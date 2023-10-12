@@ -20,7 +20,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostActorCreated() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	//virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
 	virtual void PostEditMove(bool bFinished) override;
 	virtual void Destroyed() override;
 

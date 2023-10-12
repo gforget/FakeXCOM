@@ -56,12 +56,6 @@ void ALevelBlock::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedE
 	GenerateNodePathVisualisation();
 }
 
-// void ALevelBlock::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
-// {
-// 	Super::PostEditChangeChainProperty(PropertyChangedEvent);
-// 	GenerateNodePathVisualisation();
-// }
-
 void ALevelBlock::PostEditMove(bool bFinished)
 {
 	Super::PostEditMove(bFinished);
