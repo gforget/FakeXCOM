@@ -22,11 +22,6 @@ protected:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void PostEditMove(bool bFinished) override;
 	virtual void Destroyed() override;
-
-#if WITH_EDITOR
-	UFUNCTION()
-	void OnActorSelected(const TArray<UObject*>& objectsSelected, bool value);
-#endif
 	
 	void GenerateNodePathVisualisation();
 public:
