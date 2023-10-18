@@ -1,6 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FakeXCOM/Public/LevelBlock.h"
+
+#include "NodePath.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values

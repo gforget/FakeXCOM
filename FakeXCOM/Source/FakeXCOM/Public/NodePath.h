@@ -16,16 +16,21 @@ public:
 	// Sets default values for this component's properties
 	UNodePath();
 
+	void Initialize();
+	
 	// world location
-	UPROPERTY(BlueprintReadOnly, Category = "NodePath Properties")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
 	FVector WorldLocation;
 	
 	// reference to all neighbour
-	UPROPERTY(BlueprintReadOnly, Category = "NodePath Properties")
+	UPROPERTY()
 	TArray<UNodePath*> AllNeighbours;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
+	int nbNeighbour;
+	
 	// weight cost
-	UPROPERTY(BlueprintReadWrite, Category = "NodePath Properties")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "NodePath Properties")
 	float WeightCost = 1.0f;
 	
 protected:

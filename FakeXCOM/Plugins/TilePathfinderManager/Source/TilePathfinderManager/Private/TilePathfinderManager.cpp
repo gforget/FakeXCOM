@@ -4,6 +4,7 @@
 
 #include "LevelBlock.h"
 #include "LevelEditor.h"
+#include "NodePath.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -57,9 +58,24 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 	if (WorldPtr && AllActors.Num() > 0)
 	{
 		UKismetSystemLibrary::FlushPersistentDebugLines(AllActors[0]);
+		
 		//delete all nodepath present on the map
-
-		//generate correct nodepath
+		for (int i=0; i<AllActors.Num(); i++)
+		{
+			if (ALevelBlock* LevelBlock = Cast<ALevelBlock>(AllActors[i]))
+			{
+				// Check if the component exists in the actor
+				if (UNodePath* ComponentToRemove = LevelBlock->FindComponentByClass<UNodePath>())
+				{
+					// Remove the component from the actor
+					ComponentToRemove->UnregisterComponent();
+					ComponentToRemove->DestroyComponent();
+				}
+			}
+		}
+		
+		//generate nodepath
+		TArray<UNodePath*> AllNodePathGenerated;
 		for (int i=0; i<AllActors.Num(); i++)
 		{
 			if (ALevelBlock* LevelBlock = Cast<ALevelBlock>(AllActors[i]))
@@ -75,15 +91,30 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 
 					if (bHit)
 					{
-						DrawDebugLine(WorldPtr, Start, End, FColor::Red, true, 0.0f, 0.0f, 10);
+						//DrawDebugLine(WorldPtr, Start, End, FColor::Red, true, 0.0f, 0.0f, 10);
 					}
 					else
 					{
+						//DrawDebugLine(WorldPtr, Start, End, FColor::Green, true, 0.0f, 0.0f, 10);
+						
 						//add a nodepath on the levelblock
-						DrawDebugLine(WorldPtr, Start, End, FColor::Green, true, 0.0f, 0.0f, 10);
+						if (UClass* ComponentClass = UNodePath::StaticClass())
+						{
+							UNodePath* NodePathComponent = NewObject<UNodePath>(LevelBlock, FName("NodePathComponent"));
+							NodePathComponent->RegisterComponent();
+							LevelBlock->AddInstanceComponent(NodePathComponent);
+							NodePathComponent->WorldLocation = LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j];
+							AllNodePathGenerated.Add(NodePathComponent);
+						}
 					}
 				}
 			}
+		}
+		
+		//Initialize all the nodepath after they have been generated
+		for (int i=0; i<AllNodePathGenerated.Num(); i++)
+		{
+			AllNodePathGenerated[i]->Initialize();
 		}
 	}
 }
