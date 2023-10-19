@@ -15,11 +15,8 @@ void UNodePath::Initialize()
 {
 	nbNeighbour = 0;
 	ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(GetOwner());
-	
 	FVector LevelBlockPosition = GetComponentLocation() + (LevelBlockPtr->GetActorUpVector() * 50.0f);
-	FHitResult HitResult;
-	FCollisionQueryParams CollisionParams;
-
+	
 	//Get Neighbour in all 8 directions
 	TArray<FVector> DirectionVectors;
 
@@ -52,6 +49,9 @@ void UNodePath::Initialize()
 	
 	for (int i=0;i<DirectionVectors.Num();i++)
 	{
+		FHitResult HitResult;
+		FCollisionQueryParams CollisionParams;
+		
 		FVector Start = LevelBlockPosition + DirectionVectors[i];
 		FVector End = Start - LevelBlockPtr->GetActorUpVector()*151.0f;
 		bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
@@ -71,7 +71,6 @@ void UNodePath::Initialize()
 
 				if (AllNodePaths.Num() > 0)
 				{
-					
 					// Get the closest node path to the hit, this will be the targeted neighbour
 					TArray<UNodePath*> SortedNodePaths = AllNodePaths;
 					FVector HitLocation = HitResult.Location;
@@ -79,28 +78,11 @@ void UNodePath::Initialize()
 					SortedNodePaths.Sort([HitLocation](const UNodePath& A, const UNodePath& B) {
 						return FVector::DistSquared2D(A.GetComponentLocation(), HitLocation) < FVector::DistSquared2D(B.GetComponentLocation(), HitLocation);
 					});
-
-					bool bConnectNeighbour = true;
-					if (i >= 4) // check if diagonal
-					{
-							int index1 = i-4; // movement clockwise for the index
-							int index2 = i==7 ? 0 : i-3; // the clock reset to 0 at the end
-
-							// there is one neighbour of that diagonal tht is either a full block or a void
-							if (foundBlock[index1] || foundVoid[index1] || foundBlock[index2] || foundVoid[index2])
-							{
-								bConnectNeighbour = false;
-							}
-
-							if (GetComponentLocation().Z != SortedNodePaths[0]->GetComponentLocation().Z)
-							{
-								bConnectNeighbour = false;
-							}
-					}
+					UNodePath* ChosenNodePath = SortedNodePaths[0];
 					
-					if (bConnectNeighbour)
+					if (TryConnectNeighbour(i, DirectionVectors, foundBlock, foundVoid, ChosenNodePath, LevelBlockPtr, NeighbourLevelBlock))
 					{
-						AllNeighbours.Add(SortedNodePaths[0]);
+						AllNeighbours.Add(ChosenNodePath);
 						nbNeighbour = AllNeighbours.Num();	
 					}
 				}
@@ -123,6 +105,92 @@ void UNodePath::BeginPlay()
 
 	// ...
 	
+}
+
+bool UNodePath::TryConnectNeighbour(int IndexDirection, TArray<FVector>& DirectionVectors, TArray<bool>& foundBlock, TArray<bool>& foundVoid, UNodePath* ChosenNodePath, ALevelBlock* LevelBlockPtr, ALevelBlock* NeighbourLevelBlock)
+{
+	//clearance
+	if (IndexDirection >= 4) // if diagonal
+	{
+		int index1 = IndexDirection-4; // movement clockwise for the index
+		int index2 = IndexDirection==7 ? 0 : IndexDirection-3; // the clock reset to 0 at the end
+
+		// there is one neighbour of that diagonal tht is either a full block or a void, you should not connect to that node
+		if (foundBlock[index1] || foundVoid[index1] || foundBlock[index2] || foundVoid[index2])
+		{
+			return false;
+		}
+
+		// in diagonal, you never connect to a lower or higher node
+		if (GetComponentLocation().Z != ChosenNodePath->GetComponentLocation().Z)
+		{
+			return false;
+		}
+	}
+
+	// slope clearance
+	if ((NeighbourLevelBlock->IsSlope != LevelBlockPtr->IsSlope))
+	{
+		if (IndexDirection < 4) // if vertical
+		{
+			FHitResult HitResult;
+			FCollisionQueryParams CollisionParams;
+			
+			FVector LevelBlockPosition = GetComponentLocation() + (LevelBlockPtr->GetActorUpVector() * 50.0f);
+			FVector DirectionUnitVector = DirectionVectors[IndexDirection];
+			DirectionUnitVector.Normalize();
+			
+			if (LevelBlockPtr->IsSlope && !NeighbourLevelBlock->IsSlope) // Slope to non-slope
+			{
+				if (GetComponentLocation().Z < ChosenNodePath->GetComponentLocation().Z)
+				{
+					FVector2D DirectionToNode = FVector2D(ChosenNodePath->GetComponentLocation()) - FVector2D(GetComponentLocation());
+					DirectionToNode.Normalize();
+					
+					FVector2D DirectionToTop =  FVector2D(LevelBlockPtr->GetActorLocation() + LevelBlockPtr->TopSlopePosition) - FVector2D(GetComponentLocation());
+					DirectionToTop.Normalize();
+
+					float DotProduct = DirectionToNode.Dot(DirectionToTop);
+					if (DotProduct < 0.95f)
+					{
+						return false;
+					}
+				}
+				else
+				{
+					FVector2D DirectionToNode = FVector2D(ChosenNodePath->GetComponentLocation()) - FVector2D(GetComponentLocation());
+					DirectionToNode.Normalize();
+					
+					FVector2D DirectionToBottom =  FVector2D(LevelBlockPtr->GetActorLocation() + LevelBlockPtr->BottomSlopePosition) - FVector2D(GetComponentLocation());
+					DirectionToBottom.Normalize();
+
+					float DotProduct = DirectionToNode.Dot(DirectionToBottom);
+					if (DotProduct < 0.95f)
+					{
+						return false;
+					}
+				}
+			}
+			else //Non-Slope to Slope
+			{
+				//check if the entrance of the slope is next to this node
+				FVector Start = LevelBlockPosition + DirectionUnitVector*50.0f;
+				FVector End = Start - LevelBlockPtr->GetActorUpVector()*51.0f;
+		
+				bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
+				if (HitResult.Distance < 50.0f || !bHit)
+				{
+					return false;
+				}		
+			}
+		}
+		else
+		{
+			return false; //diagonal don't connect to slope
+		}
+	}
+
+	return true;
 }
 
 

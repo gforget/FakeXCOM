@@ -21,19 +21,19 @@ void ALevelBlock::BeginPlay()
 void ALevelBlock::PostActorCreated()
 {
 	Super::PostActorCreated();
-	GenerateNodePathVisualisation();
+	GenerateNodePathPositionVisualisation();
 }
 
 void ALevelBlock::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	GenerateNodePathVisualisation();
+	GenerateNodePathPositionVisualisation();
 }
 
 void ALevelBlock::PostEditMove(bool bFinished)
 {
 	Super::PostEditMove(bFinished);
-	GenerateNodePathVisualisation();
+	GenerateNodePathPositionVisualisation();
 }
 
 void ALevelBlock::Destroyed()
@@ -42,7 +42,7 @@ void ALevelBlock::Destroyed()
 	UKismetSystemLibrary::FlushPersistentDebugLines(this);
 }
 
-void ALevelBlock::GenerateNodePathVisualisation()
+void ALevelBlock::GenerateNodePathPositionVisualisation()
 {
 #if WITH_EDITOR
 	UKismetSystemLibrary::FlushPersistentDebugLines(this);
@@ -50,13 +50,19 @@ void ALevelBlock::GenerateNodePathVisualisation()
 	UWorld* World = GetWorld();
 	float Radius = 20.0f;
 	int32 Segments = 12;
-	FColor Color = FColor::Cyan;
 	float Duration = 0.0f; 
 	float Thickness = 0.0f;
 	FVector ActorLocation = GetActorLocation();
+	
 	for (int i=0; i<NodePathPositions.Num(); i++)
 	{
-		DrawDebugSphere(World, ActorLocation + NodePathPositions[i], Radius, Segments, Color, true, Duration, 0, Thickness);
+		DrawDebugSphere(World, ActorLocation + NodePathPositions[i], Radius, Segments, FColor::Cyan, true, Duration, 0, Thickness);
+	}
+
+	if (IsSlope)
+	{
+		DrawDebugSphere(World, ActorLocation + BottomSlopePosition, Radius, Segments, FColor::Red, true, Duration, 0, Thickness);
+		DrawDebugSphere(World, ActorLocation + TopSlopePosition, Radius, Segments, FColor::Red, true, Duration, 0, Thickness);
 	}
 #endif
 }

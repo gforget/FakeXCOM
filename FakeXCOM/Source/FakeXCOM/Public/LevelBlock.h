@@ -23,13 +23,24 @@ protected:
 	virtual void PostEditMove(bool bFinished) override;
 	virtual void Destroyed() override;
 	
-	void GenerateNodePathVisualisation();
+	void GenerateNodePathPositionVisualisation();
+	
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Slope Property")
+	bool IsSlope;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Slope Property")
+	FVector TopSlopePosition;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Slope Property")
+	FVector BottomSlopePosition;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pathfinder")
 	TArray<FVector> NodePathPositions;
+	
 };
 
 
