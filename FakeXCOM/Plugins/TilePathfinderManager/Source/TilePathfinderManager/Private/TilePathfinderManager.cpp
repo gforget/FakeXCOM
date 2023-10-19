@@ -64,12 +64,13 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 		{
 			if (ALevelBlock* LevelBlock = Cast<ALevelBlock>(AllActors[i]))
 			{
-				// Check if the component exists in the actor
-				if (UNodePath* ComponentToRemove = LevelBlock->FindComponentByClass<UNodePath>())
+				TArray<UNodePath*> AllNodePaths;
+				LevelBlock->GetComponents<UNodePath>(AllNodePaths);
+				for(int j=0; j<AllNodePaths.Num(); j++)
 				{
 					// Remove the component from the actor
-					ComponentToRemove->UnregisterComponent();
-					ComponentToRemove->DestroyComponent();
+					AllNodePaths[j]->UnregisterComponent();
+					AllNodePaths[j]->DestroyComponent();
 				}
 			}
 		}
@@ -84,8 +85,8 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 				{
 					FHitResult HitResult;
 					FCollisionQueryParams CollisionParams;
-					FVector Start = LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j];
-					FVector End = Start + (LevelBlock->GetActorUpVector() * 50.0f);
+					FVector Start = LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j] + (LevelBlock->GetActorUpVector() * 110.0f);
+					FVector End = Start - (LevelBlock->GetActorUpVector() * 90.0f);
 
 					bool bHit = WorldPtr->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
 
@@ -100,10 +101,13 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 						//add a nodepath on the levelblock
 						if (UClass* ComponentClass = UNodePath::StaticClass())
 						{
-							UNodePath* NodePathComponent = NewObject<UNodePath>(LevelBlock, FName("NodePathComponent"));
+							FString name = "NodePath Component ";
+							name.Append(FString::FromInt(j));
+							
+							UNodePath* NodePathComponent = NewObject<UNodePath>(LevelBlock, FName(name));
 							NodePathComponent->RegisterComponent();
 							LevelBlock->AddInstanceComponent(NodePathComponent);
-							NodePathComponent->WorldLocation = LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j];
+							NodePathComponent->SetWorldLocation(LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j]);
 							AllNodePathGenerated.Add(NodePathComponent);
 						}
 					}
@@ -123,17 +127,31 @@ void FTilePathfinderManagerModule::OnActorSelected(const TArray<UObject*>& objec
 {
 	if (objectsSelected.Num() > 0)
 	{
+		UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
 		UKismetSystemLibrary::FlushPersistentDebugLines(objectsSelected[0]);
 		for (int i=0; i<objectsSelected.Num();i++)
 		{
+			
 			if (objectsSelected[i]->IsA(ALevelBlock::StaticClass()))
 			{
+				TArray<UNodePath*> AllNodePaths;
+				Cast<ALevelBlock>(objectsSelected[i])->GetComponents<UNodePath>(AllNodePaths);
+				
+				for(int j=0; j<AllNodePaths.Num(); j++)
+				{
+					for (int k=0; k<AllNodePaths[j]->AllNeighbours.Num(); k++)
+					{
+						DrawDebugLine(WorldPtr, AllNodePaths[j]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), AllNodePaths[j]->AllNeighbours[k]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), FColor::Blue, true, 0.0f, 0.0f, 2.0f);
+					}
+				}
+				
 				UWorld* World = objectsSelected[i]->GetWorld();
 				float Radius = 20.0f;
 				int32 Segments = 12;
 				FColor Color = FColor::Cyan;
 				float Duration = 0.0f; 
 				float Thickness = 0.0f;
+				
 				FVector ActorLocation = Cast<ALevelBlock>(objectsSelected[i])->GetActorLocation();
 				for (int j=0; j<Cast<ALevelBlock>(objectsSelected[i])->NodePathPositions.Num(); j++)
 				{

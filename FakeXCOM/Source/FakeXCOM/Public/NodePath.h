@@ -3,25 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Components/SceneComponent.h"
 #include "NodePath.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class FAKEXCOM_API UNodePath : public UActorComponent
+class FAKEXCOM_API UNodePath : public USceneComponent
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
 	UNodePath();
-
+	
 	void Initialize();
-	
-	// world location
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
-	FVector WorldLocation;
-	
+
 	// reference to all neighbour
 	UPROPERTY()
 	TArray<UNodePath*> AllNeighbours;
@@ -39,5 +35,6 @@ protected:
 
 public:
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
 };
