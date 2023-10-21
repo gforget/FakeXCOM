@@ -105,9 +105,17 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 							name.Append(FString::FromInt(j));
 							
 							UNodePath* NodePathComponent = NewObject<UNodePath>(LevelBlock, FName(name));
-							NodePathComponent->RegisterComponent();
+							NodePathComponent->CreationMethod = EComponentCreationMethod::Native;
 							LevelBlock->AddInstanceComponent(NodePathComponent);
 							NodePathComponent->SetWorldLocation(LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j]);
+							NodePathComponent->RegisterComponent();
+							
+							// UNodePath* NodePathComponent = NewObject<UNodePath>(LevelBlock, FName(name));
+							// NodePathComponent->CreationMethod = EComponentCreationMethod::Native;
+							// NodePathComponent->AttachToComponent(LevelBlock->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+							// NodePathComponent->SetWorldLocation(LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j]);
+							// NodePathComponent->RegisterComponent();
+							
 							AllNodePathGenerated.Add(NodePathComponent);
 						}
 					}
@@ -145,7 +153,17 @@ void FTilePathfinderManagerModule::OnActorSelected(const TArray<UObject*>& objec
 				{
 					for (int k=0; k<AllNodePaths[j]->AllNeighbours.Num(); k++)
 					{
-						DrawDebugLine(WorldPtr, AllNodePaths[j]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), AllNodePaths[j]->AllNeighbours[k]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), FColor::Blue, true, 0.0f, 0.0f, 2.0f);
+						if (AllNodePaths[j]->AllNeighbours[k])
+						{
+							DrawDebugLine(WorldPtr, AllNodePaths[j]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), AllNodePaths[j]->AllNeighbours[k]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), FColor::Blue, true, 0.0f, 0.0f, 2.0f);
+						}
+						else
+						{
+							if (GEngine)
+							{
+								GEngine->AddOnScreenDebugMessage(-1, 8.0f, FColor::Red, TEXT("Neighbour node not cleaned up"));
+							}
+						}
 					}
 				}
 				
