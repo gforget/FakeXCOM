@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "LevelBlock.generated.h"
 
+class UNodePath;
+
 UCLASS()
 class FAKEXCOM_API ALevelBlock : public AActor
 {
@@ -40,7 +42,8 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pathfinder")
 	TArray<FVector> NodePathPositions;
-	
+
+	UNodePath* GetClosestNodePathFromLocation (FVector Location);
 };
 
 

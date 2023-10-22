@@ -23,4 +23,21 @@ protected:
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mouse Scene Selection Properties")
+	bool bDebugMouseLineTrace = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mouse Scene Selection Properties")
+	bool bDebugShowActorNameReturned = false;
+	
+private:
+	void LeftClickSelection();
+	void RightClickSelection();
+	
+	AActor* SelectActorFromMousePosition(FVector& HitPosition);
+
+	UPROPERTY()
+	UInputComponent* InputComponentPtr;
+	
+
 };

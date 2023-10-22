@@ -47,6 +47,7 @@ void UNodePath::Initialize()
 	TArray<bool> foundVoid;
 	foundVoid.Init(false, 4);
 	
+	//Connect the nodepath to all the neighbour nodepath around
 	for (int i=0;i<DirectionVectors.Num();i++)
 	{
 		FHitResult HitResult;
@@ -65,21 +66,10 @@ void UNodePath::Initialize()
 				{
 					foundBlock[i] = true;
 				}
-				
-				TArray<UNodePath*> AllNodePaths;
-				NeighbourLevelBlock->GetComponents<UNodePath>(AllNodePaths);
 
-				if (AllNodePaths.Num() > 0)
+				//Get the node path closest to the raycast hit location
+				if (UNodePath* ChosenNodePath = NeighbourLevelBlock->GetClosestNodePathFromLocation(HitResult.Location))
 				{
-					// Get the closest node path to the hit, this will be the targeted neighbour
-					TArray<UNodePath*> SortedNodePaths = AllNodePaths;
-					FVector HitLocation = HitResult.Location;
-					
-					SortedNodePaths.Sort([HitLocation](const UNodePath& A, const UNodePath& B) {
-						return FVector::DistSquared2D(A.GetComponentLocation(), HitLocation) < FVector::DistSquared2D(B.GetComponentLocation(), HitLocation);
-					});
-					UNodePath* ChosenNodePath = SortedNodePaths[0];
-					
 					if (TryConnectNeighbour(i, DirectionVectors, foundBlock, foundVoid, ChosenNodePath, LevelBlockPtr, NeighbourLevelBlock))
 					{
 						AllNeighbours.Add(ChosenNodePath);
@@ -90,7 +80,7 @@ void UNodePath::Initialize()
 		}
 		else
 		{
-			if (i<4)
+			if (i<4) // check if vertical
 			{
 				foundVoid[i] = true;	
 			}

@@ -73,3 +73,24 @@ void ALevelBlock::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+UNodePath* ALevelBlock::GetClosestNodePathFromLocation(FVector Location)
+{
+	UNodePath* ChosenNodePath = nullptr;
+	
+	TArray<UNodePath*> AllNodePaths;
+	GetComponents<UNodePath>(AllNodePaths);
+	if (AllNodePaths.Num() > 0)
+	{
+		// Get the closest node path to the hit, this will be the targeted neighbour
+		TArray<UNodePath*> SortedNodePaths = AllNodePaths;
+					
+		SortedNodePaths.Sort([Location](const UNodePath& A, const UNodePath& B) {
+			return FVector::DistSquared2D(A.GetComponentLocation(), Location) < FVector::DistSquared2D(B.GetComponentLocation(), Location);
+		});
+			
+		ChosenNodePath = SortedNodePaths[0];
+	}
+
+	return ChosenNodePath;
+}
+
