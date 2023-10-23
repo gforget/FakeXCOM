@@ -5,7 +5,6 @@
 
 #include "MouseSceneSelectionComponent.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/GameSession.h"
 #include "GameFramework/SpringArmComponent.h"
 
 

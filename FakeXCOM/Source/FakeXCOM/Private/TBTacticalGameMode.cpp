@@ -2,3 +2,10 @@
 
 
 #include "TBTacticalGameMode.h"
+#include "TilePathFinder.h"
+
+void ATBTacticalGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	TilePathFinder = NewObject<UTilePathFinder>(GetTransientPackage(), UTilePathFinder::StaticClass());
+}

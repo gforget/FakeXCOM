@@ -4,6 +4,8 @@
 #include "MouseSceneSelectionComponent.h"
 #include "LevelBlock.h"
 #include "NodePath.h"
+#include "TBTacticalGameMode.h"
+#include "TilePathFinder.h"
 
 // Sets default values for this component's properties
 UMouseSceneSelectionComponent::UMouseSceneSelectionComponent()
@@ -52,7 +54,17 @@ void UMouseSceneSelectionComponent::LeftClickSelection()
 
 void UMouseSceneSelectionComponent::RightClickSelection()
 {
-	
+	ATBTacticalGameMode* GameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+
+	if (GameMode)
+	{
+		UTilePathFinder* TilePathFinderPtr = GameMode->TilePathFinder;
+
+		if (TilePathFinderPtr)
+		{
+			TilePathFinderPtr->TestFunction();
+		}
+	}
 }
 
 AActor* UMouseSceneSelectionComponent::SelectActorFromMousePosition(FVector& HitPosition)
