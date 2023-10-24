@@ -2,6 +2,8 @@
 
 
 #include "MouseSceneSelectionComponent.h"
+
+#include "DebugHeader.h"
 #include "LevelBlock.h"
 #include "NodePath.h"
 #include "TBTacticalGameMode.h"
@@ -40,15 +42,7 @@ void UMouseSceneSelectionComponent::LeftClickSelection()
 	if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(SelectActorFromMousePosition(HitLocation)))
 	{
 		const UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
-		
-		UWorld* World = GetWorld();
-		FVector Location = FVector(0, 0, 0); // Set the desired world location
-		float Radius = 100.0f;
-		int32 Segments = 12;
-		FColor Color = FColor::Red;
-		float Duration = 5.0f; // Will last for 5 seconds
-		float Thickness = 1.0f;
-		DrawDebugSphere(World, ChosenNodePath->GetComponentLocation(), Radius, Segments, Color, false, Duration, 0, Thickness);
+		DrawDebugSphere(GetWorld(), ChosenNodePath->GetComponentLocation(), 100.0f, 12, FColor::Red, false, 5.0f, 0, 1.0f);
 	}
 }
 
@@ -108,18 +102,12 @@ AActor* UMouseSceneSelectionComponent::SelectActorFromMousePosition(FVector& Hit
 			if (bDebugShowActorNameReturned)
 			{
 				FString HitActorName = HitResult.GetActor()->GetName();
-				if (GEngine)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 8.0f, FColor::Cyan, HitActorName);
-				}
+				DebugScreen(HitActorName, FColor::Cyan);
 			}
 		}
 		else
 		{
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 8.0f, FColor::Cyan, "No actor to return");
-			}
+			DebugScreen("No actor to return", FColor::Cyan);
 		}
 	}
 

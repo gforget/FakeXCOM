@@ -1,15 +1,25 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FakeXCOM/Public/LevelBlock.h"
-
 #include "NodePath.h"
+#include "TBTacticalGameMode.h"
+#include "TilePathFinder.h"
+#include "Components/ArrowComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 ALevelBlock::ALevelBlock()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = Root;
+	RootComponent->SetMobility(EComponentMobility::Movable);
+	
+	// Create and initialize the ArrowComponent
+	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
+	ArrowComponent->SetVisibility(false);
+	ArrowComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called when the game starts or when spawned
@@ -17,16 +27,46 @@ void ALevelBlock::BeginPlay()
 {
 	Super::BeginPlay();
 }
+// Called every frame
+void ALevelBlock::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
 
 void ALevelBlock::PostActorCreated()
 {
 	Super::PostActorCreated();
+	if (bIsStartingPosition && NodePathIndex != -1 && NodePathIndex < NodePathPositions.Num())
+	{
+		ArrowComponent->SetVisibility(true);
+		FVector ArrowPosition = NodePathPositions[NodePathIndex];
+		ArrowPosition.Z += 100.0f;
+		ArrowComponent->SetRelativeLocation(ArrowPosition);
+		ArrowComponent->SetRelativeRotation(FRotator(-90.0f,0.0f,0.0f));
+	}
+	else
+	{
+		ArrowComponent->SetVisibility(false);
+	}
+
 	GenerateNodePathPositionVisualisation();
 }
 
 void ALevelBlock::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
+	if (bIsStartingPosition && NodePathIndex != -1 && NodePathIndex < NodePathPositions.Num())
+	{
+		ArrowComponent->SetVisibility(true);
+		FVector ArrowPosition = NodePathPositions[NodePathIndex];
+		ArrowPosition.Z += 100.0f;
+		ArrowComponent->SetRelativeLocation(ArrowPosition);
+		ArrowComponent->SetRelativeRotation(FRotator(-90.0f,0.0f,0.0f));
+	}
+	else
+	{
+		ArrowComponent->SetVisibility(false);
+	}
 	GenerateNodePathPositionVisualisation();
 }
 
@@ -47,30 +87,18 @@ void ALevelBlock::GenerateNodePathPositionVisualisation()
 #if WITH_EDITOR
 	UKismetSystemLibrary::FlushPersistentDebugLines(this);
 	
-	UWorld* World = GetWorld();
-	float Radius = 20.0f;
-	int32 Segments = 12;
-	float Duration = 0.0f; 
-	float Thickness = 0.0f;
 	FVector ActorLocation = GetActorLocation();
-	
 	for (int i=0; i<NodePathPositions.Num(); i++)
 	{
-		DrawDebugSphere(World, ActorLocation + NodePathPositions[i], Radius, Segments, FColor::Cyan, true, Duration, 0, Thickness);
+		DrawDebugSphere(GetWorld(), ActorLocation + NodePathPositions[i], 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
 	}
 
 	if (IsSlope)
 	{
-		DrawDebugSphere(World, ActorLocation + BottomSlopePosition, Radius, Segments, FColor::Red, true, Duration, 0, Thickness);
-		DrawDebugSphere(World, ActorLocation + TopSlopePosition, Radius, Segments, FColor::Red, true, Duration, 0, Thickness);
+		DrawDebugSphere(GetWorld(), ActorLocation + BottomSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
+		DrawDebugSphere(GetWorld(), ActorLocation + TopSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
 	}
 #endif
-}
-
-// Called every frame
-void ALevelBlock::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 UNodePath* ALevelBlock::GetClosestNodePathFromLocation(FVector Location)

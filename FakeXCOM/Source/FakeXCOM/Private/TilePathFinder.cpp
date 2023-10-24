@@ -2,11 +2,9 @@
 
 
 #include "TilePathFinder.h"
+#include "DebugHeader.h"
 
 void UTilePathFinder::TestFunction()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 8.0f, FColor::Cyan, "test");
-	}
+	DebugScreen("test", FColor::Cyan);
 }

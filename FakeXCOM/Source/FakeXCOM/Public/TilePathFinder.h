@@ -6,6 +6,7 @@
 #include "UObject/Object.h"
 #include "TilePathFinder.generated.h"
 
+class UNodePath;
 /**
  * 
  */
@@ -15,4 +16,6 @@ class FAKEXCOM_API UTilePathFinder : public UObject
 	GENERATED_BODY()
 public:
 	void TestFunction();
+	
+	UNodePath* StartingNode;
 };

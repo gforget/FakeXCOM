@@ -18,5 +18,8 @@ class FAKEXCOM_API ATBTacticalGameMode : public AGameModeBase
 
 public:
 	UPROPERTY()
-	UTilePathFinder* TilePathFinder; //will be define even if nothing is attach to it
+	UTilePathFinder* TilePathFinder;
+
+	UPROPERTY()
+	bool bInitialized = false;
 };

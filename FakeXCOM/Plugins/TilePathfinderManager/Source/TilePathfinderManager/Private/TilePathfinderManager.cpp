@@ -110,12 +110,6 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 							NodePathComponent->SetWorldLocation(LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j]);
 							NodePathComponent->RegisterComponent();
 							
-							// UNodePath* NodePathComponent = NewObject<UNodePath>(LevelBlock, FName(name));
-							// NodePathComponent->CreationMethod = EComponentCreationMethod::Native;
-							// NodePathComponent->AttachToComponent(LevelBlock->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-							// NodePathComponent->SetWorldLocation(LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j]);
-							// NodePathComponent->RegisterComponent();
-							
 							AllNodePathGenerated.Add(NodePathComponent);
 						}
 					}
@@ -167,17 +161,10 @@ void FTilePathfinderManagerModule::OnActorSelected(const TArray<UObject*>& objec
 					}
 				}
 				
-				UWorld* World = objectsSelected[i]->GetWorld();
-				float Radius = 20.0f;
-				int32 Segments = 12;
-				FColor Color = FColor::Cyan;
-				float Duration = 0.0f; 
-				float Thickness = 0.0f;
-				
 				FVector ActorLocation = LevelBlockPtr->GetActorLocation();
 				for (int j=0; j<LevelBlockPtr->NodePathPositions.Num(); j++)
 				{
-					DrawDebugSphere(World, ActorLocation + LevelBlockPtr->NodePathPositions[j], Radius, Segments, Color, true, Duration, 0, Thickness);
+					DrawDebugSphere(objectsSelected[i]->GetWorld(), ActorLocation + LevelBlockPtr->NodePathPositions[j], 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
 				}
 			}
 		}

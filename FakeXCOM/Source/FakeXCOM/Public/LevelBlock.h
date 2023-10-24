@@ -7,6 +7,7 @@
 #include "LevelBlock.generated.h"
 
 class UNodePath;
+class UArrowComponent;
 
 UCLASS()
 class FAKEXCOM_API ALevelBlock : public AActor
@@ -42,6 +43,15 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pathfinder")
 	TArray<FVector> NodePathPositions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pathfinder")
+	bool bIsStartingPosition = false;
+
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsStartingPosition"), Category = "Pathfinder")
+	int NodePathIndex = -1;
+	
+	UPROPERTY()
+	UArrowComponent* ArrowComponent;
 
 	UNodePath* GetClosestNodePathFromLocation (FVector Location);
 };
