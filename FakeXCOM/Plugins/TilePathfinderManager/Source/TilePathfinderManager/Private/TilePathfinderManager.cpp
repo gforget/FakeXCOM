@@ -2,6 +2,7 @@
 
 #include "TilePathfinderManager.h"
 
+#include "DebugHeader.h"
 #include "LevelBlock.h"
 #include "LevelEditor.h"
 #include "NodePath.h"
@@ -51,6 +52,7 @@ void FTilePathfinderManagerModule::FillMenu(FMenuBuilder& MenuBuilder)
 
 void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 {
+	int CurrentNodeId = 0;
 	TArray<AActor*> AllActors;
 	UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
 	UGameplayStatics::GetAllActorsOfClass(WorldPtr,AActor::StaticClass(),AllActors);
@@ -105,12 +107,14 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 							name.Append(FString::FromInt(j));
 							
 							UNodePath* NodePathComponent = NewObject<UNodePath>(LevelBlock, FName(name));
+							NodePathComponent->IdNode = CurrentNodeId;
 							NodePathComponent->CreationMethod = EComponentCreationMethod::Native;
 							LevelBlock->AddInstanceComponent(NodePathComponent);
 							NodePathComponent->SetWorldLocation(LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j]);
 							NodePathComponent->RegisterComponent();
 							
 							AllNodePathGenerated.Add(NodePathComponent);
+							CurrentNodeId++;
 						}
 					}
 				}
@@ -153,10 +157,7 @@ void FTilePathfinderManagerModule::OnActorSelected(const TArray<UObject*>& objec
 						}
 						else
 						{
-							if (GEngine)
-							{
-								GEngine->AddOnScreenDebugMessage(-1, 8.0f, FColor::Red, TEXT("Neighbour node not cleaned up"));
-							}
+							DebugScreen(TEXT("Neighbour node not cleaned up"), FColor::Red);
 						}
 					}
 				}

@@ -26,6 +26,12 @@ void UMouseSceneSelectionComponent::BeginPlay()
 		InputComponentPtr->BindAction("LeftClick", IE_Pressed, this, &UMouseSceneSelectionComponent::LeftClickSelection);
 		InputComponentPtr->BindAction("RightClick", IE_Pressed, this, &UMouseSceneSelectionComponent::RightClickSelection);
 	}
+	
+	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	if (!TBTacticalGameMode)
+	{
+		DebugScreen("Game Mode not define", FColor::Red);
+	}
 }
 
 
@@ -41,24 +47,25 @@ void UMouseSceneSelectionComponent::LeftClickSelection()
 
 	if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(SelectActorFromMousePosition(HitLocation)))
 	{
-		const UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
-		DrawDebugSphere(GetWorld(), ChosenNodePath->GetComponentLocation(), 100.0f, 12, FColor::Red, false, 5.0f, 0, 1.0f);
+		UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
+		UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder;
+		
+		if (TilePathFinderPtr)
+		{
+			GenericStack<UNodePath*> Path = TilePathFinderPtr->GetPathToDestination(ChosenNodePath);
+			while (!Path.IsEmpty())
+			{
+				DrawDebugSphere(GetWorld(), Path.Pop()->GetComponentLocation(), 10.0f, 12, FColor::Red, false, 5.0f, 0, 1.0f);		
+			}
+		}
+		
+		//DrawDebugSphere(GetWorld(), ChosenNodePath->GetComponentLocation(), 100.0f, 12, FColor::Red, false, 5.0f, 0, 1.0f);
 	}
 }
 
 void UMouseSceneSelectionComponent::RightClickSelection()
 {
-	ATBTacticalGameMode* GameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
-
-	if (GameMode)
-	{
-		UTilePathFinder* TilePathFinderPtr = GameMode->TilePathFinder;
-
-		if (TilePathFinderPtr)
-		{
-			TilePathFinderPtr->TestFunction();
-		}
-	}
+	DebugScreen(TEXT("Right click"), FColor::Cyan);
 }
 
 AActor* UMouseSceneSelectionComponent::SelectActorFromMousePosition(FVector& HitPosition)

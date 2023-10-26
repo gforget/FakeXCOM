@@ -13,7 +13,7 @@ UNodePath::UNodePath()
 
 void UNodePath::Initialize()
 {
-	nbNeighbour = 0;
+	NbNeighbour = 0;
 	ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(GetOwner());
 	FVector LevelBlockPosition = GetComponentLocation() + (LevelBlockPtr->GetActorUpVector() * 50.0f);
 	
@@ -73,7 +73,15 @@ void UNodePath::Initialize()
 					if (TryConnectNeighbour(i, DirectionVectors, foundBlock, foundVoid, ChosenNodePath, LevelBlockPtr, NeighbourLevelBlock))
 					{
 						AllNeighbours.Add(ChosenNodePath);
-						nbNeighbour = AllNeighbours.Num();	
+						if (i<4)
+						{
+							AllNeighboursBaseCost.Add(100.0f);
+						}
+						else
+						{
+							AllNeighboursBaseCost.Add(141.42f);
+						}
+						NbNeighbour = AllNeighbours.Num();	
 					}
 				}
 			}

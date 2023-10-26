@@ -21,9 +21,15 @@ public:
 	// reference to all neighbour
 	UPROPERTY()
 	TArray<UNodePath*> AllNeighbours;
+
+	UPROPERTY()
+	TArray<float> AllNeighboursBaseCost;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
+	int IdNode = -1;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
-	int nbNeighbour;
+	int NbNeighbour;
 	
 	// weight cost
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "NodePath Properties")
