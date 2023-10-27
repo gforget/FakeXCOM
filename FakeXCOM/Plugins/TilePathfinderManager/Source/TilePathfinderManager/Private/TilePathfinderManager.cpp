@@ -43,8 +43,8 @@ void FTilePathfinderManagerModule::AddMenu(FMenuBarBuilder& MenuBuilder)
 
 void FTilePathfinderManagerModule::FillMenu(FMenuBuilder& MenuBuilder)
 {
-	MenuBuilder.AddMenuEntry(FText::FromString(TEXT("Option 1")),
-		FText::FromString(TEXT("Safely delete unused asset under folder")),
+	MenuBuilder.AddMenuEntry(FText::FromString(TEXT("Generate Pathfinding Graph")),
+		FText::FromString(TEXT("Generate the pathfinding graph using the LevelBlock on the map")),
 		FSlateIcon(),
 		FExecuteAction::CreateRaw(this, &FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked)
 		);
