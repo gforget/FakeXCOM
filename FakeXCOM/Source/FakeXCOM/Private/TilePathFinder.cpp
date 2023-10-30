@@ -7,18 +7,17 @@
 #include "GnericPriorityQueue.h"
 #include "NodePath.h"
 
-GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* DestinationNode)
+GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode)
 {
-	UNodePath* initialNode = StartingNode;
-
+	
 	GenericPriorityQueue<UNodePath*, float> frontier;
-	frontier.Enqueue(initialNode, 0.0f);
+	frontier.Enqueue(InitialNode, 0.0f);
 
 	TMap<int, UNodePath*> came_from;
-	AddNodeToCameFrom(came_from, initialNode->IdNode, nullptr);
+	AddNodeToCameFrom(came_from, InitialNode->IdNode, nullptr);
 	
 	TMap<int, float> cost_so_far;
-	AddCostToCostSoFar(cost_so_far, initialNode->IdNode, 0.0f);
+	AddCostToCostSoFar(cost_so_far, InitialNode->IdNode, 0.0f);
 
 	bool bPathFound = false;
 	int iteration = 0;
@@ -57,7 +56,7 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Destin
 	if (bPathFound)
 	{
 		UNodePath* current = DestinationNode;
-		while(current->IdNode != initialNode->IdNode)
+		while(current->IdNode != InitialNode->IdNode)
 		{
 			PathStack.Push(current);
 			current = GetNodeFromCameFrom(came_from, current->IdNode);

@@ -16,10 +16,7 @@ class FAKEXCOM_API UTilePathFinder : public UObject
 {
 	GENERATED_BODY()
 public:
-	GenericStack<UNodePath*> GetPathToDestination(UNodePath* DestinationNode);
-
-	UPROPERTY()
-	UNodePath* StartingNode;
+	GenericStack<UNodePath*> GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode);
 	
 	void AddNodeToCameFrom(TMap<int, UNodePath*>& came_from, int IdNode, UNodePath* ValueNode);
 	UNodePath* GetNodeFromCameFrom(TMap<int, UNodePath*>& came_from, int IdNode);

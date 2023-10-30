@@ -6,6 +6,7 @@
 #include "DebugHeader.h"
 #include "LevelBlock.h"
 #include "NodePath.h"
+#include "Soldier.h"
 #include "TBTacticalGameMode.h"
 #include "TilePathFinder.h"
 
@@ -44,28 +45,37 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 void UMouseSceneSelectionComponent::LeftClickSelection()
 {
 	FVector HitLocation;
-
-	if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(SelectActorFromMousePosition(HitLocation)))
+	if (ASoldier* SelectedSoldierPtr = Cast<ASoldier>(SelectActorFromMousePosition(HitLocation)))
 	{
-		UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
-		UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder;
-		
-		if (TilePathFinderPtr)
-		{
-			GenericStack<UNodePath*> Path = TilePathFinderPtr->GetPathToDestination(ChosenNodePath);
-			while (!Path.IsEmpty())
-			{
-				DrawDebugSphere(GetWorld(), Path.Pop()->GetComponentLocation(), 10.0f, 12, FColor::Red, false, 5.0f, 0, 1.0f);		
-			}
-		}
-		
-		//DrawDebugSphere(GetWorld(), ChosenNodePath->GetComponentLocation(), 100.0f, 12, FColor::Red, false, 5.0f, 0, 1.0f);
+		SelectedSoldier = SelectedSoldierPtr;
+		DebugScreen("Soldier Selected !", FColor::Yellow);
 	}
 }
 
 void UMouseSceneSelectionComponent::RightClickSelection()
 {
-	DebugScreen(TEXT("Right click"), FColor::Cyan);
+	if (SelectedSoldier)
+	{
+		FVector HitLocation;
+		if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(SelectActorFromMousePosition(HitLocation)))
+		{
+			UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
+			UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder;
+		
+			if (TilePathFinderPtr)
+			{
+				GenericStack<UNodePath*> Path = TilePathFinderPtr->GetPathToDestination(SelectedSoldier->LocatedNodePath, ChosenNodePath);
+				while(!Path.IsEmpty())
+				{
+					DrawDebugSphere(GetWorld(), Path.Pop()->GetComponentLocation(), 10.0f, 12, FColor::Red, false, 5.0f, 0, 1.0f);
+				}
+			}
+		}
+	}
+	else
+	{
+		DebugScreen("No soldier selected", FColor::Red);
+	}
 }
 
 AActor* UMouseSceneSelectionComponent::SelectActorFromMousePosition(FVector& HitPosition)

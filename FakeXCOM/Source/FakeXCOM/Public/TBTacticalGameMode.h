@@ -7,6 +7,7 @@
 #include "TBTacticalGameMode.generated.h"
 
 class UTilePathFinder;
+class ASoldier;
 /**
  * 
  */
@@ -22,4 +23,7 @@ public:
 
 	UPROPERTY()
 	bool bInitialized = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Spawnable Unit")
+	TSubclassOf<ASoldier> SoldierClass;
 };

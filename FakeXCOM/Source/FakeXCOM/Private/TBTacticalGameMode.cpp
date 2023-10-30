@@ -6,6 +6,8 @@
 #include "LevelBlock.h"
 #include "TilePathFinder.h"
 #include "NodePath.h"
+#include "Soldier.h"
+#include "TBTacticalController.h"
 #include "Kismet/GameplayStatics.h"
 
 void ATBTacticalGameMode::BeginPlay()
@@ -31,13 +33,17 @@ void ATBTacticalGameMode::BeginPlay()
 				{
 					TArray<UNodePath*> AllNodePaths;
 					LevelBlock->GetComponents<UNodePath>(AllNodePaths);
+					UNodePath* StartingNodePtr = AllNodePaths[LevelBlock->NodePathIndex];
 					
-					TilePathFinder->StartingNode = AllNodePaths[LevelBlock->NodePathIndex];
+					if (SoldierClass)
+					{
+						ASoldier* SoldierPtr = GetWorld()->SpawnActor<ASoldier>(SoldierClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
+						SoldierPtr->LocatedNodePath = StartingNodePtr;
+					}
 				}
 			}
 		}
 	}
 	
-	DrawDebugSphere(GetWorld(), TilePathFinder->StartingNode->GetComponentLocation(), 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
 	bInitialized = true;
 }

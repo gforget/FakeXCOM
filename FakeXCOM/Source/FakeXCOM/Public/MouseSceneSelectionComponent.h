@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "MouseSceneSelectionComponent.generated.h"
 class ATBTacticalGameMode;
+class ASoldier;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UMouseSceneSelectionComponent : public UActorComponent
@@ -41,4 +42,7 @@ private:
 	
 	UPROPERTY()
 	ATBTacticalGameMode* TBTacticalGameMode;
+
+	UPROPERTY()
+	ASoldier* SelectedSoldier;
 };
