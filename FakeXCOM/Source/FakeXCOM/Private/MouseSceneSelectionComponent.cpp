@@ -5,9 +5,9 @@
 
 #include "DebugHeader.h"
 #include "LevelBlock.h"
-#include "NodePath.h"
 #include "Soldier.h"
 #include "TBTacticalGameMode.h"
+#include "TileMovementComponent.h"
 #include "TilePathFinder.h"
 
 // Sets default values for this component's properties
@@ -64,11 +64,7 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 		
 			if (TilePathFinderPtr)
 			{
-				GenericStack<UNodePath*> Path = TilePathFinderPtr->GetPathToDestination(SelectedSoldier->LocatedNodePath, ChosenNodePath);
-				while(!Path.IsEmpty())
-				{
-					DrawDebugSphere(GetWorld(), Path.Pop()->GetComponentLocation(), 10.0f, 12, FColor::Red, false, 5.0f, 0, 1.0f);
-				}
+				SelectedSoldier->TileMovementComponent->FollowPath(TilePathFinderPtr->GetPathToDestination(SelectedSoldier->TileMovementComponent->LocatedNodePath, ChosenNodePath));
 			}
 		}
 	}

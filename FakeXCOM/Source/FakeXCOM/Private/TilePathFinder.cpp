@@ -2,7 +2,6 @@
 
 
 #include "TilePathFinder.h"
-#include "DebugHeader.h"
 #include "GenericStack.h"
 #include "GnericPriorityQueue.h"
 #include "NodePath.h"
@@ -50,8 +49,7 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Initia
 		}
 	}
 	
-	DebugScreen(FString::FromInt(came_from.Num()), FColor::Red);
-
+	//Generate the path
 	GenericStack<UNodePath*> PathStack;
 	if (bPathFound)
 	{
@@ -62,6 +60,11 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Initia
 			current = GetNodeFromCameFrom(came_from, current->IdNode);
 		}
 	}
+	
+	// clear memory to avoid memory leak
+	frontier.Clear(); 
+	came_from.Empty();
+	cost_so_far.Empty();
 	
 	return PathStack;
 }

@@ -48,7 +48,11 @@ public:
 	{
 		return PriorityQueue.Num() == 0;
 	}
-
+	
+	void Clear()
+	{
+		PriorityQueue.Empty();
+	}
 private:
 	TArray<PriorityElement<TElement, TKey>> PriorityQueue;
 };

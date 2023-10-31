@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Soldier.generated.h"
-class UNodePath;
+
+class UTileMovementComponent;
 
 UCLASS()
 class FAKEXCOM_API ASoldier : public ACharacter
@@ -24,6 +25,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY()
-	UNodePath* LocatedNodePath;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UTileMovementComponent* TileMovementComponent;
+	
 };

@@ -7,7 +7,7 @@
 #include "TilePathFinder.h"
 #include "NodePath.h"
 #include "Soldier.h"
-#include "TBTacticalController.h"
+#include "TileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void ATBTacticalGameMode::BeginPlay()
@@ -27,7 +27,7 @@ void ATBTacticalGameMode::BeginPlay()
 		//delete all nodepath present on the map
 		for (int i=0; i<AllActors.Num(); i++)
 		{
-			if (ALevelBlock* LevelBlock = Cast<ALevelBlock>(AllActors[i]))
+			if (const ALevelBlock* LevelBlock = Cast<ALevelBlock>(AllActors[i]))
 			{
 				if (LevelBlock->bIsStartingPosition)
 				{
@@ -37,8 +37,8 @@ void ATBTacticalGameMode::BeginPlay()
 					
 					if (SoldierClass)
 					{
-						ASoldier* SoldierPtr = GetWorld()->SpawnActor<ASoldier>(SoldierClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
-						SoldierPtr->LocatedNodePath = StartingNodePtr;
+						const ASoldier* SoldierPtr = GetWorld()->SpawnActor<ASoldier>(SoldierClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
+						SoldierPtr->TileMovementComponent->LocatedNodePath = StartingNodePtr;
 					}
 				}
 			}

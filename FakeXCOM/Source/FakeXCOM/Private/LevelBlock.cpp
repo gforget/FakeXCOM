@@ -2,8 +2,6 @@
 
 #include "FakeXCOM/Public/LevelBlock.h"
 #include "NodePath.h"
-#include "TBTacticalGameMode.h"
-#include "TilePathFinder.h"
 #include "Components/ArrowComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
