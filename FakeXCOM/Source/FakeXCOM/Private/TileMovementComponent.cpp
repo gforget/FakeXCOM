@@ -3,6 +3,7 @@
 
 #include "TileMovementComponent.h"
 #include "NodePath.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UTileMovementComponent::UTileMovementComponent()
@@ -20,7 +21,11 @@ void UTileMovementComponent::BeginPlay()
 void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (bStopMoving) return;
+	if (bStopMoving)
+	{
+		CurrentVelocity = 0.0f;
+		return;
+	}
 	
 	if (bChangeDestination)
 	{
@@ -31,16 +36,29 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		MovementDirection = Destination - GetOwner()->GetActorLocation();
 		MovementDirection.Normalize();
 		bChangeDestination = false;
-		
-		DrawDebugSphere(GetWorld(), Destination, 10.0f, 12, FColor::Red, false, 5.0f, 0, 1.0f);
 	}
-
-	const FVector Delta = Destination - GetOwner()->GetActorLocation();
-	DebugScreen(FString::Printf(TEXT("%f"), Delta.SizeSquared()), FColor::Green);
 	
+	//Rotate toward destination
+	FVector TargetLocation = Destination;
+	TargetLocation.Z = 0.0f;
+	
+	FVector ActorLocation = GetOwner()->GetActorLocation();
+	ActorLocation.Z = 0.0f;
+	
+	FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(ActorLocation, TargetLocation);
+	
+	float InterpSpeed = RotationSpeed;
+	FRotator CurrentRotation = FMath::Lerp(GetOwner()->GetActorRotation(), NewRotation, InterpSpeed * DeltaTime);
+
+	GetOwner()->SetActorRotation(CurrentRotation);
+	
+	//Move to destination
+	const FVector Delta = Destination - GetOwner()->GetActorLocation();
 	if (Delta.SizeSquared() > 10.0f)
 	{
-		GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() + MovementDirection*200.0f*DeltaTime);
+		const FVector DeltaDisplacement = MovementDirection*MovementSpeed*DeltaTime;
+		CurrentVelocity = DeltaDisplacement.Size();
+		GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() + DeltaDisplacement);
 	}
 	else
 	{

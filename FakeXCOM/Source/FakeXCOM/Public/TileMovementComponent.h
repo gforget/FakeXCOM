@@ -26,6 +26,15 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement Properties")
+	float MovementSpeed = 200.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement Properties")
+	float RotationSpeed = 25.0f;
+	
+	UPROPERTY()
+	float CurrentVelocity = 0.0f;
+	
 	UPROPERTY()
 	UNodePath* LocatedNodePath;
 
