@@ -39,16 +39,14 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 	
 	//Rotate toward destination
-	FVector TargetLocation = Destination;
-	TargetLocation.Z = 0.0f;
-	
 	FVector ActorLocation = GetOwner()->GetActorLocation();
 	ActorLocation.Z = 0.0f;
 	
-	FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(ActorLocation, TargetLocation);
-	
-	float InterpSpeed = RotationSpeed;
-	FRotator CurrentRotation = FMath::Lerp(GetOwner()->GetActorRotation(), NewRotation, InterpSpeed * DeltaTime);
+	FVector TargetLocation = ActorLocation + MovementDirection*MovementSpeed*DeltaTime;
+	TargetLocation.Z = 0.0f;
+
+	const FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(ActorLocation, TargetLocation);
+	const FRotator CurrentRotation = FMath::Lerp(GetOwner()->GetActorRotation(), NewRotation, RotationSpeed * DeltaTime);
 
 	GetOwner()->SetActorRotation(CurrentRotation);
 	
@@ -57,7 +55,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (Delta.SizeSquared() > 10.0f)
 	{
 		const FVector DeltaDisplacement = MovementDirection*MovementSpeed*DeltaTime;
-		CurrentVelocity = DeltaDisplacement.Size();
+		CurrentVelocity = MovementSpeed;
 		GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() + DeltaDisplacement);
 	}
 	else
@@ -69,6 +67,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		else
 		{
 			bStopMoving = true;
+			GetOwner()->SetActorLocation(Destination);
 		}
 	}
 }
