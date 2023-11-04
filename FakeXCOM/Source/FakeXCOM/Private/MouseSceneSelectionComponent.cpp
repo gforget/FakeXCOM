@@ -29,10 +29,6 @@ void UMouseSceneSelectionComponent::BeginPlay()
 	}
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
-	if (!TBTacticalGameMode)
-	{
-		DebugScreen("Game Mode not define", FColor::Red);
-	}
 }
 
 
@@ -62,9 +58,9 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 			UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
 			UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder;
 		
-			if (TilePathFinderPtr)
+			if (TilePathFinderPtr && ChosenNodePath)
 			{
-				SelectedSoldier->TileMovementComponent->FollowPath(TilePathFinderPtr->GetPathToDestination(SelectedSoldier->TileMovementComponent->LocatedNodePath, ChosenNodePath));
+				TilePathFinderPtr->MoveUnit(SelectedSoldier, ChosenNodePath);
 			}
 		}
 	}

@@ -11,7 +11,6 @@ void USoldierAnimInstance::UpdateAnimation(float DeltaTime)
 	{
 		Speed = TileMovementComponentPtr->CurrentVelocity;
 		IsMoving = Speed > 0.0f;
-		DebugScreen(FString::Printf(TEXT("%f"), Speed), FColor::Cyan);
 	}
 }
 

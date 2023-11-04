@@ -8,6 +8,8 @@
 #include "TilePathFinder.generated.h"
 
 class UNodePath;
+class ASoldier;
+class UTileMovementComponent;
 /**
  * 
  */
@@ -15,7 +17,20 @@ UCLASS()
 class FAKEXCOM_API UTilePathFinder : public UObject
 {
 	GENERATED_BODY()
+
 public:
+
+	UPROPERTY()
+	bool bCanMoveUnit = true;
+
+	UFUNCTION()
+	void OnUnitStartMovingEvent();
+
+	UFUNCTION()
+	void OnUnitStopMovingEvent();
+	
+	void SubscribeOnUnitStartMovingEvent(UTileMovementComponent* UnitMovementComponent);
+	
 	GenericStack<UNodePath*> GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode);
 	
 	void AddNodeToCameFrom(TMap<int, UNodePath*>& came_from, int IdNode, UNodePath* ValueNode);
@@ -23,4 +38,6 @@ public:
 	
 	void AddCostToCostSoFar(TMap<int, float>& cost_so_far,int IdNode, float Cost);
 	float GetCostFromCostSoFar(TMap<int, float>& cost_so_far, int IdNode);
+
+	void MoveUnit(const ASoldier* Soldier, UNodePath* ChosenNode);
 };

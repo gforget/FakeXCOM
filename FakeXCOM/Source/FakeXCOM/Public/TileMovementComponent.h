@@ -8,10 +8,15 @@
 #include "TileMovementComponent.generated.h"
 
 class UNodePath;
+class ATBTacticalGameMode;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnitStartMovingDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnitStopMovingDelegate);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UTileMovementComponent : public UActorComponent
 {
+
 	GENERATED_BODY()
 
 public:
@@ -46,9 +51,15 @@ public:
 	
 	UPROPERTY()
 	FVector MovementDirection;
+
+	UPROPERTY(BlueprintAssignable)
+	FUnitStartMovingDelegate OnUnitStartMovingEvent;
+	
+	UPROPERTY(BlueprintAssignable)
+	FUnitStopMovingDelegate OnUnitStopMovingEvent;
 	
 	void FollowPath(const GenericStack<UNodePath*>& NewPath);
-	
+
 private:
 	GenericStack<UNodePath*> Path;
 
@@ -57,4 +68,7 @@ private:
 
 	UPROPERTY()
 	bool bStopMoving = true;
+
+	UPROPERTY()
+	ATBTacticalGameMode* TBTacticalGameMode;
 };

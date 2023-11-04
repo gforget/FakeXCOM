@@ -5,6 +5,24 @@
 #include "GenericStack.h"
 #include "GnericPriorityQueue.h"
 #include "NodePath.h"
+#include "Soldier.h"
+#include "TileMovementComponent.h"
+
+void UTilePathFinder::SubscribeOnUnitStartMovingEvent(UTileMovementComponent* UnitMovementComponent)
+{
+	UnitMovementComponent->OnUnitStartMovingEvent.AddDynamic(this, &UTilePathFinder::OnUnitStartMovingEvent);
+	UnitMovementComponent->OnUnitStopMovingEvent.AddDynamic(this, &UTilePathFinder::OnUnitStopMovingEvent);
+}
+
+void UTilePathFinder::OnUnitStartMovingEvent()
+{
+	bCanMoveUnit = false;
+}
+
+void UTilePathFinder::OnUnitStopMovingEvent()
+{
+	bCanMoveUnit = true;
+}
 
 GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode)
 {
@@ -111,4 +129,12 @@ float UTilePathFinder::GetCostFromCostSoFar(TMap<int, float>& cost_so_far, int I
 	}
 
 	return 0.0f;
+}
+
+void UTilePathFinder::MoveUnit(const ASoldier* Soldier, UNodePath* ChosenNode)
+{
+	if (bCanMoveUnit)
+	{
+		Soldier->TileMovementComponent->FollowPath(GetPathToDestination(Soldier->TileMovementComponent->LocatedNodePath, ChosenNode));
+	}
 }

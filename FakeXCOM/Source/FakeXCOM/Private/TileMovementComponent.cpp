@@ -3,6 +3,8 @@
 
 #include "TileMovementComponent.h"
 #include "NodePath.h"
+#include "TBTacticalGameMode.h"
+#include "TilePathFinder.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
@@ -15,6 +17,12 @@ UTileMovementComponent::UTileMovementComponent()
 void UTileMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	if (TBTacticalGameMode)
+	{
+		TBTacticalGameMode->TilePathFinder->SubscribeOnUnitStartMovingEvent(this);
+	}
 }
 
 // Called every frame
@@ -24,6 +32,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (bStopMoving)
 	{
 		CurrentVelocity = 0.0f;
+		OnUnitStopMovingEvent.Broadcast();
 		return;
 	}
 	
@@ -78,5 +87,6 @@ void UTileMovementComponent::FollowPath(const GenericStack<UNodePath*>& NewPath)
 	Path = NewPath;
 	bChangeDestination = true;
 	bStopMoving = false;
+	OnUnitStartMovingEvent.Broadcast();
 }
 

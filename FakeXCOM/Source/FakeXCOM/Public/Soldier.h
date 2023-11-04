@@ -7,6 +7,7 @@
 #include "Soldier.generated.h"
 
 class UTileMovementComponent;
+class AGun;
 
 UCLASS()
 class FAKEXCOM_API ASoldier : public ACharacter
@@ -27,5 +28,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UTileMovementComponent* TileMovementComponent;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
+	TSubclassOf<AGun> GunClass;
+
+	UPROPERTY()
+	AGun* Gun;
 };
