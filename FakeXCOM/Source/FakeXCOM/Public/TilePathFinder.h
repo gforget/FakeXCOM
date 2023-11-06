@@ -29,7 +29,7 @@ public:
 	UFUNCTION()
 	void OnUnitStopMovingEvent();
 	
-	void SubscribeOnUnitStartMovingEvent(UTileMovementComponent* UnitMovementComponent);
+	void SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent);
 	
 	GenericStack<UNodePath*> GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode);
 	

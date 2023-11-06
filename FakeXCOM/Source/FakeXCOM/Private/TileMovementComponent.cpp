@@ -3,6 +3,7 @@
 
 #include "TileMovementComponent.h"
 #include "NodePath.h"
+#include "Soldier.h"
 #include "TBTacticalGameMode.h"
 #include "TilePathFinder.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -21,7 +22,7 @@ void UTileMovementComponent::BeginPlay()
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
 	if (TBTacticalGameMode)
 	{
-		TBTacticalGameMode->TilePathFinder->SubscribeOnUnitStartMovingEvent(this);
+		TBTacticalGameMode->TilePathFinder->SubscribeOnUnitMovingEvents(this);
 	}
 }
 
@@ -39,7 +40,11 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (bChangeDestination)
 	{
 		UNodePath* NodePathPtr = Path.Pop();
-		if (Path.Size() == 0) LocatedNodePath = NodePathPtr;
+		if (Path.Size() == 0)
+		{
+			LocatedNodePath = NodePathPtr;
+			Cast<ALevelBlock>(NodePathPtr->GetOwner())->UnitOnBlock = Cast<ASoldier>(GetOwner());
+		} 
 		
 		Destination = NodePathPtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f);
 		MovementDirection = Destination - GetOwner()->GetActorLocation();

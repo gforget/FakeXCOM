@@ -8,6 +8,7 @@
 
 class UNodePath;
 class UArrowComponent;
+class ASoldier;
 
 UCLASS()
 class FAKEXCOM_API ALevelBlock : public AActor
@@ -32,6 +33,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UNodePath* GetClosestNodePathFromLocation (FVector Location);
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Slope Property")
 	bool IsSlope;
 
@@ -53,7 +56,8 @@ public:
 	UPROPERTY()
 	UArrowComponent* ArrowComponent;
 
-	UNodePath* GetClosestNodePathFromLocation (FVector Location);
+	UPROPERTY()
+	ASoldier* UnitOnBlock;
 };
 
 

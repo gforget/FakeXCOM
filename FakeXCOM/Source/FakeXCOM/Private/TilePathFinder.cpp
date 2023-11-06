@@ -8,7 +8,7 @@
 #include "Soldier.h"
 #include "TileMovementComponent.h"
 
-void UTilePathFinder::SubscribeOnUnitStartMovingEvent(UTileMovementComponent* UnitMovementComponent)
+void UTilePathFinder::SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent)
 {
 	UnitMovementComponent->OnUnitStartMovingEvent.AddDynamic(this, &UTilePathFinder::OnUnitStartMovingEvent);
 	UnitMovementComponent->OnUnitStopMovingEvent.AddDynamic(this, &UTilePathFinder::OnUnitStopMovingEvent);
