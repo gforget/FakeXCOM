@@ -6,6 +6,36 @@
 #include "Components/SceneComponent.h"
 #include "NodePath.generated.h"
 
+USTRUCT(BlueprintType)
+struct NO_API FCoverInfo
+{
+	GENERATED_BODY()
+	
+	// You can define your struct members here
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool FullCover = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FVector IconPosition = FVector::Zero();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FRotator IconRotation = FRotator::ZeroRotator;
+	
+	FCoverInfo()
+	{
+		// Initialize the struct members with default values
+		FullCover = false;
+		IconPosition = FVector::ZeroVector;
+		IconRotation = FRotator::ZeroRotator;
+	}
+	
+	FCoverInfo(bool _FullCover, const FVector& _IconPosition, const FRotator& _IconRotation)
+	{
+		FullCover = _FullCover;
+		IconPosition = _IconPosition;
+		IconRotation = _IconRotation;
+	}
+};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UNodePath : public USceneComponent
@@ -17,13 +47,15 @@ public:
 	UNodePath();
 	
 	void Initialize();
-
-	// reference to all neighbour
+	
 	UPROPERTY()
 	TArray<UNodePath*> AllNeighbours;
 
 	UPROPERTY()
 	TArray<float> AllNeighboursBaseCost;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
+	TArray<FCoverInfo> AllCoverInfos;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
 	int IdNode = -1;

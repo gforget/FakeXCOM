@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Cover3DIcon.h"
 #include "Components/ActorComponent.h"
 #include "MouseSceneSelectionComponent.generated.h"
 class ATBTacticalGameMode;
@@ -31,6 +32,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
 	TSubclassOf<AActor> Select3DIconClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
+	TSubclassOf<ACover3DIcon> Cover3DIconClass;
 	
 private:
 	void LeftClickSelection();
@@ -52,4 +56,7 @@ private:
 
 	UPROPERTY()
 	AActor* Select3DIcon;
+
+	UPROPERTY()
+	TArray<ACover3DIcon*> AllCover3DIcon;
 };

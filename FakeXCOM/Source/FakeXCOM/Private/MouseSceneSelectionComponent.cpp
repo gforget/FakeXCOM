@@ -43,6 +43,8 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 		if (ChosenNodePath && (!CurrentMouseOverNodePath || CurrentMouseOverNodePath->IdNode != ChosenNodePath->IdNode))
 		{
 			CurrentMouseOverNodePath = ChosenNodePath;
+			
+			//Create Select 3d Icon
 			if (Select3DIconClass)
 			{
 				if (Select3DIcon)
@@ -54,7 +56,37 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 				Select3DIcon = GetWorld()->SpawnActor<AActor>(Select3DIconClass,
 					CurrentMouseOverNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
 					CurrentMouseOverNodePath->GetComponentRotation());
+			}
+
+			//Create Cover 3D Icon
+			if (Cover3DIconClass)
+			{
+				if (AllCover3DIcon.Num() > 0)
+				{
+					for (int i=0; i<AllCover3DIcon.Num(); i++)
+					{
+						AllCover3DIcon[i]->Destroy();
+					}
+					AllCover3DIcon.Empty();
+				}
 				
+				for (int i=0; i<CurrentMouseOverNodePath->AllCoverInfos.Num(); i++)
+				{
+					ACover3DIcon* Cover3DIcon = GetWorld()->SpawnActor<ACover3DIcon>(Cover3DIconClass,
+						CurrentMouseOverNodePath->AllCoverInfos[i].IconPosition,
+						CurrentMouseOverNodePath->AllCoverInfos[i].IconRotation);
+
+					if (CurrentMouseOverNodePath->AllCoverInfos[i].FullCover)
+					{
+						Cover3DIcon->FullShield->SetVisibility(true);
+					}
+					else
+					{
+						Cover3DIcon->HalfShield->SetVisibility(true);
+					}
+					
+					AllCover3DIcon.Add(Cover3DIcon);
+				}
 			}
 		}
 	}

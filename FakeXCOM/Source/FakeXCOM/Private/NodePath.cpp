@@ -60,6 +60,37 @@ void UNodePath::Initialize()
 	
 	TArray<bool> foundVoid;
 	foundVoid.Init(false, 4);
+
+	//Get where all the cover position is for that node path
+	//0 to 3 mean it is only vertical position
+	for (int i=0; i<4; i++)
+	{
+		FHitResult HitResult2;
+		FCollisionQueryParams CollisionParams2;
+		CollisionParams2.AddIgnoredActor(LevelBlockPtr);
+		
+		FVector Start2 = LevelBlockPosition;
+		FVector End2 = LevelBlockPosition + DirectionVectors[i];
+		bool bHit2 = GetWorld()->LineTraceSingleByChannel(HitResult2, Start2, End2, ECC_Visibility, CollisionParams2);
+		if (bHit2)
+		{
+			if (ALevelBlock* LevelBlockHit = Cast<ALevelBlock>(HitResult2.GetActor()))
+			{
+				if (!LevelBlockHit->IsSlope)
+				{
+					// if no nodepath is found on the block, that mean another block is on top of it
+					// it should be a fullcover then
+					TArray<UNodePath*> AllNodePaths;
+					LevelBlockHit->GetComponents<UNodePath>(AllNodePaths);
+					bool bFullCover = AllNodePaths.Num() == 0;
+					
+					FRotator MyRotator = FRotationMatrix::MakeFromZ(HitResult2.ImpactNormal).Rotator() + FRotator(0.0f, 0.0f, 90.0f);
+					FCoverInfo newCoverInfo = FCoverInfo(bFullCover, HitResult2.Location + HitResult2.ImpactNormal*0.5f, MyRotator);
+					AllCoverInfos.Add(newCoverInfo);
+				}
+			}
+		}
+	}
 	
 	//Connect the nodepath to all the neighbour nodepath around
 	for (int i=0;i<DirectionVectors.Num();i++)
