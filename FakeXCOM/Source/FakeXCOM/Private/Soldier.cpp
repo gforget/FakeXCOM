@@ -2,6 +2,8 @@
 
 #include "Soldier.h"
 #include "Gun.h"
+#include "LevelBlock.h"
+#include "NodePath.h"
 #include "TileMovementComponent.h"
 
 // Sets default values
@@ -26,6 +28,33 @@ void ASoldier::BeginPlay()
 	else
 	{
 		DebugScreen("No Gun Set to this soldier", FColor::Red);
+	}
+
+	// Assign Node Reference
+	
+	// Define the line trace parameters
+	FHitResult HitResult;
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(this);
+	
+	// Perform the line trace
+	FVector StartLocation = GetActorLocation();
+	FVector EndLocation = GetActorLocation() + FVector(0.0f,0.0f, -100.0f);
+
+	if (bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, TraceParams))
+	{
+		if (HitResult.GetActor())
+		{
+			if (ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(HitResult.GetActor()))
+			{
+				LevelBlockPtr->UnitOnBlock = this;
+			
+				TArray<UNodePath*> AllNodePaths;
+				LevelBlockPtr->GetComponents<UNodePath>(AllNodePaths);
+				UNodePath* StartingNodePtr = AllNodePaths[LevelBlockPtr->NodePathIndex];
+				TileMovementComponent->LocatedNodePath = StartingNodePtr;
+			}
+		}
 	}
 }
 

@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "LevelBlock.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "TBTacticalGameMode.generated.h"
@@ -15,9 +16,12 @@ UCLASS()
 class FAKEXCOM_API ATBTacticalGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+	
+protected:
 	virtual void BeginPlay() override;
-
+	
 public:
+	
 	UPROPERTY()
 	UTilePathFinder* TilePathFinder;
 

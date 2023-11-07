@@ -5,9 +5,9 @@
 
 #include "DebugHeader.h"
 #include "LevelBlock.h"
+#include "NodePath.h"
 #include "Soldier.h"
 #include "TBTacticalGameMode.h"
-#include "TileMovementComponent.h"
 #include "TilePathFinder.h"
 
 // Sets default values for this component's properties
@@ -60,7 +60,11 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 		
 			if (TilePathFinderPtr && ChosenNodePath)
 			{
-				TilePathFinderPtr->MoveUnit(SelectedSoldier, ChosenNodePath);
+				ALevelBlock* test = Cast<ALevelBlock>(ChosenNodePath->GetOwner());
+				if (test->UnitOnBlock == nullptr)
+				{
+					TilePathFinderPtr->MoveUnit(SelectedSoldier, ChosenNodePath);
+				}
 			}
 		}
 	}

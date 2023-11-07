@@ -3,6 +3,7 @@
 
 #include "TBTacticalCameraController.h"
 
+#include "DebugHeader.h"
 #include "MouseSceneSelectionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -130,14 +131,24 @@ void ATBTacticalCameraController::MouseScroll()
 		return;
 	}
 	
-	float mouseXValue;
-	float mouseYValue;
+	float mouseXValue = 0.0f;
+	float mouseYValue = 0.0f;
 	
-	int32 vSizeX;
-	int32 vSizeY;
+	int32 vSizeX = 0;
+	int32 vSizeY = 0;
 	
 	PlayerControllerPtr->GetMousePosition(mouseXValue, mouseYValue);
 	PlayerControllerPtr->GetViewportSize(vSizeX, vSizeY);
+	
+	// prevent scrolling when mouse out of focus of games
+	if (FMath::IsNearlyZero(mouseXValue) && FMath::IsNearlyZero(mouseYValue))
+	{
+		bMoveUp = false;
+		bMoveDown = false;
+		bMoveLeft = false;
+		bMoveRight = false;
+		return;
+	}
 	
 	if (mouseYValue/vSizeY <= PercentMoveUp)
 	{

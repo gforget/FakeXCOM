@@ -42,6 +42,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		UNodePath* NodePathPtr = Path.Pop();
 		if (Path.Size() == 0)
 		{
+			Cast<ALevelBlock>(LocatedNodePath->GetOwner())->UnitOnBlock = nullptr;
 			LocatedNodePath = NodePathPtr;
 			Cast<ALevelBlock>(NodePathPtr->GetOwner())->UnitOnBlock = Cast<ASoldier>(GetOwner());
 		} 

@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Soldier.h"
 #include "GameFramework/Actor.h"
 #include "LevelBlock.generated.h"
 
 class UNodePath;
 class UArrowComponent;
-class ASoldier;
 
 UCLASS()
 class FAKEXCOM_API ALevelBlock : public AActor
@@ -52,12 +52,13 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsStartingPosition"), Category = "Pathfinder")
 	int NodePathIndex = -1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ASoldier* UnitOnBlock = nullptr;
 	
 	UPROPERTY()
-	UArrowComponent* ArrowComponent;
-
-	UPROPERTY()
-	ASoldier* UnitOnBlock;
+	UArrowComponent* ArrowComponent = nullptr;
+	
 };
 
 

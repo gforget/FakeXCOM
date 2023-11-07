@@ -9,7 +9,7 @@
 ALevelBlock::ALevelBlock()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
+	
 	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
 	RootComponent->SetMobility(EComponentMobility::Movable);

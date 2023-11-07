@@ -64,7 +64,7 @@ private:
 	GenericStack<UNodePath*> Path;
 
 	UPROPERTY()
-	bool bChangeDestination;
+	bool bChangeDestination = false;
 
 	UPROPERTY()
 	bool bStopMoving = true;
