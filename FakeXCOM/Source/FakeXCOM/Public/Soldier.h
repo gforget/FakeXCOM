@@ -34,4 +34,7 @@ public:
 
 	UPROPERTY()
 	AGun* Gun;
+
+	UPROPERTY()
+	int IdUnit = 0;
 };

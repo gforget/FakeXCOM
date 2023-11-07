@@ -17,7 +17,8 @@ void ATBTacticalGameMode::BeginPlay()
 	TArray<AActor*> AllActors;
 	const UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
 	UGameplayStatics::GetAllActorsOfClass(WorldPtr,AActor::StaticClass(),AllActors);
-
+	int CurrentIdUnit = 0;
+	
 	if (WorldPtr && AllActors.Num() > 0)
 	{
 		UKismetSystemLibrary::FlushPersistentDebugLines(AllActors[0]);
@@ -34,7 +35,9 @@ void ATBTacticalGameMode::BeginPlay()
 					
 					if (SoldierClass)
 					{
-						GetWorld()->SpawnActor<ASoldier>(SoldierClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
+						ASoldier* SoldierPtr = GetWorld()->SpawnActor<ASoldier>(SoldierClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
+						SoldierPtr->IdUnit = CurrentIdUnit;
+						CurrentIdUnit++;
 					}
 				}
 			}

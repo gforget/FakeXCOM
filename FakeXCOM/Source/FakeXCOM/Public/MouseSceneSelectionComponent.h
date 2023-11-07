@@ -10,6 +10,17 @@ class ATBTacticalGameMode;
 class ASoldier;
 class UNodePath;
 
+USTRUCT()
+struct NO_API FAssignCover3DIcon
+{
+	GENERATED_BODY()
+	
+	UPROPERTY()
+	TArray<ACover3DIcon*> Entries;
+
+	FAssignCover3DIcon(){}
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UMouseSceneSelectionComponent : public UActorComponent
 {
@@ -58,5 +69,8 @@ private:
 	AActor* Select3DIcon;
 
 	UPROPERTY()
-	TArray<ACover3DIcon*> AllCover3DIcon;
+	TArray<ACover3DIcon*> AllMouseOverCover3DIcon;
+
+	UPROPERTY()
+	TMap<int, FAssignCover3DIcon> AllAssignCover3DIcon;
 };

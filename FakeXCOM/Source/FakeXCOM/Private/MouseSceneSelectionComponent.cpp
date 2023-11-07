@@ -61,13 +61,13 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 			//Create Cover 3D Icon
 			if (Cover3DIconClass)
 			{
-				if (AllCover3DIcon.Num() > 0)
+				if (AllMouseOverCover3DIcon.Num() > 0)
 				{
-					for (int i=0; i<AllCover3DIcon.Num(); i++)
+					for (int i=0; i<AllMouseOverCover3DIcon.Num(); i++)
 					{
-						AllCover3DIcon[i]->Destroy();
+						AllMouseOverCover3DIcon[i]->Destroy();
 					}
-					AllCover3DIcon.Empty();
+					AllMouseOverCover3DIcon.Empty();
 				}
 				
 				for (int i=0; i<CurrentMouseOverNodePath->AllCoverInfos.Num(); i++)
@@ -85,7 +85,7 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 						Cover3DIcon->HalfShield->SetVisibility(true);
 					}
 					
-					AllCover3DIcon.Add(Cover3DIcon);
+					AllMouseOverCover3DIcon.Add(Cover3DIcon);
 				}
 			}
 		}
@@ -118,6 +118,22 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 				if (LevelBlockPtr->UnitOnBlock == nullptr)
 				{
 					TilePathFinderPtr->MoveUnit(SelectedSoldier, ChosenNodePath);
+					if (!AllAssignCover3DIcon.Contains(SelectedSoldier->IdUnit))
+					{
+						AllAssignCover3DIcon.Add(SelectedSoldier->IdUnit, FAssignCover3DIcon());
+					}
+					
+					if (AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries.Num() > 0)
+					{
+						for (int i=0; i<AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries.Num(); i++)
+						{
+							AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries[i]->Destroy();
+						}
+						AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries.Empty();
+					}
+					
+					AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries.Append(AllMouseOverCover3DIcon);
+					AllMouseOverCover3DIcon.Empty();
 				}
 			}
 		}
