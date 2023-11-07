@@ -6,7 +6,6 @@
 #include "NodePath.h"
 #include "Soldier.h"
 #include "TilePathFinder.h"
-#include "TileMovementComponent.h"
 
 void ATBTacticalGameMode::BeginPlay()
 {

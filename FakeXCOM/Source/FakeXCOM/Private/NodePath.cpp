@@ -13,6 +13,20 @@ UNodePath::UNodePath()
 
 void UNodePath::Initialize()
 {
+	//Calculate Rotation of the point compare to the ground alignment
+	FHitResult HitResult1;
+	FCollisionQueryParams CollisionParams1;
+		
+	FVector Start1 = GetComponentLocation() + FVector(0.0f, 0.0f, 10.0f);
+	FVector End1 = GetComponentLocation() + FVector(0.0f, 0.0f, -15.0f);
+	bool bHit1 = GetWorld()->LineTraceSingleByChannel(HitResult1, Start1, End1, ECC_Visibility, CollisionParams1);
+	if (bHit1)
+	{
+		FRotator MyRotator = FRotationMatrix::MakeFromZ(HitResult1.ImpactNormal).Rotator();
+		SetWorldRotation(MyRotator);
+	}
+	
+	//Connecting Neighbour
 	NbNeighbour = 0;
 	ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(GetOwner());
 	FVector LevelBlockPosition = GetComponentLocation() + (LevelBlockPtr->GetActorUpVector() * 50.0f);
@@ -50,25 +64,25 @@ void UNodePath::Initialize()
 	//Connect the nodepath to all the neighbour nodepath around
 	for (int i=0;i<DirectionVectors.Num();i++)
 	{
-		FHitResult HitResult;
-		FCollisionQueryParams CollisionParams;
+		FHitResult HitResult2;
+		FCollisionQueryParams CollisionParams2;
 		
-		FVector Start = LevelBlockPosition + DirectionVectors[i];
-		FVector End = Start - LevelBlockPtr->GetActorUpVector()*151.0f;
-		bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
+		FVector Start2 = LevelBlockPosition + DirectionVectors[i];
+		FVector End2 = Start2 - LevelBlockPtr->GetActorUpVector()*151.0f;
+		bool bHit2 = GetWorld()->LineTraceSingleByChannel(HitResult2, Start2, End2, ECC_Visibility, CollisionParams2);
 		
-		if (bHit)
+		if (bHit2)
 		{
-			if (ALevelBlock* NeighbourLevelBlock = Cast<ALevelBlock>(HitResult.GetActor()))
+			if (ALevelBlock* NeighbourLevelBlock = Cast<ALevelBlock>(HitResult2.GetActor()))
 			{
 				//check if there is a at least one level of block on that direction up from the floor level of that block
-				if (HitResult.Distance <= 50 && i<4)
+				if (HitResult2.Distance <= 50 && i<4)
 				{
 					foundBlock[i] = true;
 				}
 
 				//Get the node path closest to the raycast hit location
-				if (UNodePath* ChosenNodePath = NeighbourLevelBlock->GetClosestNodePathFromLocation(HitResult.Location))
+				if (UNodePath* ChosenNodePath = NeighbourLevelBlock->GetClosestNodePathFromLocation(HitResult2.Location))
 				{
 					if (TryConnectNeighbour(i, DirectionVectors, foundBlock, foundVoid, ChosenNodePath, LevelBlockPtr, NeighbourLevelBlock))
 					{

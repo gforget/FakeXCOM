@@ -85,21 +85,15 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 			{
 				for (int j=0; j<LevelBlock->NodePathPositions.Num(); j++)
 				{
+					//Check if there is no block on top of the block
 					FHitResult HitResult;
 					FCollisionQueryParams CollisionParams;
 					FVector Start = LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j] + (LevelBlock->GetActorUpVector() * 110.0f);
 					FVector End = Start - (LevelBlock->GetActorUpVector() * 90.0f);
 
 					bool bHit = WorldPtr->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
-
-					if (bHit)
+					if (!bHit)
 					{
-						//DrawDebugLine(WorldPtr, Start, End, FColor::Red, true, 0.0f, 0.0f, 10);
-					}
-					else
-					{
-						//DrawDebugLine(WorldPtr, Start, End, FColor::Green, true, 0.0f, 0.0f, 10);
-						
 						//add a nodepath on the levelblock
 						if (UClass* ComponentClass = UNodePath::StaticClass())
 						{

@@ -7,6 +7,7 @@
 #include "MouseSceneSelectionComponent.generated.h"
 class ATBTacticalGameMode;
 class ASoldier;
+class UNodePath;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UMouseSceneSelectionComponent : public UActorComponent
@@ -24,18 +25,18 @@ protected:
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mouse Scene Selection Properties")
 	bool bDebugMouseLineTrace = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mouse Scene Selection Properties")
-	bool bDebugShowActorNameReturned = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
+	TSubclassOf<AActor> Select3DIconClass;
 	
 private:
 	void LeftClickSelection();
 	void RightClickSelection();
 	
-	AActor* SelectActorFromMousePosition(FVector& HitPosition);
+	AActor* SelectActorFromMousePosition(FVector& HitPosition, bool bDebugShowActorNameReturned = false);
 
 	UPROPERTY()
 	UInputComponent* InputComponentPtr;
@@ -45,4 +46,10 @@ private:
 
 	UPROPERTY()
 	ASoldier* SelectedSoldier;
+
+	UPROPERTY()
+	UNodePath* CurrentMouseOverNodePath;
+
+	UPROPERTY()
+	AActor* Select3DIcon;
 };

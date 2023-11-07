@@ -16,7 +16,6 @@ UMouseSceneSelectionComponent::UMouseSceneSelectionComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-
 // Called when the game starts
 void UMouseSceneSelectionComponent::BeginPlay()
 {
@@ -36,6 +35,29 @@ void UMouseSceneSelectionComponent::BeginPlay()
 void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
+	FVector HitLocation;
+	if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(SelectActorFromMousePosition(HitLocation)))
+	{
+		UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
+		if (ChosenNodePath && (!CurrentMouseOverNodePath || CurrentMouseOverNodePath->IdNode != ChosenNodePath->IdNode))
+		{
+			CurrentMouseOverNodePath = ChosenNodePath;
+			if (Select3DIconClass)
+			{
+				if (Select3DIcon)
+				{
+					Select3DIcon->Destroy();
+					Select3DIcon = nullptr;
+				}
+				
+				Select3DIcon = GetWorld()->SpawnActor<AActor>(Select3DIconClass,
+					CurrentMouseOverNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+					CurrentMouseOverNodePath->GetComponentRotation());
+				
+			}
+		}
+	}
 }
 
 void UMouseSceneSelectionComponent::LeftClickSelection()
@@ -60,8 +82,8 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 		
 			if (TilePathFinderPtr && ChosenNodePath)
 			{
-				ALevelBlock* test = Cast<ALevelBlock>(ChosenNodePath->GetOwner());
-				if (test->UnitOnBlock == nullptr)
+				const ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(ChosenNodePath->GetOwner());
+				if (LevelBlockPtr->UnitOnBlock == nullptr)
 				{
 					TilePathFinderPtr->MoveUnit(SelectedSoldier, ChosenNodePath);
 				}
@@ -74,7 +96,7 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 	}
 }
 
-AActor* UMouseSceneSelectionComponent::SelectActorFromMousePosition(FVector& HitPosition)
+AActor* UMouseSceneSelectionComponent::SelectActorFromMousePosition(FVector& HitPosition, bool bDebugShowActorNameReturned)
 {
 	AActor* ActorReturned = nullptr;
 	
