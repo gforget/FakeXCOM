@@ -118,6 +118,8 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 				if (LevelBlockPtr->UnitOnBlock == nullptr)
 				{
 					TilePathFinderPtr->MoveUnit(SelectedSoldier, ChosenNodePath);
+
+					//Assign the cover icon so they do not get deleted when a unit is assign on a nodepath
 					if (!AllAssignCover3DIcon.Contains(SelectedSoldier->IdUnit))
 					{
 						AllAssignCover3DIcon.Add(SelectedSoldier->IdUnit, FAssignCover3DIcon());
