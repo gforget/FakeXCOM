@@ -13,14 +13,15 @@ void ATBTacticalGameMode::BeginPlay()
 	
 	//Setup TilePathFinder
 	TilePathFinder = NewObject<UTilePathFinder>(GetTransientPackage(), UTilePathFinder::StaticClass());
-	
+
+	//For some reason, assigning pointer generated here on other object result on them being deleted or not recognise later
 	TArray<AActor*> AllActors;
 	const UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
 	UGameplayStatics::GetAllActorsOfClass(WorldPtr,AActor::StaticClass(),AllActors);
-	int CurrentIdUnit = 0;
-	
+
 	if (WorldPtr && AllActors.Num() > 0)
 	{
+		int CurrentIdUnit = 0;
 		UKismetSystemLibrary::FlushPersistentDebugLines(AllActors[0]);
 		
 		for (int i=0; i<AllActors.Num(); i++)

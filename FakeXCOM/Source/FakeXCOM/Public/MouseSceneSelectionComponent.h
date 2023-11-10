@@ -9,6 +9,7 @@
 class ATBTacticalGameMode;
 class ASoldier;
 class UNodePath;
+class UTilePathFinder;
 
 USTRUCT()
 struct NO_API FAssignCover3DIcon
@@ -42,32 +43,40 @@ public:
 	bool bDebugMouseLineTrace = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
+	TSubclassOf<ACover3DIcon> Cover3DIconClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
 	TSubclassOf<AActor> Select3DIconClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
-	TSubclassOf<ACover3DIcon> Cover3DIconClass;
-	
+	TSubclassOf<AActor> Path3DIconClass;
+
+	UPROPERTY()
+	ASoldier* SelectedSoldier;
 private:
 	void LeftClickSelection();
 	void RightClickSelection();
 	
-	AActor* SelectActorFromMousePosition(FVector& HitPosition, bool bDebugShowActorNameReturned = false);
+	AActor* SelectActorFromMousePosition(FVector& HitPosition, bool bDebugShowActorNameReturned = false) const;
 
 	UPROPERTY()
 	UInputComponent* InputComponentPtr;
 	
 	UPROPERTY()
 	ATBTacticalGameMode* TBTacticalGameMode;
-
+	
 	UPROPERTY()
-	ASoldier* SelectedSoldier;
-
+	UTilePathFinder* TilePathFinder;
+	
 	UPROPERTY()
 	UNodePath* CurrentMouseOverNodePath;
 
 	UPROPERTY()
 	AActor* Select3DIcon;
 
+	UPROPERTY()
+	TArray<AActor*> AllPath3DIcons;
+	
 	UPROPERTY()
 	TArray<ACover3DIcon*> AllMouseOverCover3DIcon;
 

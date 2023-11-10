@@ -7,8 +7,11 @@
 #include "LevelBlock.h"
 #include "NodePath.h"
 #include "Soldier.h"
+#include "TBTacticalCameraController.h"
 #include "TBTacticalGameMode.h"
+#include "TileMovementComponent.h"
 #include "TilePathFinder.h"
+
 
 // Sets default values for this component's properties
 UMouseSceneSelectionComponent::UMouseSceneSelectionComponent()
@@ -28,6 +31,8 @@ void UMouseSceneSelectionComponent::BeginPlay()
 	}
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	TBTacticalGameMode->CameraController = Cast<ATBTacticalCameraController>(GetOwner());
+	TilePathFinder = TBTacticalGameMode->TilePathFinder;
 }
 
 
@@ -36,6 +41,17 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
+	//TODO: Could create an event so we know when GameMode has finish it begin play
+	if (!TilePathFinder)
+	{
+		TilePathFinder = TBTacticalGameMode->TilePathFinder;
+	}
+	
+	if (!SelectedSoldier || !TilePathFinder->bCanMoveUnit) //Normally there is always a soldier selected
+	{
+		return;
+	}
+	
 	FVector HitLocation;
 	if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(SelectActorFromMousePosition(HitLocation)))
 	{
@@ -43,6 +59,36 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 		if (ChosenNodePath && (!CurrentMouseOverNodePath || CurrentMouseOverNodePath->IdNode != ChosenNodePath->IdNode))
 		{
 			CurrentMouseOverNodePath = ChosenNodePath;
+			
+			//Create Path3dIcons
+			if (Path3DIconClass)
+			{
+				if (AllPath3DIcons.Num() > 0)
+				{
+					for (int i=0; i<AllPath3DIcons.Num();i++)
+					{
+						AllPath3DIcons[i]->Destroy();
+					}
+					AllPath3DIcons.Empty();
+				}
+
+				if (UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder)
+				{
+					GenericStack<UNodePath*> PathStack = TilePathFinderPtr->GetPathToDestination(
+							SelectedSoldier->TileMovementComponent->LocatedNodePath,
+							CurrentMouseOverNodePath
+							);
+					
+					while(!PathStack.IsEmpty())
+					{
+						const UNodePath* CurrentNodePath = PathStack.Pop();
+						AllPath3DIcons.Add(GetWorld()->SpawnActor<AActor>(Path3DIconClass,
+							CurrentNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+							CurrentNodePath->GetComponentRotation()
+							));
+					}
+				}
+			}
 			
 			//Create Select 3d Icon
 			if (Select3DIconClass)
@@ -55,7 +101,8 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 				
 				Select3DIcon = GetWorld()->SpawnActor<AActor>(Select3DIconClass,
 					CurrentMouseOverNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
-					CurrentMouseOverNodePath->GetComponentRotation());
+					CurrentMouseOverNodePath->GetComponentRotation()
+					);
 			}
 
 			//Create Cover 3D Icon
@@ -106,18 +153,30 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 {
 	if (SelectedSoldier)
 	{
+		if (!TilePathFinder->bCanMoveUnit)
+		{
+			return;
+		}
+		
+		//clear the path icon
+		if (AllPath3DIcons.Num() > 0)
+		{
+			for (int i=0; i<AllPath3DIcons.Num();i++)
+			{
+				AllPath3DIcons[i]->Destroy();
+			}
+			AllPath3DIcons.Empty();
+		}
+		
 		FVector HitLocation;
 		if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(SelectActorFromMousePosition(HitLocation)))
 		{
-			UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
-			UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder;
-		
-			if (TilePathFinderPtr && ChosenNodePath)
+			if (UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation))
 			{
 				const ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(ChosenNodePath->GetOwner());
 				if (LevelBlockPtr->UnitOnBlock == nullptr)
 				{
-					TilePathFinderPtr->MoveUnit(SelectedSoldier, ChosenNodePath);
+					TilePathFinder->MoveUnit(SelectedSoldier, ChosenNodePath);
 
 					//Assign the cover icon so they do not get deleted when a unit is assign on a nodepath
 					if (!AllAssignCover3DIcon.Contains(SelectedSoldier->IdUnit))
@@ -146,7 +205,7 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 	}
 }
 
-AActor* UMouseSceneSelectionComponent::SelectActorFromMousePosition(FVector& HitPosition, bool bDebugShowActorNameReturned)
+AActor* UMouseSceneSelectionComponent::SelectActorFromMousePosition(FVector& HitPosition, bool bDebugShowActorNameReturned) const
 {
 	AActor* ActorReturned = nullptr;
 	

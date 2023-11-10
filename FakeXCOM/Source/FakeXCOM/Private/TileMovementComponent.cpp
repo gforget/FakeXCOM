@@ -24,6 +24,8 @@ void UTileMovementComponent::BeginPlay()
 	{
 		TBTacticalGameMode->TilePathFinder->SubscribeOnUnitMovingEvents(this);
 	}
+
+	SetComponentTickEnabled(false);
 }
 
 // Called every frame
@@ -34,6 +36,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	{
 		CurrentVelocity = 0.0f;
 		OnUnitStopMovingEvent.Broadcast();
+		SetComponentTickEnabled(false);
 		return;
 	}
 	
@@ -94,5 +97,6 @@ void UTileMovementComponent::FollowPath(const GenericStack<UNodePath*>& NewPath)
 	bChangeDestination = true;
 	bStopMoving = false;
 	OnUnitStartMovingEvent.Broadcast();
+	SetComponentTickEnabled(true);
 }
 

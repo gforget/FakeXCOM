@@ -3,7 +3,10 @@
 #include "Soldier.h"
 #include "Gun.h"
 #include "LevelBlock.h"
+#include "MouseSceneSelectionComponent.h"
 #include "NodePath.h"
+#include "TBTacticalCameraController.h"
+#include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
 
 // Sets default values
@@ -18,6 +21,8 @@ ASoldier::ASoldier()
 void ASoldier::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
 	
 	if (GunClass)
 	{
@@ -55,6 +60,11 @@ void ASoldier::BeginPlay()
 				TileMovementComponent->LocatedNodePath = StartingNodePtr;
 			}
 		}
+	}
+	
+	if (!TBTacticalGameMode->CameraController->MouseSceneSelectionComponent->SelectedSoldier)
+	{
+		TBTacticalGameMode->CameraController->MouseSceneSelectionComponent->SelectedSoldier = this;
 	}
 }
 

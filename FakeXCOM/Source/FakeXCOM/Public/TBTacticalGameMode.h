@@ -9,6 +9,7 @@
 
 class UTilePathFinder;
 class ASoldier;
+class ATBTacticalCameraController;
 /**
  * 
  */
@@ -18,12 +19,16 @@ class FAKEXCOM_API ATBTacticalGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 protected:
+	
 	virtual void BeginPlay() override;
 	
 public:
-	
+
 	UPROPERTY()
 	UTilePathFinder* TilePathFinder;
+	
+	UPROPERTY()
+	ATBTacticalCameraController* CameraController;
 
 	UPROPERTY()
 	bool bInitialized = false;

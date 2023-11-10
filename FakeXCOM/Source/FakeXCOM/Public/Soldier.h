@@ -8,6 +8,7 @@
 
 class UTileMovementComponent;
 class AGun;
+class ATBTacticalGameMode;
 
 UCLASS()
 class FAKEXCOM_API ASoldier : public ACharacter
@@ -33,8 +34,12 @@ public:
 	TSubclassOf<AGun> GunClass;
 
 	UPROPERTY()
+	ATBTacticalGameMode* TBTacticalGameMode;
+	
+	UPROPERTY()
 	AGun* Gun;
 
 	UPROPERTY()
 	int IdUnit = 0;
+	
 };
