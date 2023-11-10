@@ -34,20 +34,21 @@ ATBTacticalCameraController::ATBTacticalCameraController()
 	SpringArmComponent->TargetArmLength = 500.0f; // Adjust this as per your needs
 	SpringArmComponent->bEnableCameraLag = true; // Enable camera lag for a spring-like effect
 	SpringArmComponent->CameraLagSpeed = 10.0f; // Adjust camera lag speed as needed
+	
 }
 
 // Called when the game starts or when spawned
 void ATBTacticalCameraController::BeginPlay()
 {
 	Super::BeginPlay();
-	WorldPtr = GetWorld();
-	if (WorldPtr)
+	World = GetWorld();
+	if (World)
 	{
-		PlayerControllerPtr = WorldPtr->GetFirstPlayerController();
-		if (PlayerControllerPtr)
+		PlayerController = World->GetFirstPlayerController();
+		if (PlayerController)
 		{
 			// Set the new view target with a blend time
-			PlayerControllerPtr->SetViewTargetWithBlend(this, 1.0f, EViewTargetBlendFunction::VTBlend_Linear, 0.0f, false);
+			PlayerController->SetViewTargetWithBlend(this, 1.0f, EViewTargetBlendFunction::VTBlend_Linear, 0.0f, false);
 		}
 	}
 
@@ -66,6 +67,7 @@ void ATBTacticalCameraController::BeginPlay()
 		InputComponent->BindAction("Left", IE_Released, this, &ATBTacticalCameraController::ReleaseLeft);
 	}
 	
+	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
 }
 
 // Called every frame
@@ -137,8 +139,8 @@ void ATBTacticalCameraController::MouseScroll()
 	int32 vSizeX = 0;
 	int32 vSizeY = 0;
 	
-	PlayerControllerPtr->GetMousePosition(mouseXValue, mouseYValue);
-	PlayerControllerPtr->GetViewportSize(vSizeX, vSizeY);
+	PlayerController->GetMousePosition(mouseXValue, mouseYValue);
+	PlayerController->GetViewportSize(vSizeX, vSizeY);
 	
 	// prevent scrolling when mouse out of focus of games
 	if (FMath::IsNearlyZero(mouseXValue) && FMath::IsNearlyZero(mouseYValue))
@@ -191,21 +193,37 @@ void ATBTacticalCameraController::MoveCamera(float DeltaTime)
 {
 	if(bMoveUp)
 	{
-		RootComponent->AddRelativeLocation(FVector(0.0f, Speed, 0.0f) * DeltaTime);
+		const FVector TranslationVector = FVector(0.0f, Speed, 0.0f) * DeltaTime;
+		if ((RootComponent->GetComponentLocation() + TranslationVector).Y < TBTacticalGameMode->TopPosition.Y)
+		{
+			RootComponent->AddRelativeLocation(TranslationVector);
+		}
 	}
 	
 	if(bMoveDown)
 	{
-		RootComponent->AddRelativeLocation(FVector(0.0f, -Speed, 0.0f) * DeltaTime);
+		const FVector TranslationVector = FVector(0.0f, -Speed, 0.0f) * DeltaTime;
+		if ((RootComponent->GetComponentLocation() + TranslationVector).Y > TBTacticalGameMode->BottomPosition.Y)
+		{
+			RootComponent->AddRelativeLocation(TranslationVector);
+		}
 	}
 	
 	if(bMoveRight)
 	{
-		RootComponent->AddRelativeLocation(FVector(-Speed, 0.0f, 0.0f) * DeltaTime);
+		const FVector TranslationVector = FVector(-Speed, 0.0f, 0.0f) * DeltaTime;
+		if ((RootComponent->GetComponentLocation() + TranslationVector).X > TBTacticalGameMode->BottomPosition.X)
+		{
+			RootComponent->AddRelativeLocation(TranslationVector);
+		}
 	}
 	
 	if(bMoveLeft)
 	{
-		RootComponent->AddRelativeLocation(FVector(Speed, 0.0f, 0.0f) * DeltaTime);
+		const FVector TranslationVector = FVector(Speed, 0.0f, 0.0f) * DeltaTime;
+		if ((RootComponent->GetComponentLocation() + TranslationVector).X < TBTacticalGameMode->TopPosition.X)
+		{
+			RootComponent->AddRelativeLocation(TranslationVector);
+		}
 	}
 }

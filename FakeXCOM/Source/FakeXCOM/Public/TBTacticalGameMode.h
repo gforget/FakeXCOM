@@ -33,6 +33,12 @@ public:
 	UPROPERTY()
 	bool bInitialized = false;
 
+	UPROPERTY()
+	FVector TopPosition = FVector(TNumericLimits<float>::Min(), TNumericLimits<float>::Min(), 0.0f);
+
+	UPROPERTY()
+	FVector BottomPosition = FVector(TNumericLimits<float>::Max(), TNumericLimits<float>::Max(), 0.0f);
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Spawnable Unit")
 	TSubclassOf<ASoldier> SoldierClass;
 };

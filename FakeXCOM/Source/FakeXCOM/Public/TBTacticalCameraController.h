@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TBTacticalGameMode.h"
 #include "GameFramework/Actor.h"
 #include "TBTacticalCameraController.generated.h"
 class USpringArmComponent;
@@ -54,11 +55,14 @@ public:
 
 private:
 	UPROPERTY()
-	UWorld* WorldPtr;
+	UWorld* World;
 	
 	UPROPERTY()
-	APlayerController* PlayerControllerPtr;
+	APlayerController* PlayerController;
 
+	UPROPERTY()
+	ATBTacticalGameMode* TBTacticalGameMode;
+	
 	UPROPERTY()
 	bool bMoveUp = false;
 

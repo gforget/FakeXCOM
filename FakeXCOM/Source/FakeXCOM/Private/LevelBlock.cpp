@@ -34,37 +34,15 @@ void ALevelBlock::Tick(float DeltaTime)
 void ALevelBlock::PostActorCreated()
 {
 	Super::PostActorCreated();
-	if (bIsStartingPosition && NodePathIndex != -1 && NodePathIndex < NodePathPositions.Num())
-	{
-		ArrowComponent->SetVisibility(true);
-		FVector ArrowPosition = NodePathPositions[NodePathIndex];
-		ArrowPosition.Z += 100.0f;
-		ArrowComponent->SetRelativeLocation(ArrowPosition);
-		ArrowComponent->SetRelativeRotation(FRotator(-90.0f,0.0f,0.0f));
-	}
-	else
-	{
-		ArrowComponent->SetVisibility(false);
-	}
-
+	
+	ActivateArrowComponent();
 	GenerateNodePathPositionVisualisation();
 }
 
 void ALevelBlock::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	if (bIsStartingPosition && NodePathIndex != -1 && NodePathIndex < NodePathPositions.Num())
-	{
-		ArrowComponent->SetVisibility(true);
-		FVector ArrowPosition = NodePathPositions[NodePathIndex];
-		ArrowPosition.Z += 100.0f;
-		ArrowComponent->SetRelativeLocation(ArrowPosition);
-		ArrowComponent->SetRelativeRotation(FRotator(-90.0f,0.0f,0.0f));
-	}
-	else
-	{
-		ArrowComponent->SetVisibility(false);
-	}
+	ActivateArrowComponent();
 	GenerateNodePathPositionVisualisation();
 }
 
@@ -99,6 +77,22 @@ void ALevelBlock::GenerateNodePathPositionVisualisation()
 #endif
 }
 
+void ALevelBlock::ActivateArrowComponent()
+{
+	if (bIsStartingPosition && NodePathIndex != -1 && NodePathIndex < NodePathPositions.Num())
+	{
+		ArrowComponent->SetVisibility(true);
+		FVector ArrowPosition = NodePathPositions[NodePathIndex];
+		ArrowPosition.Z += 100.0f;
+		ArrowComponent->SetRelativeLocation(ArrowPosition);
+		ArrowComponent->SetRelativeRotation(FRotator(-90.0f,0.0f,0.0f));
+	}
+	else
+	{
+		ArrowComponent->SetVisibility(false);
+	}
+}
+
 UNodePath* ALevelBlock::GetClosestNodePathFromLocation(FVector Location)
 {
 	UNodePath* ChosenNodePath = nullptr;
@@ -109,7 +103,6 @@ UNodePath* ALevelBlock::GetClosestNodePathFromLocation(FVector Location)
 	{
 		// Get the closest node path to the hit, this will be the targeted neighbour
 		TArray<UNodePath*> SortedNodePaths = AllNodePaths;
-					
 		SortedNodePaths.Sort([Location](const UNodePath& A, const UNodePath& B) {
 			return FVector::DistSquared2D(A.GetComponentLocation(), Location) < FVector::DistSquared2D(B.GetComponentLocation(), Location);
 		});

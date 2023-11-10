@@ -27,8 +27,6 @@ protected:
 	virtual void PostEditMove(bool bFinished) override;
 	virtual void Destroyed() override;
 	
-	void GenerateNodePathPositionVisualisation();
-	
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -49,16 +47,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pathfinder")
 	bool bIsStartingPosition = false;
-
+	
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsStartingPosition"), Category = "Pathfinder")
-	int NodePathIndex = -1;
+	int NodePathIndex = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ASoldier* UnitOnBlock = nullptr;
 	
 	UPROPERTY()
 	UArrowComponent* ArrowComponent = nullptr;
-	
+
+private:
+	void GenerateNodePathPositionVisualisation();
+	void ActivateArrowComponent();
 };
 
 

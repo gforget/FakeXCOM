@@ -28,17 +28,41 @@ void ATBTacticalGameMode::BeginPlay()
 		{
 			if (const ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(AllActors[i]))
 			{
+				TArray<UNodePath*> AllNodePaths;
+				LevelBlockPtr->GetComponents<UNodePath>(AllNodePaths);
+				
 				if (LevelBlockPtr->bIsStartingPosition)
 				{
-					TArray<UNodePath*> AllNodePaths;
-					LevelBlockPtr->GetComponents<UNodePath>(AllNodePaths);
 					const UNodePath* StartingNodePtr = AllNodePaths[LevelBlockPtr->NodePathIndex];
-					
 					if (SoldierClass)
 					{
 						ASoldier* SoldierPtr = GetWorld()->SpawnActor<ASoldier>(SoldierClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
 						SoldierPtr->IdUnit = CurrentIdUnit;
 						CurrentIdUnit++;
+					}
+				}
+				
+				//Set Top and Bottom position
+				for (int j=0; j<AllNodePaths.Num(); j++)
+				{
+					if (AllNodePaths[j]->GetComponentLocation().X > TopPosition.X)
+					{
+						TopPosition.X = AllNodePaths[j]->GetComponentLocation().X;
+					}
+						
+					if (AllNodePaths[j]->GetComponentLocation().Y > TopPosition.Y)
+					{
+						TopPosition.Y = AllNodePaths[j]->GetComponentLocation().Y;
+					}
+						
+					if (AllNodePaths[j]->GetComponentLocation().X < BottomPosition.X)
+					{
+						BottomPosition.X = AllNodePaths[j]->GetComponentLocation().X;
+					}
+						
+					if (AllNodePaths[j]->GetComponentLocation().Y < BottomPosition.Y)
+					{
+						BottomPosition.Y = AllNodePaths[j]->GetComponentLocation().Y;
 					}
 				}
 			}
