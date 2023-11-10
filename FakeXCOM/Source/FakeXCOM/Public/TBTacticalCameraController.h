@@ -39,7 +39,7 @@ public:
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Properties")
-	float Speed = 20.0f;
+	float Speed = 1000.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Properties")
 	float PercentMoveUp = 0.05f;
@@ -53,7 +53,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Properties")
 	float PercentMoveLeft = 0.05f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Properties")
+	float RotateCameraSpeed = 5.0f;
+	
 private:
+	UPROPERTY()
+	bool bCameraControlLock = false;
+	
 	UPROPERTY()
 	UWorld* World;
 	
@@ -98,7 +104,25 @@ private:
 	
 	void PressLeft();
 	void ReleaseLeft();
+
+	void PressTurnCameraRight();
+	
+	void PressTurnCameraLeft();
 	
 	void MouseScroll();
 	void MoveCamera(float DeltaTime);
+
+	//Camera Rotation Variables
+	UPROPERTY()
+	FTimerHandle RotateTimerHandle;
+
+	UPROPERTY()
+	float RotateTimerClock = 0.016666f; //60 fps
+
+	UPROPERTY()
+	FRotator CameraRotation;
+	
+	void RotateCameraTimerFunction();
 };
+
+

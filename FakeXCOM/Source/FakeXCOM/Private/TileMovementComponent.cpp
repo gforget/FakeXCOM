@@ -65,7 +65,6 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 	const FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(ActorLocation, TargetLocation);
 	const FRotator CurrentRotation = FMath::Lerp(GetOwner()->GetActorRotation(), NewRotation, RotationSpeed * DeltaTime);
-
 	GetOwner()->SetActorRotation(CurrentRotation);
 	
 	//Move to destination

@@ -1,8 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "TBTacticalCameraController.h"
-
 #include "DebugHeader.h"
 #include "MouseSceneSelectionComponent.h"
 #include "Camera/CameraComponent.h"
@@ -65,15 +63,24 @@ void ATBTacticalCameraController::BeginPlay()
 		
 		InputComponent->BindAction("Left", IE_Pressed, this, &ATBTacticalCameraController::PressLeft);
 		InputComponent->BindAction("Left", IE_Released, this, &ATBTacticalCameraController::ReleaseLeft);
+
+		InputComponent->BindAction("TurnCameraRight", IE_Pressed, this, &ATBTacticalCameraController::PressTurnCameraRight);
+		InputComponent->BindAction("TurnCameraLeft", IE_Pressed, this, &ATBTacticalCameraController::PressTurnCameraLeft);
 	}
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	CameraRotation = GetActorRotation();
 }
 
 // Called every frame
 void ATBTacticalCameraController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (bCameraControlLock)
+	{
+		return;
+	}
+	
 	MouseScroll();
 	MoveCamera(DeltaTime);
 }
@@ -124,6 +131,38 @@ void ATBTacticalCameraController::ReleaseLeft()
 {
 	bMoveLeft = false;
 	bPressLeft = false;
+}
+
+void ATBTacticalCameraController::PressTurnCameraRight()
+{
+	CameraRotation -= FRotator(0.0f, 90.0f, 0.0f);
+	GetWorld()->GetTimerManager().SetTimer(
+	  RotateTimerHandle,
+	  this,
+	  &ATBTacticalCameraController::RotateCameraTimerFunction,
+	  RotateTimerClock, 
+	  true);
+}
+
+void ATBTacticalCameraController::PressTurnCameraLeft()
+{
+	CameraRotation += FRotator(0.0f, 90.0f, 0.0f);
+	GetWorld()->GetTimerManager().SetTimer(
+	  RotateTimerHandle,
+	  this,
+	  &ATBTacticalCameraController::RotateCameraTimerFunction,
+	  RotateTimerClock, 
+	  true);
+}
+
+void ATBTacticalCameraController::RotateCameraTimerFunction()
+{
+	const FRotator CurrentRotation = FMath::Lerp(GetActorRotation(), CameraRotation, RotateCameraSpeed * RotateTimerClock);
+	SetActorRotation(CurrentRotation);
+	if (CurrentRotation.Equals(CameraRotation, 0.1f))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(RotateTimerHandle);
+	}
 }
 
 void ATBTacticalCameraController::MouseScroll()
@@ -191,39 +230,36 @@ void ATBTacticalCameraController::MouseScroll()
 
 void ATBTacticalCameraController::MoveCamera(float DeltaTime)
 {
+	FVector TranslationVector = FVector::Zero();
 	if(bMoveUp)
 	{
-		const FVector TranslationVector = FVector(0.0f, Speed, 0.0f) * DeltaTime;
-		if ((RootComponent->GetComponentLocation() + TranslationVector).Y < TBTacticalGameMode->TopPosition.Y)
-		{
-			RootComponent->AddRelativeLocation(TranslationVector);
-		}
+		TranslationVector += GetActorForwardVector();
 	}
 	
 	if(bMoveDown)
 	{
-		const FVector TranslationVector = FVector(0.0f, -Speed, 0.0f) * DeltaTime;
-		if ((RootComponent->GetComponentLocation() + TranslationVector).Y > TBTacticalGameMode->BottomPosition.Y)
-		{
-			RootComponent->AddRelativeLocation(TranslationVector);
-		}
+		TranslationVector -= GetActorForwardVector();
 	}
 	
 	if(bMoveRight)
 	{
-		const FVector TranslationVector = FVector(-Speed, 0.0f, 0.0f) * DeltaTime;
-		if ((RootComponent->GetComponentLocation() + TranslationVector).X > TBTacticalGameMode->BottomPosition.X)
-		{
-			RootComponent->AddRelativeLocation(TranslationVector);
-		}
+		TranslationVector += GetActorRightVector();
 	}
 	
 	if(bMoveLeft)
 	{
-		const FVector TranslationVector = FVector(Speed, 0.0f, 0.0f) * DeltaTime;
-		if ((RootComponent->GetComponentLocation() + TranslationVector).X < TBTacticalGameMode->TopPosition.X)
-		{
-			RootComponent->AddRelativeLocation(TranslationVector);
-		}
+		TranslationVector -= GetActorRightVector();
+	}
+
+	TranslationVector = TranslationVector*Speed*DeltaTime;
+	if (
+		((RootComponent->GetComponentLocation() + TranslationVector).X < TBTacticalGameMode->TopPosition.X) &&
+		((RootComponent->GetComponentLocation() + TranslationVector).X > TBTacticalGameMode->BottomPosition.X) &&
+		((RootComponent->GetComponentLocation() + TranslationVector).Y > TBTacticalGameMode->BottomPosition.Y) &&
+		((RootComponent->GetComponentLocation() + TranslationVector).Y < TBTacticalGameMode->TopPosition.Y)
+		)
+	{
+		RootComponent->AddRelativeLocation(TranslationVector);
 	}
 }
+

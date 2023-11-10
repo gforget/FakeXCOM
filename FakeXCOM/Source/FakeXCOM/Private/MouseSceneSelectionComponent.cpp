@@ -145,7 +145,7 @@ void UMouseSceneSelectionComponent::LeftClickSelection()
 	if (ASoldier* SelectedSoldierPtr = Cast<ASoldier>(SelectActorFromMousePosition(HitLocation)))
 	{
 		SelectedSoldier = SelectedSoldierPtr;
-		DebugScreen("Soldier Selected !", FColor::Yellow);
+		DebugScreen("New Soldier Selected !", FColor::Yellow);
 	}
 }
 
@@ -198,10 +198,6 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 				}
 			}
 		}
-	}
-	else
-	{
-		DebugScreen("No soldier selected", FColor::Red);
 	}
 }
 
