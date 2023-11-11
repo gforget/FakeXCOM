@@ -11,4 +11,5 @@ void ATBTacticalController::BeginPlay()
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 	InputMode.SetHideCursorDuringCapture(false);
 	SetInputMode(InputMode);
+	
 }

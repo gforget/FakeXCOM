@@ -53,6 +53,7 @@ public:
 
 	UPROPERTY()
 	ASoldier* SelectedSoldier;
+	
 private:
 	void LeftClickSelection();
 	void RightClickSelection();

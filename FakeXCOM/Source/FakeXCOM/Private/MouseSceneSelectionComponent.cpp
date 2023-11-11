@@ -7,7 +7,7 @@
 #include "LevelBlock.h"
 #include "NodePath.h"
 #include "Soldier.h"
-#include "TBTacticalCameraController.h"
+#include "TBTacticalMainController.h"
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
 #include "TilePathFinder.h"
@@ -31,7 +31,7 @@ void UMouseSceneSelectionComponent::BeginPlay()
 	}
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
-	TBTacticalGameMode->CameraController = Cast<ATBTacticalCameraController>(GetOwner());
+	TBTacticalGameMode->CameraController = Cast<ATBTacticalMainController>(GetOwner());
 	TilePathFinder = TBTacticalGameMode->TilePathFinder;
 }
 

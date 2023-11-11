@@ -9,7 +9,7 @@
 
 class UTilePathFinder;
 class ASoldier;
-class ATBTacticalCameraController;
+class ATBTacticalMainController;
 /**
  * 
  */
@@ -28,7 +28,7 @@ public:
 	UTilePathFinder* TilePathFinder;
 	
 	UPROPERTY()
-	ATBTacticalCameraController* CameraController;
+	ATBTacticalMainController* CameraController;
 
 	UPROPERTY()
 	bool bInitialized = false;

@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "TBTacticalCameraController.h"
+#include "TBTacticalMainController.h"
 #include "DebugHeader.h"
 #include "MouseSceneSelectionComponent.h"
 #include "Camera/CameraComponent.h"
@@ -8,7 +8,7 @@
 
 
 // Sets default values
-ATBTacticalCameraController::ATBTacticalCameraController()
+ATBTacticalMainController::ATBTacticalMainController()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -36,7 +36,7 @@ ATBTacticalCameraController::ATBTacticalCameraController()
 }
 
 // Called when the game starts or when spawned
-void ATBTacticalCameraController::BeginPlay()
+void ATBTacticalMainController::BeginPlay()
 {
 	Super::BeginPlay();
 	World = GetWorld();
@@ -52,20 +52,20 @@ void ATBTacticalCameraController::BeginPlay()
 
 	if (InputComponent)
 	{
-		InputComponent->BindAction("Up", IE_Pressed, this, &ATBTacticalCameraController::PressUp);
-		InputComponent->BindAction("Up", IE_Released, this, &ATBTacticalCameraController::ReleaseUp);
+		InputComponent->BindAction("Up", IE_Pressed, this, &ATBTacticalMainController::PressUp);
+		InputComponent->BindAction("Up", IE_Released, this, &ATBTacticalMainController::ReleaseUp);
 
-		InputComponent->BindAction("Down", IE_Pressed, this, &ATBTacticalCameraController::PressDown);
-		InputComponent->BindAction("Down", IE_Released, this, &ATBTacticalCameraController::ReleaseDown);
+		InputComponent->BindAction("Down", IE_Pressed, this, &ATBTacticalMainController::PressDown);
+		InputComponent->BindAction("Down", IE_Released, this, &ATBTacticalMainController::ReleaseDown);
 		
-		InputComponent->BindAction("Right", IE_Pressed, this, &ATBTacticalCameraController::PressRight);
-		InputComponent->BindAction("Right", IE_Released, this, &ATBTacticalCameraController::ReleaseRight);
+		InputComponent->BindAction("Right", IE_Pressed, this, &ATBTacticalMainController::PressRight);
+		InputComponent->BindAction("Right", IE_Released, this, &ATBTacticalMainController::ReleaseRight);
 		
-		InputComponent->BindAction("Left", IE_Pressed, this, &ATBTacticalCameraController::PressLeft);
-		InputComponent->BindAction("Left", IE_Released, this, &ATBTacticalCameraController::ReleaseLeft);
+		InputComponent->BindAction("Left", IE_Pressed, this, &ATBTacticalMainController::PressLeft);
+		InputComponent->BindAction("Left", IE_Released, this, &ATBTacticalMainController::ReleaseLeft);
 
-		InputComponent->BindAction("TurnCameraRight", IE_Pressed, this, &ATBTacticalCameraController::PressTurnCameraRight);
-		InputComponent->BindAction("TurnCameraLeft", IE_Pressed, this, &ATBTacticalCameraController::PressTurnCameraLeft);
+		InputComponent->BindAction("TurnCameraRight", IE_Pressed, this, &ATBTacticalMainController::PressTurnCameraRight);
+		InputComponent->BindAction("TurnCameraLeft", IE_Pressed, this, &ATBTacticalMainController::PressTurnCameraLeft);
 	}
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
@@ -73,7 +73,7 @@ void ATBTacticalCameraController::BeginPlay()
 }
 
 // Called every frame
-void ATBTacticalCameraController::Tick(float DeltaTime)
+void ATBTacticalMainController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (bCameraControlLock)
@@ -85,77 +85,77 @@ void ATBTacticalCameraController::Tick(float DeltaTime)
 	MoveCamera(DeltaTime);
 }
 
-void ATBTacticalCameraController::PressUp()
+void ATBTacticalMainController::PressUp()
 {
 	bMoveUp = true;
 	bPressUp = true;
 }
 
-void ATBTacticalCameraController::ReleaseUp()
+void ATBTacticalMainController::ReleaseUp()
 {
 	bMoveUp = false;
 	bPressUp = false;
 }
 
-void ATBTacticalCameraController::PressDown()
+void ATBTacticalMainController::PressDown()
 {
 	bMoveDown = true;
 	bPressDown = true;
 }
 
-void ATBTacticalCameraController::ReleaseDown()
+void ATBTacticalMainController::ReleaseDown()
 {
 	bMoveDown = false;
 	bPressDown = false;
 }
 
-void ATBTacticalCameraController::PressRight()
+void ATBTacticalMainController::PressRight()
 {
 	bMoveRight = true;
 	bPressRight = true;
 }
 
-void ATBTacticalCameraController::ReleaseRight()
+void ATBTacticalMainController::ReleaseRight()
 {
 	bMoveRight = false;
 	bPressRight = false;
 }
 
-void ATBTacticalCameraController::PressLeft()
+void ATBTacticalMainController::PressLeft()
 {
 	bMoveLeft = true;
 	bPressLeft = true;
 }
 
-void ATBTacticalCameraController::ReleaseLeft()
+void ATBTacticalMainController::ReleaseLeft()
 {
 	bMoveLeft = false;
 	bPressLeft = false;
 }
 
-void ATBTacticalCameraController::PressTurnCameraRight()
+void ATBTacticalMainController::PressTurnCameraRight()
 {
 	CameraRotation -= FRotator(0.0f, 90.0f, 0.0f);
 	GetWorld()->GetTimerManager().SetTimer(
 	  RotateTimerHandle,
 	  this,
-	  &ATBTacticalCameraController::RotateCameraTimerFunction,
+	  &ATBTacticalMainController::RotateCameraTimerFunction,
 	  RotateTimerClock, 
 	  true);
 }
 
-void ATBTacticalCameraController::PressTurnCameraLeft()
+void ATBTacticalMainController::PressTurnCameraLeft()
 {
 	CameraRotation += FRotator(0.0f, 90.0f, 0.0f);
 	GetWorld()->GetTimerManager().SetTimer(
 	  RotateTimerHandle,
 	  this,
-	  &ATBTacticalCameraController::RotateCameraTimerFunction,
+	  &ATBTacticalMainController::RotateCameraTimerFunction,
 	  RotateTimerClock, 
 	  true);
 }
 
-void ATBTacticalCameraController::RotateCameraTimerFunction()
+void ATBTacticalMainController::RotateCameraTimerFunction()
 {
 	const FRotator CurrentRotation = FMath::Lerp(GetActorRotation(), CameraRotation, RotateCameraSpeed * RotateTimerClock);
 	SetActorRotation(CurrentRotation);
@@ -165,7 +165,7 @@ void ATBTacticalCameraController::RotateCameraTimerFunction()
 	}
 }
 
-void ATBTacticalCameraController::MouseScroll()
+void ATBTacticalMainController::MouseScroll()
 {
 	if (bPressUp || bPressDown || bPressRight || bPressLeft)
 	{
@@ -228,7 +228,7 @@ void ATBTacticalCameraController::MouseScroll()
 	}
 }
 
-void ATBTacticalCameraController::MoveCamera(float DeltaTime)
+void ATBTacticalMainController::MoveCamera(float DeltaTime)
 {
 	FVector TranslationVector = FVector::Zero();
 	if(bMoveUp)
@@ -251,7 +251,7 @@ void ATBTacticalCameraController::MoveCamera(float DeltaTime)
 		TranslationVector -= GetActorRightVector();
 	}
 
-	TranslationVector = TranslationVector*Speed*DeltaTime;
+	TranslationVector = TranslationVector*ScrollingSpeed*DeltaTime;
 	if (
 		((RootComponent->GetComponentLocation() + TranslationVector).X < TBTacticalGameMode->TopPosition.X) &&
 		((RootComponent->GetComponentLocation() + TranslationVector).X > TBTacticalGameMode->BottomPosition.X) &&

@@ -5,7 +5,7 @@
 #include "LevelBlock.h"
 #include "MouseSceneSelectionComponent.h"
 #include "NodePath.h"
-#include "TBTacticalCameraController.h"
+#include "TBTacticalMainController.h"
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
 

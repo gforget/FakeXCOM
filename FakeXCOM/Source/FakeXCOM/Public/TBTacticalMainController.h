@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "TBTacticalGameMode.h"
 #include "GameFramework/Actor.h"
-#include "TBTacticalCameraController.generated.h"
+#include "TBTacticalMainController.generated.h"
 class USpringArmComponent;
 class UCameraComponent;
 class UMouseSceneSelectionComponent;
@@ -13,13 +13,13 @@ class UWorld;
 class APlayerController;
 
 UCLASS()
-class FAKEXCOM_API ATBTacticalCameraController : public AActor
+class FAKEXCOM_API ATBTacticalMainController : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ATBTacticalCameraController();
+	ATBTacticalMainController();
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,7 +39,7 @@ public:
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Properties")
-	float Speed = 1000.0f;
+	float ScrollingSpeed = 1000.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Properties")
 	float PercentMoveUp = 0.05f;
