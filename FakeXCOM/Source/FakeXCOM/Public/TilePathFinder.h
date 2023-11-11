@@ -24,10 +24,10 @@ public:
 	bool bCanMoveUnit = true;
 
 	UFUNCTION()
-	void OnUnitStartMovingEvent();
+	void OnUnitStartMovingEvent(AActor* MovingActor);
 
 	UFUNCTION()
-	void OnUnitStopMovingEvent();
+	void OnUnitStopMovingEvent(AActor* MovingActor);
 	
 	void SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent);
 	

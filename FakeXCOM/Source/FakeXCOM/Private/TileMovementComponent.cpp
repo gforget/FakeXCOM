@@ -5,6 +5,7 @@
 #include "NodePath.h"
 #include "Soldier.h"
 #include "TBTacticalGameMode.h"
+#include "TBTacticalMainController.h"
 #include "TilePathFinder.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -23,6 +24,7 @@ void UTileMovementComponent::BeginPlay()
 	if (TBTacticalGameMode)
 	{
 		TBTacticalGameMode->TilePathFinder->SubscribeOnUnitMovingEvents(this);
+		TBTacticalGameMode->MainController->SubscribeOnUnitMovingEvents(this);
 	}
 
 	SetComponentTickEnabled(false);
@@ -35,7 +37,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (bStopMoving)
 	{
 		CurrentVelocity = 0.0f;
-		OnUnitStopMovingEvent.Broadcast();
+		OnUnitStopMovingEvent.Broadcast(GetOwner());
 		SetComponentTickEnabled(false);
 		return;
 	}
@@ -95,7 +97,7 @@ void UTileMovementComponent::FollowPath(const GenericStack<UNodePath*>& NewPath)
 	Path = NewPath;
 	bChangeDestination = true;
 	bStopMoving = false;
-	OnUnitStartMovingEvent.Broadcast();
+	OnUnitStartMovingEvent.Broadcast(GetOwner());
 	SetComponentTickEnabled(true);
 }
 

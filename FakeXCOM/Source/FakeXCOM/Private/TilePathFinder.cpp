@@ -14,12 +14,12 @@ void UTilePathFinder::SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMo
 	UnitMovementComponent->OnUnitStopMovingEvent.AddDynamic(this, &UTilePathFinder::OnUnitStopMovingEvent);
 }
 
-void UTilePathFinder::OnUnitStartMovingEvent()
+void UTilePathFinder::OnUnitStartMovingEvent(AActor* MovingActor)
 {
 	bCanMoveUnit = false;
 }
 
-void UTilePathFinder::OnUnitStopMovingEvent()
+void UTilePathFinder::OnUnitStopMovingEvent(AActor* MovingActor)
 {
 	bCanMoveUnit = true;
 }

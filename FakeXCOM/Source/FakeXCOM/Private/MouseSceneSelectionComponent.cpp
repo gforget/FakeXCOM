@@ -31,7 +31,7 @@ void UMouseSceneSelectionComponent::BeginPlay()
 	}
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
-	TBTacticalGameMode->CameraController = Cast<ATBTacticalMainController>(GetOwner());
+	TBTacticalGameMode->MainController = Cast<ATBTacticalMainController>(GetOwner());
 	TilePathFinder = TBTacticalGameMode->TilePathFinder;
 }
 

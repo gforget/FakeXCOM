@@ -38,6 +38,7 @@ void ATBTacticalGameMode::BeginPlay()
 					{
 						ASoldier* SoldierPtr = GetWorld()->SpawnActor<ASoldier>(SoldierClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
 						SoldierPtr->IdUnit = CurrentIdUnit;
+						SoldierPtr->Initialize();
 						CurrentIdUnit++;
 					}
 				}
@@ -70,4 +71,29 @@ void ATBTacticalGameMode::BeginPlay()
 	}
 	
 	bInitialized = true;
+}
+
+ASoldier* ATBTacticalGameMode::GetNextSoldier()
+{
+	//TODO: create a loop to select soldier who turn didn't finish and can perform action this turn
+	//Soldier are never removed from the list, even when dead
+	
+	SelectedSoldierId++;
+	if (SelectedSoldierId >= AllSoldierReference.Num())
+	{
+		SelectedSoldierId = 0;
+	}
+	
+	return AllSoldierReference[SelectedSoldierId];
+}
+
+ASoldier* ATBTacticalGameMode::GetPreviousSoldier()
+{
+	SelectedSoldierId--;
+	if (SelectedSoldierId < 0)
+	{
+		SelectedSoldierId = AllSoldierReference.Num()-1;
+	}
+	
+	return AllSoldierReference[SelectedSoldierId];
 }

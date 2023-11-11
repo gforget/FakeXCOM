@@ -55,10 +55,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Properties")
 	float RotateCameraSpeed = 5.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Properties")
+	float FollowCameraSpeed = 5.0f;
+	
+	void SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent);
 	
 private:
-	UPROPERTY()
-	bool bCameraControlLock = false;
 	
 	UPROPERTY()
 	UWorld* World;
@@ -92,7 +95,43 @@ private:
 
 	UPROPERTY()
 	bool bPressLeft = false;
+
+	UPROPERTY()
+	float TimerClock = 0.016666f; //60 fps
 	
+	//Camera Rotation Variables
+	UPROPERTY()
+	FTimerHandle RotateTimerHandle;
+	
+	UPROPERTY()
+	FRotator CameraRotation;
+	
+	void RotateCameraTimerFunction();
+	
+	//Follow Actor Variables
+	UPROPERTY()
+	AActor* CameraTargetActor = nullptr;
+	
+	bool IsCameraControlLock();
+	void FollowActor(AActor* TargetActor);
+	void UnFollowActor();
+	
+	void PerformFollowActor(float DeltaTime);
+
+	UFUNCTION()
+	void OnUnitStartMovingEvent(AActor* MovingActor);
+
+	UFUNCTION()
+	void OnUnitStopMovingEvent(AActor* MovingActor);
+
+	UPROPERTY()
+	FTimerHandle GoToActorTimerHandle;
+	
+	void GoToActor(AActor* TargetActor);
+
+	void GoToActorTimerFunction();
+	
+	//Input function
 	void PressUp();
 	void ReleaseUp();
 	
@@ -106,23 +145,16 @@ private:
 	void ReleaseLeft();
 
 	void PressTurnCameraRight();
-	
 	void PressTurnCameraLeft();
+
+	void PressSelectPreviousSoldier();
+	void PressSelectNextSoldier();
 	
 	void MouseScroll();
 	void MoveCamera(float DeltaTime);
 
-	//Camera Rotation Variables
-	UPROPERTY()
-	FTimerHandle RotateTimerHandle;
 
-	UPROPERTY()
-	float RotateTimerClock = 0.016666f; //60 fps
-
-	UPROPERTY()
-	FRotator CameraRotation;
-	
-	void RotateCameraTimerFunction();
 };
+
 
 

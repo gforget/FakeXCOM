@@ -41,5 +41,6 @@ public:
 
 	UPROPERTY()
 	int IdUnit = 0;
-	
+
+	void Initialize();
 };

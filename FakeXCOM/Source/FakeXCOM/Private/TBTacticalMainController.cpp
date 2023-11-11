@@ -2,6 +2,7 @@
 
 #include "TBTacticalMainController.h"
 #include "DebugHeader.h"
+#include "TileMovementComponent.h"
 #include "MouseSceneSelectionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -39,9 +40,13 @@ ATBTacticalMainController::ATBTacticalMainController()
 void ATBTacticalMainController::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	World = GetWorld();
+	CameraRotation = GetActorRotation();
+	
 	if (World)
 	{
+		TBTacticalGameMode = World->GetAuthGameMode<ATBTacticalGameMode>();
 		PlayerController = World->GetFirstPlayerController();
 		if (PlayerController)
 		{
@@ -66,23 +71,84 @@ void ATBTacticalMainController::BeginPlay()
 
 		InputComponent->BindAction("TurnCameraRight", IE_Pressed, this, &ATBTacticalMainController::PressTurnCameraRight);
 		InputComponent->BindAction("TurnCameraLeft", IE_Pressed, this, &ATBTacticalMainController::PressTurnCameraLeft);
+
+		InputComponent->BindAction("SelectPreviousSoldier", IE_Pressed, this, &ATBTacticalMainController::PressSelectPreviousSoldier);
+		InputComponent->BindAction("SelectNextSoldier", IE_Pressed, this, &ATBTacticalMainController::PressSelectNextSoldier);
 	}
-	
-	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
-	CameraRotation = GetActorRotation();
 }
 
 // Called every frame
 void ATBTacticalMainController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (bCameraControlLock)
-	{
-		return;
-	}
-	
+	PerformFollowActor(DeltaTime);
 	MouseScroll();
 	MoveCamera(DeltaTime);
+}
+
+void ATBTacticalMainController::FollowActor(AActor* TargetActor)
+{
+	CameraTargetActor = TargetActor;
+}
+
+void ATBTacticalMainController::UnFollowActor()
+{
+	CameraTargetActor = nullptr;
+}
+
+bool ATBTacticalMainController::IsCameraControlLock()
+{
+	return CameraTargetActor != nullptr;
+}
+
+void ATBTacticalMainController::PerformFollowActor(float DeltaTime)
+{
+	if (CameraTargetActor)
+	{
+		const FVector CurrentLocation =
+			FMath::Lerp(GetActorLocation(),
+				CameraTargetActor->GetActorLocation(),
+				FollowCameraSpeed * DeltaTime);
+		
+		SetActorLocation(CurrentLocation);
+	}
+}
+
+void ATBTacticalMainController::SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent)
+{
+	UnitMovementComponent->OnUnitStartMovingEvent.AddDynamic(this, &ATBTacticalMainController::OnUnitStartMovingEvent);
+	UnitMovementComponent->OnUnitStopMovingEvent.AddDynamic(this, &ATBTacticalMainController::OnUnitStopMovingEvent);
+}
+
+void ATBTacticalMainController::OnUnitStartMovingEvent(AActor* MovingActor)
+{
+	FollowActor(MovingActor);
+}
+
+void ATBTacticalMainController::OnUnitStopMovingEvent(AActor* MovingActor)
+{
+	UnFollowActor();
+}
+
+void ATBTacticalMainController::GoToActor(AActor* TargetActor)
+{
+	FollowActor(TargetActor);
+	
+	GetWorld()->GetTimerManager().SetTimer(
+  GoToActorTimerHandle,
+  this,
+  &ATBTacticalMainController::GoToActorTimerFunction,
+  TimerClock, 
+  true);
+}
+
+void ATBTacticalMainController::GoToActorTimerFunction()
+{
+	if (GetActorLocation().Equals(CameraTargetActor->GetActorLocation(), 5.0f))
+	{
+		UnFollowActor();
+		GetWorld()->GetTimerManager().ClearTimer(GoToActorTimerHandle);
+	}
 }
 
 void ATBTacticalMainController::PressUp()
@@ -140,7 +206,7 @@ void ATBTacticalMainController::PressTurnCameraRight()
 	  RotateTimerHandle,
 	  this,
 	  &ATBTacticalMainController::RotateCameraTimerFunction,
-	  RotateTimerClock, 
+	  TimerClock, 
 	  true);
 }
 
@@ -151,22 +217,38 @@ void ATBTacticalMainController::PressTurnCameraLeft()
 	  RotateTimerHandle,
 	  this,
 	  &ATBTacticalMainController::RotateCameraTimerFunction,
-	  RotateTimerClock, 
+	  TimerClock, 
 	  true);
 }
 
 void ATBTacticalMainController::RotateCameraTimerFunction()
 {
-	const FRotator CurrentRotation = FMath::Lerp(GetActorRotation(), CameraRotation, RotateCameraSpeed * RotateTimerClock);
+	const FRotator CurrentRotation = FMath::Lerp(GetActorRotation(), CameraRotation, RotateCameraSpeed * TimerClock);
 	SetActorRotation(CurrentRotation);
+	
 	if (CurrentRotation.Equals(CameraRotation, 0.1f))
 	{
 		GetWorld()->GetTimerManager().ClearTimer(RotateTimerHandle);
 	}
 }
 
+void ATBTacticalMainController::PressSelectPreviousSoldier()
+{
+	if (IsCameraControlLock()) return;
+	MouseSceneSelectionComponent->SelectedSoldier = TBTacticalGameMode->GetPreviousSoldier();
+	GoToActor(MouseSceneSelectionComponent->SelectedSoldier);
+}
+
+void ATBTacticalMainController::PressSelectNextSoldier()
+{
+	if (IsCameraControlLock()) return;
+	MouseSceneSelectionComponent->SelectedSoldier = TBTacticalGameMode->GetNextSoldier();
+	GoToActor(MouseSceneSelectionComponent->SelectedSoldier);
+}
+
 void ATBTacticalMainController::MouseScroll()
 {
+	if (IsCameraControlLock()) return;
 	if (bPressUp || bPressDown || bPressRight || bPressLeft)
 	{
 		return;
@@ -230,6 +312,7 @@ void ATBTacticalMainController::MouseScroll()
 
 void ATBTacticalMainController::MoveCamera(float DeltaTime)
 {
+	if (IsCameraControlLock()) return;
 	FVector TranslationVector = FVector::Zero();
 	if(bMoveUp)
 	{

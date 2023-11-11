@@ -21,7 +21,6 @@ ASoldier::ASoldier()
 void ASoldier::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
 	
 	if (GunClass)
@@ -34,7 +33,16 @@ void ASoldier::BeginPlay()
 	{
 		DebugScreen("No Gun Set to this soldier", FColor::Red);
 	}
+}
 
+// Called every frame
+void ASoldier::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+void ASoldier::Initialize()
+{
 	// Assign Node Reference
 	
 	// Define the line trace parameters
@@ -61,16 +69,13 @@ void ASoldier::BeginPlay()
 			}
 		}
 	}
-	
-	if (!TBTacticalGameMode->CameraController->MouseSceneSelectionComponent->SelectedSoldier)
-	{
-		TBTacticalGameMode->CameraController->MouseSceneSelectionComponent->SelectedSoldier = this;
-	}
-}
 
-// Called every frame
-void ASoldier::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	//Adding Reference to this soldier
+	TBTacticalGameMode->AllSoldierReference.Add(IdUnit, this);
+	if (!TBTacticalGameMode->MainController->MouseSceneSelectionComponent->SelectedSoldier)
+	{
+		TBTacticalGameMode->MainController->MouseSceneSelectionComponent->SelectedSoldier = this;
+		TBTacticalGameMode->SelectedSoldierId = IdUnit;
+	}
 }
 

@@ -10,9 +10,11 @@
 class UTilePathFinder;
 class ASoldier;
 class ATBTacticalMainController;
+
 /**
  * 
  */
+
 UCLASS()
 class FAKEXCOM_API ATBTacticalGameMode : public AGameModeBase
 {
@@ -28,7 +30,7 @@ public:
 	UTilePathFinder* TilePathFinder;
 	
 	UPROPERTY()
-	ATBTacticalMainController* CameraController;
+	ATBTacticalMainController* MainController;
 
 	UPROPERTY()
 	bool bInitialized = false;
@@ -41,4 +43,13 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Spawnable Unit")
 	TSubclassOf<ASoldier> SoldierClass;
+
+	UPROPERTY()
+	int SelectedSoldierId = -1;
+	
+	UPROPERTY()
+	TMap<int, ASoldier*> AllSoldierReference;
+
+	ASoldier* GetNextSoldier();
+	ASoldier* GetPreviousSoldier();
 };
