@@ -76,6 +76,7 @@ void ASoldier::Initialize()
 	{
 		TBTacticalGameMode->MainController->MouseSceneSelectionComponent->SelectedSoldier = this;
 		TBTacticalGameMode->SelectedSoldierId = IdUnit;
+		TBTacticalGameMode->MainController->GoToActor(this);
 	}
 }
 

@@ -30,16 +30,15 @@ ATBTacticalMainController::ATBTacticalMainController()
 	CameraComponent->AttachToComponent(SpringArmComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	// Set the properties of the SpringArmComponent as needed
-	SpringArmComponent->TargetArmLength = 500.0f; // Adjust this as per your needs
 	SpringArmComponent->bEnableCameraLag = true; // Enable camera lag for a spring-like effect
 	SpringArmComponent->CameraLagSpeed = 10.0f; // Adjust camera lag speed as needed
-	
 }
 
 // Called when the game starts or when spawned
 void ATBTacticalMainController::BeginPlay()
 {
 	Super::BeginPlay();
+	SpringArmComponent->TargetArmLength = HeightCameraValue[CurrentHeightCameraValueIndex];
 	
 	World = GetWorld();
 	CameraRotation = GetActorRotation();
@@ -74,6 +73,9 @@ void ATBTacticalMainController::BeginPlay()
 
 		InputComponent->BindAction("SelectPreviousSoldier", IE_Pressed, this, &ATBTacticalMainController::PressSelectPreviousSoldier);
 		InputComponent->BindAction("SelectNextSoldier", IE_Pressed, this, &ATBTacticalMainController::PressSelectNextSoldier);
+
+		InputComponent->BindAction("CameraUp", IE_Pressed, this, &ATBTacticalMainController::PressCameraUp);
+		InputComponent->BindAction("CameraDown", IE_Pressed, this, &ATBTacticalMainController::PressCameraDown);
 	}
 }
 
@@ -244,6 +246,59 @@ void ATBTacticalMainController::PressSelectNextSoldier()
 	if (IsCameraControlLock()) return;
 	MouseSceneSelectionComponent->SelectedSoldier = TBTacticalGameMode->GetNextSoldier();
 	GoToActor(MouseSceneSelectionComponent->SelectedSoldier);
+}
+
+void ATBTacticalMainController::PressCameraUp()
+{
+	if(HeightCameraValue.Num() == 0)
+	{
+		DebugScreen("HeightCameraValues not set", FColor::Red);
+		return;	
+	}
+	
+	if (CurrentHeightCameraValueIndex - 1 >= 0)
+	{
+		CurrentHeightCameraValueIndex--;
+		
+		GetWorld()->GetTimerManager().SetTimer(
+		  CameraHeightTimerHandle,
+		  this,
+		  &ATBTacticalMainController::CameraHeightTimerFunction,
+		  TimerClock, 
+		  true);
+	}
+}
+
+void ATBTacticalMainController::PressCameraDown()
+{
+	if(HeightCameraValue.Num() == 0)
+	{
+		DebugScreen("HeightCameraValues not set", FColor::Red);
+		return;	
+	}
+	
+	if (CurrentHeightCameraValueIndex + 1 < HeightCameraValue.Num())
+	{
+		CurrentHeightCameraValueIndex++;
+		GetWorld()->GetTimerManager().SetTimer(
+		  CameraHeightTimerHandle,
+		  this,
+		  &ATBTacticalMainController::CameraHeightTimerFunction,
+		  TimerClock, 
+		  true);
+	}
+}
+
+void ATBTacticalMainController::CameraHeightTimerFunction()
+{
+	const float CurrentHeight = FMath::Lerp(SpringArmComponent->TargetArmLength, HeightCameraValue[CurrentHeightCameraValueIndex], CameraHeightSpeed * TimerClock);
+	SpringArmComponent->TargetArmLength = CurrentHeight;
+	
+	if (SpringArmComponent->TargetArmLength >= HeightCameraValue[CurrentHeightCameraValueIndex]-0.1f &&
+		SpringArmComponent->TargetArmLength <= HeightCameraValue[CurrentHeightCameraValueIndex]+0.1f)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CameraHeightTimerHandle);
+	}
 }
 
 void ATBTacticalMainController::MouseScroll()
