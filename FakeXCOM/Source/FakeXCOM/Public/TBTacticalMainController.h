@@ -68,6 +68,18 @@ public:
 	void SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent);
 	void FollowActor(AActor* TargetActor);
 	void GoToActor(AActor* TargetActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Level UI Functions")
+	void PressTurnCameraRight();
+	
+	UFUNCTION(BlueprintCallable, Category = "Level UI Functions")
+	void PressTurnCameraLeft();
+
+	UFUNCTION(BlueprintCallable, Category = "Level UI Functions")
+	void PressSelectPreviousSoldier();
+
+	UFUNCTION(BlueprintCallable, Category = "Level UI Functions")
+	void PressSelectNextSoldier();
 	
 private:
 	UPROPERTY()
@@ -155,12 +167,6 @@ private:
 	
 	void PressLeft();
 	void ReleaseLeft();
-
-	void PressTurnCameraRight();
-	void PressTurnCameraLeft();
-
-	void PressSelectPreviousSoldier();
-	void PressSelectNextSoldier();
 
 	void PressCameraUp();
 	void PressCameraDown();

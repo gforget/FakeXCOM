@@ -5,6 +5,7 @@
 #include "LevelBlock.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Blueprint/UserWidget.h"
 #include "TBTacticalGameMode.generated.h"
 
 class UTilePathFinder;
@@ -26,10 +27,10 @@ protected:
 	
 public:
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category="Global Object")
 	UTilePathFinder* TilePathFinder;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category="Global Object")
 	ATBTacticalMainController* MainController;
 
 	UPROPERTY()
@@ -40,6 +41,9 @@ public:
 
 	UPROPERTY()
 	FVector BottomPosition = FVector(TNumericLimits<float>::Max(), TNumericLimits<float>::Max(), 0.0f);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Level Properties")
+	TSubclassOf<UUserWidget> LevelUI;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Spawnable Unit")
 	TSubclassOf<ASoldier> SoldierClass;

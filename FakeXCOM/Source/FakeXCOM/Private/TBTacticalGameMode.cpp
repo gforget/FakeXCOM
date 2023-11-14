@@ -6,10 +6,15 @@
 #include "NodePath.h"
 #include "Soldier.h"
 #include "TilePathFinder.h"
+#include "Blueprint/UserWidget.h"
 
 void ATBTacticalGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Setup LevelUI
+	UUserWidget* LevelUIPtr = CreateWidget<UUserWidget>(GetWorld(), LevelUI);
+	LevelUIPtr->AddToViewport();
 	
 	//Setup TilePathFinder
 	TilePathFinder = NewObject<UTilePathFinder>(GetTransientPackage(), UTilePathFinder::StaticClass());
