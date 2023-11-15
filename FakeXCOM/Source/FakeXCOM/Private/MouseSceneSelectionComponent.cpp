@@ -6,7 +6,6 @@
 #include "DebugHeader.h"
 #include "LevelBlock.h"
 #include "NodePath.h"
-#include "Soldier.h"
 #include "TBTacticalMainController.h"
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
@@ -47,7 +46,7 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 		TilePathFinder = TBTacticalGameMode->TilePathFinder;
 	}
 	
-	if (!SelectedSoldier || !TilePathFinder->bCanMoveUnit) //Normally there is always a soldier selected
+	if (!SelectedUnit || !TilePathFinder->bCanMoveUnit) //Normally there is always a soldier selected
 	{
 		return;
 	}
@@ -75,7 +74,7 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 				if (UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder)
 				{
 					GenericStack<UNodePath*> PathStack = TilePathFinderPtr->GetPathToDestination(
-							SelectedSoldier->TileMovementComponent->LocatedNodePath,
+							SelectedUnit->TileMovementComponent->LocatedNodePath,
 							CurrentMouseOverNodePath
 							);
 					
@@ -142,16 +141,16 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 void UMouseSceneSelectionComponent::LeftClickSelection()
 {
 	FVector HitLocation;
-	if (ASoldier* SelectedSoldierPtr = Cast<ASoldier>(SelectActorFromMousePosition(HitLocation)))
+	if (AUnit* SelectedUnitPtr = Cast<AUnit>(SelectActorFromMousePosition(HitLocation)))
 	{
-		SelectedSoldier = SelectedSoldierPtr;
+		SelectedUnit = SelectedUnitPtr;
 		DebugScreen("New Soldier Selected !", FColor::Yellow);
 	}
 }
 
 void UMouseSceneSelectionComponent::RightClickSelection()
 {
-	if (SelectedSoldier)
+	if (SelectedUnit)
 	{
 		if (!TilePathFinder->bCanMoveUnit)
 		{
@@ -176,24 +175,24 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 				const ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(ChosenNodePath->GetOwner());
 				if (LevelBlockPtr->UnitOnBlock == nullptr)
 				{
-					TilePathFinder->MoveUnit(SelectedSoldier, ChosenNodePath);
+					TilePathFinder->MoveUnit(SelectedUnit, ChosenNodePath);
 
 					//Assign the cover icon so they do not get deleted when a unit is assign on a nodepath
-					if (!AllAssignCover3DIcon.Contains(SelectedSoldier->IdUnit))
+					if (!AllAssignCover3DIcon.Contains(SelectedUnit->IdUnit))
 					{
-						AllAssignCover3DIcon.Add(SelectedSoldier->IdUnit, FAssignCover3DIcon());
+						AllAssignCover3DIcon.Add(SelectedUnit->IdUnit, FAssignCover3DIcon());
 					}
 					
-					if (AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries.Num() > 0)
+					if (AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries.Num() > 0)
 					{
-						for (int i=0; i<AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries.Num(); i++)
+						for (int i=0; i<AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries.Num(); i++)
 						{
-							AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries[i]->Destroy();
+							AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries[i]->Destroy();
 						}
-						AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries.Empty();
+						AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries.Empty();
 					}
 					
-					AllAssignCover3DIcon[SelectedSoldier->IdUnit].Entries.Append(AllMouseOverCover3DIcon);
+					AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries.Append(AllMouseOverCover3DIcon);
 					AllMouseOverCover3DIcon.Empty();
 				}
 			}

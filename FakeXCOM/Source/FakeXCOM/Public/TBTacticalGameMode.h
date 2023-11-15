@@ -49,14 +49,14 @@ public:
 	ULevelUI* LevelUI;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Spawnable Unit")
-	TSubclassOf<ASoldier> SoldierClass;
+	TSubclassOf<AUnit> UnitClass;
 
 	UPROPERTY()
-	int SelectedSoldierId = -1;
+	int SelectedUnitId = -1;
 	
 	UPROPERTY(BlueprintReadOnly)
-	TMap<int, ASoldier*> AllSoldierReference;
+	TMap<int, AUnit*> AllUnitReference;
 
-	ASoldier* GetNextSoldier();
-	ASoldier* GetPreviousSoldier();
+	AUnit* GetNextUnit();
+	AUnit* GetPreviousUnit();
 };

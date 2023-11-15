@@ -7,7 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "MouseSceneSelectionComponent.generated.h"
 class ATBTacticalGameMode;
-class ASoldier;
+class AUnit;
 class UNodePath;
 class UTilePathFinder;
 
@@ -52,7 +52,7 @@ public:
 	TSubclassOf<AActor> Path3DIconClass;
 
 	UPROPERTY()
-	ASoldier* SelectedSoldier;
+	AUnit* SelectedUnit;
 	
 private:
 	void LeftClickSelection();

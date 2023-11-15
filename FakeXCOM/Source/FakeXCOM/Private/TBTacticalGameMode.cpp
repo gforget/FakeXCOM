@@ -5,7 +5,7 @@
 #include "LevelBlock.h"
 #include "LevelUI.h"
 #include "NodePath.h"
-#include "Soldier.h"
+#include "Unit.h"
 #include "TilePathFinder.h"
 #include "Blueprint/UserWidget.h"
 
@@ -43,11 +43,11 @@ void ATBTacticalGameMode::BeginPlay()
 				if (LevelBlockPtr->bIsStartingPosition)
 				{
 					const UNodePath* StartingNodePtr = AllNodePaths[LevelBlockPtr->NodePathIndex];
-					if (SoldierClass)
+					if (UnitClass)
 					{
-						ASoldier* SoldierPtr = GetWorld()->SpawnActor<ASoldier>(SoldierClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
-						SoldierPtr->IdUnit = CurrentIdUnit;
-						SoldierPtr->Initialize();
+						AUnit* UnitPtr = GetWorld()->SpawnActor<AUnit>(UnitClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
+						UnitPtr->IdUnit = CurrentIdUnit;
+						UnitPtr->Initialize();
 						CurrentIdUnit++;
 					}
 				}
@@ -82,27 +82,27 @@ void ATBTacticalGameMode::BeginPlay()
 	bInitialized = true;
 }
 
-ASoldier* ATBTacticalGameMode::GetNextSoldier()
+AUnit* ATBTacticalGameMode::GetNextUnit()
 {
 	//TODO: create a loop to select soldier who turn didn't finish and can perform action this turn
 	//Soldier are never removed from the list, even when dead
 	
-	SelectedSoldierId++;
-	if (SelectedSoldierId >= AllSoldierReference.Num())
+	SelectedUnitId++;
+	if (SelectedUnitId >= AllUnitReference.Num())
 	{
-		SelectedSoldierId = 0;
+		SelectedUnitId = 0;
 	}
 	
-	return AllSoldierReference[SelectedSoldierId];
+	return AllUnitReference[SelectedUnitId];
 }
 
-ASoldier* ATBTacticalGameMode::GetPreviousSoldier()
+AUnit* ATBTacticalGameMode::GetPreviousUnit()
 {
-	SelectedSoldierId--;
-	if (SelectedSoldierId < 0)
+	SelectedUnitId--;
+	if (SelectedUnitId < 0)
 	{
-		SelectedSoldierId = AllSoldierReference.Num()-1;
+		SelectedUnitId = AllUnitReference.Num()-1;
 	}
 	
-	return AllSoldierReference[SelectedSoldierId];
+	return AllUnitReference[SelectedUnitId];
 }

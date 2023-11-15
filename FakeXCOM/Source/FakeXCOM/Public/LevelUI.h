@@ -11,7 +11,7 @@ class UCanvasPanel;
 class UProgressBar;
 class UCanvasPanelSlot;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSpawnEvent, ASoldier*, Soldier);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSpawnEvent, AUnit*, Unit);
 
 UCLASS()
 class FAKEXCOM_API ULevelUI : public UUserWidget

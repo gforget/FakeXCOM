@@ -3,7 +3,6 @@
 
 #include "TileMovementComponent.h"
 #include "NodePath.h"
-#include "Soldier.h"
 #include "TBTacticalGameMode.h"
 #include "TBTacticalMainController.h"
 #include "TilePathFinder.h"
@@ -49,7 +48,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		{
 			Cast<ALevelBlock>(LocatedNodePath->GetOwner())->UnitOnBlock = nullptr;
 			LocatedNodePath = NodePathPtr;
-			Cast<ALevelBlock>(NodePathPtr->GetOwner())->UnitOnBlock = Cast<ASoldier>(GetOwner());
+			Cast<ALevelBlock>(NodePathPtr->GetOwner())->UnitOnBlock = Cast<AUnit>(GetOwner());
 		} 
 		
 		Destination = NodePathPtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f);

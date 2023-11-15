@@ -237,15 +237,15 @@ void ATBTacticalMainController::RotateCameraTimerFunction()
 void ATBTacticalMainController::PressSelectPreviousSoldier()
 {
 	if (IsCameraControlLock()) return;
-	MouseSceneSelectionComponent->SelectedSoldier = TBTacticalGameMode->GetPreviousSoldier();
-	GoToActor(MouseSceneSelectionComponent->SelectedSoldier);
+	MouseSceneSelectionComponent->SelectedUnit = TBTacticalGameMode->GetPreviousUnit();
+	GoToActor(MouseSceneSelectionComponent->SelectedUnit);
 }
 
 void ATBTacticalMainController::PressSelectNextSoldier()
 {
 	if (IsCameraControlLock()) return;
-	MouseSceneSelectionComponent->SelectedSoldier = TBTacticalGameMode->GetNextSoldier();
-	GoToActor(MouseSceneSelectionComponent->SelectedSoldier);
+	MouseSceneSelectionComponent->SelectedUnit = TBTacticalGameMode->GetNextUnit();
+	GoToActor(MouseSceneSelectionComponent->SelectedUnit);
 }
 
 void ATBTacticalMainController::PressCameraUp()

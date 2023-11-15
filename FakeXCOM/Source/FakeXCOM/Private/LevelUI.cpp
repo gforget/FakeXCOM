@@ -32,7 +32,7 @@ void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	for (const TPair<int, UProgressBar*>& HealthBarAssoc : HealthBarAssociationMap)
 	{
 		FVector2d ScreenLocation;
-		const FVector UnitLocation = TBTacticalGameMode->AllSoldierReference[HealthBarAssoc.Key]->GetActorLocation();
+		const FVector UnitLocation = TBTacticalGameMode->AllUnitReference[HealthBarAssoc.Key]->GetActorLocation();
 		PlayerController->ProjectWorldLocationToScreen(UnitLocation, ScreenLocation, true);
 
 		//Prevent offsetting caused by the UMG system

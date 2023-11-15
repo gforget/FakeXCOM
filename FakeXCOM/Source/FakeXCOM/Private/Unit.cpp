@@ -1,6 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Soldier.h"
+
+#include "Unit.h"
 #include "Gun.h"
 #include "LevelBlock.h"
 #include "MouseSceneSelectionComponent.h"
@@ -8,17 +9,33 @@
 #include "TBTacticalMainController.h"
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
+#include "Components/ArrowComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
-ASoldier::ASoldier()
+AUnit::AUnit()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Component"));
+	CapsuleComponent->SetCapsuleHalfHeight(88.0f);
+	CapsuleComponent->SetCapsuleRadius(34.0f);
+	
+	RootComponent = CapsuleComponent;
+	RootComponent->SetMobility(EComponentMobility::Movable);
+
+	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
+	ArrowComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	
+	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComponent"));
+	SkeletalMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
 	TileMovementComponent = CreateDefaultSubobject<UTileMovementComponent>(TEXT("Tile Movement Component"));
 }
 
 // Called when the game starts or when spawned
-void ASoldier::BeginPlay()
+void AUnit::BeginPlay()
 {
 	Super::BeginPlay();
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
@@ -26,7 +43,7 @@ void ASoldier::BeginPlay()
 	if (GunClass)
 	{
 		Gun = GetWorld()->SpawnActor<AGun>(GunClass);
-		Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("WeaponSocket"));
+		Gun->AttachToComponent(SkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("WeaponSocket"));
 		Gun->SetOwner(this);
 	}
 	else
@@ -36,12 +53,12 @@ void ASoldier::BeginPlay()
 }
 
 // Called every frame
-void ASoldier::Tick(float DeltaTime)
+void AUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void ASoldier::Initialize()
+void AUnit::Initialize()
 {
 	// Assign Node Reference
 	
@@ -71,11 +88,11 @@ void ASoldier::Initialize()
 	}
 
 	//Adding Reference to this soldier
-	TBTacticalGameMode->AllSoldierReference.Add(IdUnit, this);
-	if (!TBTacticalGameMode->MainController->MouseSceneSelectionComponent->SelectedSoldier)
+	TBTacticalGameMode->AllUnitReference.Add(IdUnit, this);
+	if (!TBTacticalGameMode->MainController->MouseSceneSelectionComponent->SelectedUnit)
 	{
-		TBTacticalGameMode->MainController->MouseSceneSelectionComponent->SelectedSoldier = this;
-		TBTacticalGameMode->SelectedSoldierId = IdUnit;
+		TBTacticalGameMode->MainController->MouseSceneSelectionComponent->SelectedUnit = this;
+		TBTacticalGameMode->SelectedUnitId = IdUnit;
 		TBTacticalGameMode->MainController->GoToActor(this);
 	}
 	

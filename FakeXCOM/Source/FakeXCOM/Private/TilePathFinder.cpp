@@ -5,7 +5,6 @@
 #include "GenericStack.h"
 #include "..\Public\GenericPriorityQueue.h"
 #include "NodePath.h"
-#include "Soldier.h"
 #include "TileMovementComponent.h"
 
 void UTilePathFinder::SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent)
@@ -131,10 +130,10 @@ float UTilePathFinder::GetCostFromCostSoFar(TMap<int, float>& cost_so_far, int I
 	return 0.0f;
 }
 
-void UTilePathFinder::MoveUnit(const ASoldier* Soldier, UNodePath* ChosenNode)
+void UTilePathFinder::MoveUnit(const AUnit* Unit, UNodePath* ChosenNode)
 {
 	if (bCanMoveUnit)
 	{
-		Soldier->TileMovementComponent->FollowPath(GetPathToDestination(Soldier->TileMovementComponent->LocatedNodePath, ChosenNode));
+		Unit->TileMovementComponent->FollowPath(GetPathToDestination(Unit->TileMovementComponent->LocatedNodePath, ChosenNode));
 	}
 }

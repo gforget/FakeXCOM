@@ -3,21 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "Soldier.generated.h"
+#include "GameFramework/Actor.h"
+#include "Unit.generated.h"
 
 class UTileMovementComponent;
 class AGun;
 class ATBTacticalGameMode;
+class UArrowComponent;
+class UCapsuleComponent;
 
 UCLASS()
-class FAKEXCOM_API ASoldier : public ACharacter
+class FAKEXCOM_API AUnit : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	ASoldier();
+	// Sets default values for this actor's properties
+	AUnit();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,6 +28,15 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditDefaultsOnly)
+	UCapsuleComponent* CapsuleComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	UArrowComponent* ArrowComponent;
+	
+	UPROPERTY(EditDefaultsOnly)
+	USkeletalMeshComponent* SkeletalMeshComponent;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UTileMovementComponent* TileMovementComponent;

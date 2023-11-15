@@ -8,7 +8,7 @@
 #include "TilePathFinder.generated.h"
 
 class UNodePath;
-class ASoldier;
+class AUnit;
 class UTileMovementComponent;
 /**
  * 
@@ -39,5 +39,5 @@ public:
 	void AddCostToCostSoFar(TMap<int, float>& cost_so_far,int IdNode, float Cost);
 	float GetCostFromCostSoFar(TMap<int, float>& cost_so_far, int IdNode);
 
-	void MoveUnit(const ASoldier* Soldier, UNodePath* ChosenNode);
+	void MoveUnit(const AUnit* Unit, UNodePath* ChosenNode);
 };

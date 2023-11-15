@@ -17,9 +17,9 @@ void USoldierAnimInstance::UpdateAnimation(float DeltaTime)
 void USoldierAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
-	if (const APawn* OwningPawn = TryGetPawnOwner())
+	if (const AActor* OwningActor = GetOwningActor())
 	{
-		TileMovementComponentPtr = OwningPawn->FindComponentByClass<UTileMovementComponent>();
+		TileMovementComponentPtr = OwningActor->FindComponentByClass<UTileMovementComponent>();
 		if (!TileMovementComponentPtr)
 		{
 			DebugScreen("No TileMovementComponent on the unit", FColor::Red);

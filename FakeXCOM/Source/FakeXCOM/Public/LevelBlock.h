@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Soldier.h"
+#include "Unit.h"
 #include "GameFramework/Actor.h"
 #include "LevelBlock.generated.h"
 
@@ -52,7 +52,7 @@ public:
 	int NodePathIndex = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	ASoldier* UnitOnBlock = nullptr;
+	AUnit* UnitOnBlock = nullptr;
 	
 	UPROPERTY()
 	UArrowComponent* ArrowComponent = nullptr;
