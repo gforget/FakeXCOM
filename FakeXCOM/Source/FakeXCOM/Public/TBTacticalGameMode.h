@@ -57,6 +57,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TMap<int, AUnit*> AllUnitReference;
 
-	AUnit* GetNextUnit();
-	AUnit* GetPreviousUnit();
+	void SelectNextUnit();
+	void SelectPreviousUnit();
+
+	AUnit* SelectUnit(int UnitId);
+	AUnit* GetCurrentlySelectedUnit();
 };

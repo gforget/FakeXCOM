@@ -21,6 +21,7 @@ AUnit::AUnit()
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Component"));
 	CapsuleComponent->SetCapsuleHalfHeight(88.0f);
 	CapsuleComponent->SetCapsuleRadius(34.0f);
+	CapsuleComponent->SetCollisionProfileName(TEXT("Pawn"));
 	
 	RootComponent = CapsuleComponent;
 	RootComponent->SetMobility(EComponentMobility::Movable);
@@ -89,11 +90,9 @@ void AUnit::Initialize()
 
 	//Adding Reference to this soldier
 	TBTacticalGameMode->AllUnitReference.Add(IdUnit, this);
-	if (!TBTacticalGameMode->MainController->MouseSceneSelectionComponent->SelectedUnit)
+	if (!TBTacticalGameMode->GetCurrentlySelectedUnit())
 	{
-		TBTacticalGameMode->MainController->MouseSceneSelectionComponent->SelectedUnit = this;
-		TBTacticalGameMode->SelectedUnitId = IdUnit;
-		TBTacticalGameMode->MainController->GoToActor(this);
+		TBTacticalGameMode->SelectUnit(IdUnit);
 	}
 	
 	TBTacticalGameMode->LevelUI->OnUnitSpawnEvent.Broadcast(this);

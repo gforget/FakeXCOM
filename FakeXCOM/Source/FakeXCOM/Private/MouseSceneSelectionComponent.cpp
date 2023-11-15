@@ -46,7 +46,7 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 		TilePathFinder = TBTacticalGameMode->TilePathFinder;
 	}
 	
-	if (!SelectedUnit || !TilePathFinder->bCanMoveUnit) //Normally there is always a soldier selected
+	if (!TBTacticalGameMode->GetCurrentlySelectedUnit() || !TilePathFinder->bCanMoveUnit) //Normally there is always a soldier selected
 	{
 		return;
 	}
@@ -74,7 +74,7 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 				if (UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder)
 				{
 					GenericStack<UNodePath*> PathStack = TilePathFinderPtr->GetPathToDestination(
-							SelectedUnit->TileMovementComponent->LocatedNodePath,
+							TBTacticalGameMode->GetCurrentlySelectedUnit()->TileMovementComponent->LocatedNodePath,
 							CurrentMouseOverNodePath
 							);
 					
@@ -141,16 +141,15 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 void UMouseSceneSelectionComponent::LeftClickSelection()
 {
 	FVector HitLocation;
-	if (AUnit* SelectedUnitPtr = Cast<AUnit>(SelectActorFromMousePosition(HitLocation)))
+	if (const AUnit* SelectedUnitPtr = Cast<AUnit>(SelectActorFromMousePosition(HitLocation)))
 	{
-		SelectedUnit = SelectedUnitPtr;
-		DebugScreen("New Soldier Selected !", FColor::Yellow);
+		TBTacticalGameMode->SelectUnit(SelectedUnitPtr->IdUnit);
 	}
 }
 
 void UMouseSceneSelectionComponent::RightClickSelection()
 {
-	if (SelectedUnit)
+	if (TBTacticalGameMode->GetCurrentlySelectedUnit())
 	{
 		if (!TilePathFinder->bCanMoveUnit)
 		{
@@ -175,24 +174,24 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 				const ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(ChosenNodePath->GetOwner());
 				if (LevelBlockPtr->UnitOnBlock == nullptr)
 				{
-					TilePathFinder->MoveUnit(SelectedUnit, ChosenNodePath);
+					TilePathFinder->MoveUnit(TBTacticalGameMode->GetCurrentlySelectedUnit(), ChosenNodePath);
 
 					//Assign the cover icon so they do not get deleted when a unit is assign on a nodepath
-					if (!AllAssignCover3DIcon.Contains(SelectedUnit->IdUnit))
+					if (!AllAssignCover3DIcon.Contains(TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit))
 					{
-						AllAssignCover3DIcon.Add(SelectedUnit->IdUnit, FAssignCover3DIcon());
+						AllAssignCover3DIcon.Add(TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit, FAssignCover3DIcon());
 					}
 					
-					if (AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries.Num() > 0)
+					if (AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries.Num() > 0)
 					{
-						for (int i=0; i<AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries.Num(); i++)
+						for (int i=0; i<AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries.Num(); i++)
 						{
-							AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries[i]->Destroy();
+							AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries[i]->Destroy();
 						}
-						AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries.Empty();
+						AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries.Empty();
 					}
 					
-					AllAssignCover3DIcon[SelectedUnit->IdUnit].Entries.Append(AllMouseOverCover3DIcon);
+					AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries.Append(AllMouseOverCover3DIcon);
 					AllMouseOverCover3DIcon.Empty();
 				}
 			}

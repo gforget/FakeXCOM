@@ -50,9 +50,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
 	TSubclassOf<AActor> Path3DIconClass;
-
-	UPROPERTY()
-	AUnit* SelectedUnit;
 	
 private:
 	void LeftClickSelection();

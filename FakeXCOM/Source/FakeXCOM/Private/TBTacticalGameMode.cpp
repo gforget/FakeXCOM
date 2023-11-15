@@ -5,6 +5,7 @@
 #include "LevelBlock.h"
 #include "LevelUI.h"
 #include "NodePath.h"
+#include "TBTacticalMainController.h"
 #include "Unit.h"
 #include "TilePathFinder.h"
 #include "Blueprint/UserWidget.h"
@@ -82,7 +83,7 @@ void ATBTacticalGameMode::BeginPlay()
 	bInitialized = true;
 }
 
-AUnit* ATBTacticalGameMode::GetNextUnit()
+void ATBTacticalGameMode::SelectNextUnit()
 {
 	//TODO: create a loop to select soldier who turn didn't finish and can perform action this turn
 	//Soldier are never removed from the list, even when dead
@@ -92,17 +93,36 @@ AUnit* ATBTacticalGameMode::GetNextUnit()
 	{
 		SelectedUnitId = 0;
 	}
-	
-	return AllUnitReference[SelectedUnitId];
+
+	SelectUnit(SelectedUnitId);
 }
 
-AUnit* ATBTacticalGameMode::GetPreviousUnit()
+void ATBTacticalGameMode::SelectPreviousUnit()
 {
 	SelectedUnitId--;
 	if (SelectedUnitId < 0)
 	{
 		SelectedUnitId = AllUnitReference.Num()-1;
 	}
-	
+	SelectUnit(SelectedUnitId);
+}
+
+AUnit* ATBTacticalGameMode::SelectUnit(int UnitId)
+{
+	DebugScreen("New Soldier Selected !", FColor::Yellow);
+
+	SelectedUnitId = UnitId;
+	MainController->GoToActor(AllUnitReference[SelectedUnitId]);
+
 	return AllUnitReference[SelectedUnitId];
+}
+
+AUnit* ATBTacticalGameMode::GetCurrentlySelectedUnit()
+{
+	if (SelectedUnitId != -1)
+	{
+		return AllUnitReference[SelectedUnitId];	
+	}
+	
+	return nullptr;
 }
