@@ -11,6 +11,7 @@
 #include "TileMovementComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AUnit::AUnit()
@@ -51,6 +52,42 @@ void AUnit::BeginPlay()
 	{
 		DebugScreen("No Gun Set to this soldier", FColor::Red);
 	}
+}
+
+void AUnit::PostActorCreated()
+{
+	Super::PostActorCreated();
+	GenerateHealthBarAnchorPositionVisualisation();	
+}
+
+void AUnit::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	GenerateHealthBarAnchorPositionVisualisation();
+}
+
+void AUnit::PostEditMove(bool bFinished)
+{
+	Super::PostEditMove(bFinished);
+	GenerateHealthBarAnchorPositionVisualisation();
+}
+
+void AUnit::Destroyed()
+{
+	Super::Destroyed();
+	UKismetSystemLibrary::FlushPersistentDebugLines(this);
+}
+
+void AUnit::GenerateHealthBarAnchorPositionVisualisation() const
+{
+#if WITH_EDITOR
+	if (GetWorld()->WorldType == EWorldType::EditorPreview)
+	{
+		UKismetSystemLibrary::FlushPersistentDebugLines(this);
+		const FVector ActorLocation = GetActorLocation();
+		DrawDebugSphere(GetWorld(), ActorLocation + HealthBarAnchor, 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
+	}
+#endif
 }
 
 // Called every frame

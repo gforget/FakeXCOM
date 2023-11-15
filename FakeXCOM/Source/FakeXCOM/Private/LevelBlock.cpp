@@ -61,18 +61,21 @@ void ALevelBlock::Destroyed()
 void ALevelBlock::GenerateNodePathPositionVisualisation()
 {
 #if WITH_EDITOR
-	UKismetSystemLibrary::FlushPersistentDebugLines(this);
-	
-	FVector ActorLocation = GetActorLocation();
-	for (int i=0; i<NodePathPositions.Num(); i++)
+	if (GetWorld()->WorldType == EWorldType::EditorPreview)
 	{
-		DrawDebugSphere(GetWorld(), ActorLocation + NodePathPositions[i], 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
-	}
+		UKismetSystemLibrary::FlushPersistentDebugLines(this);
 
-	if (IsSlope)
-	{
-		DrawDebugSphere(GetWorld(), ActorLocation + BottomSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
-		DrawDebugSphere(GetWorld(), ActorLocation + TopSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
+		const FVector ActorLocation = GetActorLocation();
+		for (int i=0; i<NodePathPositions.Num(); i++)
+		{
+			DrawDebugSphere(GetWorld(), ActorLocation + NodePathPositions[i], 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
+		}
+
+		if (IsSlope)
+		{
+			DrawDebugSphere(GetWorld(), ActorLocation + BottomSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + TopSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
+		}
 	}
 #endif
 }
