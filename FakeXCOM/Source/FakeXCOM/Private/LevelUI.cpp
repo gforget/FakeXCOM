@@ -14,6 +14,8 @@
 void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+	
+	//TODO:maybe define it in the construct script ?
 	if (!TBTacticalGameMode)
 	{
 		TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
@@ -32,8 +34,11 @@ void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		FVector2d ScreenLocation;
 		const FVector UnitLocation = TBTacticalGameMode->AllSoldierReference[HealthBarAssoc.Key]->GetActorLocation();
 		PlayerController->ProjectWorldLocationToScreen(UnitLocation, ScreenLocation, true);
+
+		//Prevent offsetting caused by the UMG system
 		ScreenLocation = ScreenLocation/ViewPortScale;
 		ScreenLocation *= GameUserSettings->GetResolutionScaleNormalized();
+		
 		Cast<UCanvasPanelSlot>(HealthBarAssoc.Value->Slot)->SetPosition(ScreenLocation);
 	}
 }

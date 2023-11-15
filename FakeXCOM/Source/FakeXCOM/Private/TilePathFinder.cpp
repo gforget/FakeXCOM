@@ -3,7 +3,7 @@
 
 #include "TilePathFinder.h"
 #include "GenericStack.h"
-#include "GnericPriorityQueue.h"
+#include "..\Public\GenericPriorityQueue.h"
 #include "NodePath.h"
 #include "Soldier.h"
 #include "TileMovementComponent.h"
