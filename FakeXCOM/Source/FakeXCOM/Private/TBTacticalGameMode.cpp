@@ -31,7 +31,7 @@ void ATBTacticalGameMode::BeginPlay()
 
 	if (WorldPtr && AllActors.Num() > 0)
 	{
-		int CurrentIdUnit = 0;
+		int CurrentIdUnit = -1;
 		UKismetSystemLibrary::FlushPersistentDebugLines(AllActors[0]);
 		
 		for (int i=0; i<AllActors.Num(); i++)
@@ -46,10 +46,10 @@ void ATBTacticalGameMode::BeginPlay()
 					const UNodePath* StartingNodePtr = AllNodePaths[LevelBlockPtr->NodePathIndex];
 					if (UnitClass)
 					{
+						CurrentIdUnit++;
 						AUnit* UnitPtr = GetWorld()->SpawnActor<AUnit>(UnitClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
 						UnitPtr->IdUnit = CurrentIdUnit;
 						UnitPtr->Initialize();
-						CurrentIdUnit++;
 					}
 				}
 				
@@ -78,6 +78,8 @@ void ATBTacticalGameMode::BeginPlay()
 				}
 			}
 		}
+		
+		SelectUnit(CurrentIdUnit);
 	}
 	
 	bInitialized = true;
@@ -113,7 +115,8 @@ AUnit* ATBTacticalGameMode::SelectUnit(int UnitId)
 
 	SelectedUnitId = UnitId;
 	MainController->GoToActor(AllUnitReference[SelectedUnitId]);
-
+	LevelUI->OnUnitSelectedEvent.Broadcast(AllUnitReference[SelectedUnitId]);
+	
 	return AllUnitReference[SelectedUnitId];
 }
 

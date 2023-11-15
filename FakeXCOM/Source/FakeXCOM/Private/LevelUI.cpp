@@ -8,7 +8,7 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
-#include "Components/ProgressBar.h"
+#include "Components/Overlay.h"
 #include "GameFramework/GameUserSettings.h"
 
 void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -29,7 +29,7 @@ void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	const float ViewPortScale = UWidgetLayoutLibrary::GetViewportScale(GetWorld());
 	const UGameUserSettings* GameUserSettings = UGameUserSettings::GetGameUserSettings();
 	
-	for (const TPair<int, UProgressBar*>& HealthBarAssoc : HealthBarAssociationMap)
+	for (const TPair<int, UOverlay*>& HealthBarAssoc : HealthBarAssociationMap)
 	{
 		FVector2d ScreenLocation;
 		const AUnit* CurrentUnit = TBTacticalGameMode->AllUnitReference[HealthBarAssoc.Key];
@@ -45,7 +45,7 @@ void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	}
 }
 
-void ULevelUI::AddHealthBar(UProgressBar* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas)
+void ULevelUI::AddHealthBar(UOverlay* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas)
 {
 	UCanvasPanelSlot* HealthBarPanelSlot = Cast<UCanvasPanelSlot>(MainCanvas->AddChild(HealthBar));
 
@@ -54,6 +54,21 @@ void ULevelUI::AddHealthBar(UProgressBar* HealthBar, UCanvasPanelSlot* Reference
 	HealthBarPanelSlot->SetAlignment(ReferencePanelSlot->GetAlignment());
 	HealthBarPanelSlot->SetAutoSize(ReferencePanelSlot->GetAutoSize());
 	HealthBarPanelSlot->SetZOrder(ReferencePanelSlot->GetZOrder());
+}
+
+void ULevelUI::FocusHealthBar(int IdUnit)
+{
+	for (const TPair<int, UOverlay*>& HealthBarAssoc : HealthBarAssociationMap)
+	{
+		if (HealthBarAssoc.Key == IdUnit)
+		{
+			HealthBarAssoc.Value->SetRenderOpacity(1.0f);
+		}
+		else
+		{
+			HealthBarAssoc.Value->SetRenderOpacity(UnfocusAlpha);
+		}
+	}
 }
 
 

@@ -8,10 +8,11 @@
 
 class ATBTacticalGameMode;
 class UCanvasPanel;
-class UProgressBar;
+class UOverlay;
 class UCanvasPanelSlot;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSpawnEvent, AUnit*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSelectedEvent, AUnit*, Unit);
 
 UCLASS()
 class FAKEXCOM_API ULevelUI : public UUserWidget
@@ -29,12 +30,21 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Main Events")
 	FUnitSpawnEvent OnUnitSpawnEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "Main Events")
+	FUnitSelectedEvent OnUnitSelectedEvent;
 	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
-	void AddHealthBar(UProgressBar* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas);
+	void AddHealthBar(UOverlay* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas);
 
+	UFUNCTION(BlueprintCallable, Category = "Main Functions")
+	void FocusHealthBar(int IdUnit);
+	
 	UPROPERTY(BlueprintReadWrite)
-	TMap<int, UProgressBar*> HealthBarAssociationMap;
+	TMap<int, UOverlay*> HealthBarAssociationMap;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HealtBar Properties")
+	float UnfocusAlpha = 0.5f;
 	
 protected:
 	
