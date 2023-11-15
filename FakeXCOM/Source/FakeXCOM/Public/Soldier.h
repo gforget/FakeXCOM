@@ -39,7 +39,7 @@ public:
 	UPROPERTY()
 	AGun* Gun;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int IdUnit = 0;
 
 	void Initialize();

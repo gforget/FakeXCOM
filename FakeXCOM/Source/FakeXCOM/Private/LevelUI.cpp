@@ -3,7 +3,51 @@
 
 #include "LevelUI.h"
 
-void ULevelUI::SetMessage(const FText& NewMessage)
+#include "DebugHeader.h"
+#include "TBTacticalGameMode.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/ProgressBar.h"
+#include "GameFramework/GameUserSettings.h"
+
+void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Message set: %s"), *NewMessage.ToString());
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (!TBTacticalGameMode)
+	{
+		TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	}
+	
+	if (!PlayerController)
+	{
+		PlayerController = GetWorld()->GetFirstPlayerController();
+	}
+
+	const float ViewPortScale = UWidgetLayoutLibrary::GetViewportScale(GetWorld());
+	const UGameUserSettings* GameUserSettings = UGameUserSettings::GetGameUserSettings();
+	
+	for (const TPair<int, UProgressBar*>& HealthBarAssoc : HealthBarAssociationMap)
+	{
+		FVector2d ScreenLocation;
+		const FVector UnitLocation = TBTacticalGameMode->AllSoldierReference[HealthBarAssoc.Key]->GetActorLocation();
+		PlayerController->ProjectWorldLocationToScreen(UnitLocation, ScreenLocation, true);
+		ScreenLocation = ScreenLocation/ViewPortScale;
+		ScreenLocation *= GameUserSettings->GetResolutionScaleNormalized();
+		Cast<UCanvasPanelSlot>(HealthBarAssoc.Value->Slot)->SetPosition(ScreenLocation);
+	}
 }
+
+void ULevelUI::AddHealthBar(UProgressBar* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas)
+{
+	UCanvasPanelSlot* HealthBarPanelSlot = Cast<UCanvasPanelSlot>(MainCanvas->AddChild(HealthBar));
+
+	HealthBarPanelSlot->SetAnchors(ReferencePanelSlot->GetAnchors());
+	HealthBarPanelSlot->SetSize(ReferencePanelSlot->GetSize());
+	HealthBarPanelSlot->SetAlignment(ReferencePanelSlot->GetAlignment());
+	HealthBarPanelSlot->SetAutoSize(ReferencePanelSlot->GetAutoSize());
+	HealthBarPanelSlot->SetZOrder(ReferencePanelSlot->GetZOrder());
+}
+
+
+

@@ -5,7 +5,7 @@
 #include "LevelBlock.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Blueprint/UserWidget.h"
+#include "LevelUI.h"
 #include "TBTacticalGameMode.generated.h"
 
 class UTilePathFinder;
@@ -43,7 +43,10 @@ public:
 	FVector BottomPosition = FVector(TNumericLimits<float>::Max(), TNumericLimits<float>::Max(), 0.0f);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Level Properties")
-	TSubclassOf<UUserWidget> LevelUI;
+	TSubclassOf<ULevelUI> LevelUIClass;
+
+	UPROPERTY()
+	ULevelUI* LevelUI;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Spawnable Unit")
 	TSubclassOf<ASoldier> SoldierClass;
@@ -51,7 +54,7 @@ public:
 	UPROPERTY()
 	int SelectedSoldierId = -1;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TMap<int, ASoldier*> AllSoldierReference;
 
 	ASoldier* GetNextSoldier();

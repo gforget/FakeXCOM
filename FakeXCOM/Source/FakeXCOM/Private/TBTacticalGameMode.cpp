@@ -3,6 +3,7 @@
 #include "TBTacticalGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "LevelBlock.h"
+#include "LevelUI.h"
 #include "NodePath.h"
 #include "Soldier.h"
 #include "TilePathFinder.h"
@@ -13,8 +14,11 @@ void ATBTacticalGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	//Setup LevelUI
-	UUserWidget* LevelUIPtr = CreateWidget<UUserWidget>(GetWorld(), LevelUI);
-	LevelUIPtr->AddToViewport();
+	if (LevelUIClass)
+	{
+		LevelUI = CreateWidget<ULevelUI>(GetWorld(), LevelUIClass);
+		LevelUI->AddToViewport();
+	}
 	
 	//Setup TilePathFinder
 	TilePathFinder = NewObject<UTilePathFinder>(GetTransientPackage(), UTilePathFinder::StaticClass());

@@ -78,5 +78,7 @@ void ASoldier::Initialize()
 		TBTacticalGameMode->SelectedSoldierId = IdUnit;
 		TBTacticalGameMode->MainController->GoToActor(this);
 	}
+	
+	TBTacticalGameMode->LevelUI->OnUnitSpawnEvent.Broadcast(this);
 }
 

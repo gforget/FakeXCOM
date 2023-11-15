@@ -10,10 +10,8 @@
 class UNodePath;
 class ATBTacticalGameMode;
 
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitStartMovingDelegate, AActor*, ActorMoving);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitStopMovingDelegate, AActor*, ActorMoving);
-
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UTileMovementComponent : public UActorComponent
