@@ -60,6 +60,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Game UI")
 	FVector HealthBarAnchor = FVector(0.0f, 0.0f, 88.0f);
+
+	UPROPERTY(BlueprintReadOnly)
+	FString UnitName = "";
 	
 	void Initialize();
 	
