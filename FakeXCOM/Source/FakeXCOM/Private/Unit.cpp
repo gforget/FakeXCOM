@@ -1,12 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Unit.h"
+#include "AbilitySystemComponent.h"
 #include "Gun.h"
 #include "LevelBlock.h"
-#include "MouseSceneSelectionComponent.h"
 #include "NodePath.h"
-#include "TBTacticalMainController.h"
+#include "UnitAttributeSet.h"
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
 #include "Components/ArrowComponent.h"
@@ -34,6 +33,8 @@ AUnit::AUnit()
 	SkeletalMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	TileMovementComponent = CreateDefaultSubobject<UTileMovementComponent>(TEXT("Tile Movement Component"));
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Ability System Component"));
 }
 
 // Called when the game starts or when spawned
@@ -51,6 +52,12 @@ void AUnit::BeginPlay()
 	else
 	{
 		DebugScreen("No Gun Set to this soldier", FColor::Red);
+	}
+
+	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (IsValid(ASC))
+	{
+		UnitAttributeSet = ASC->GetSet<UUnitAttributeSet>();
 	}
 }
 
@@ -81,11 +88,14 @@ void AUnit::Destroyed()
 void AUnit::GenerateHealthBarAnchorPositionVisualisation() const
 {
 #if WITH_EDITOR
-	if (GetWorld()->WorldType == EWorldType::EditorPreview)
+	if (const UWorld* World = GetWorld())
 	{
-		UKismetSystemLibrary::FlushPersistentDebugLines(this);
-		const FVector ActorLocation = GetActorLocation();
-		DrawDebugSphere(GetWorld(), ActorLocation + HealthBarAnchor, 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
+		if (World->WorldType == EWorldType::EditorPreview)
+		{
+			UKismetSystemLibrary::FlushPersistentDebugLines(this);
+			const FVector ActorLocation = GetActorLocation();
+			DrawDebugSphere(GetWorld(), ActorLocation + HealthBarAnchor, 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
+		}
 	}
 #endif
 }
@@ -94,6 +104,11 @@ void AUnit::GenerateHealthBarAnchorPositionVisualisation() const
 void AUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+UAbilitySystemComponent* AUnit::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
 }
 
 void AUnit::Initialize()

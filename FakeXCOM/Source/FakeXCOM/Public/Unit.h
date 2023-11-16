@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Actor.h"
 #include "Unit.generated.h"
 
@@ -11,9 +12,10 @@ class AGun;
 class ATBTacticalGameMode;
 class UArrowComponent;
 class UCapsuleComponent;
+class UUnitAttributeSet;
 
 UCLASS()
-class FAKEXCOM_API AUnit : public AActor
+class FAKEXCOM_API AUnit : public AActor, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -34,6 +36,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
+	UAbilitySystemComponent* AbilitySystemComponent;
+
+	UPROPERTY()
+	const UUnitAttributeSet* UnitAttributeSet;
+	
 	UPROPERTY(EditDefaultsOnly)
 	UCapsuleComponent* CapsuleComponent;
 
@@ -52,7 +62,7 @@ public:
 	UPROPERTY()
 	ATBTacticalGameMode* TBTacticalGameMode;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	AGun* Gun;
 
 	UPROPERTY(BlueprintReadOnly)

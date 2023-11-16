@@ -8,7 +8,7 @@ public class FakeXCOM : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "LevelEditor", "UnrealEd", "UMG"});
+		PublicDependencyModuleNames.AddRange(new string[] { "GameplayAbilities", "GameplayTags", "GameplayTasks", "Core", "CoreUObject", "Engine", "InputCore", "LevelEditor", "UnrealEd", "UMG"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
