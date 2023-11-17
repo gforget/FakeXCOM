@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayAbilitySpec.h"
 #include "GameFramework/Actor.h"
 #include "Unit.generated.h"
 
@@ -13,6 +14,7 @@ class ATBTacticalGameMode;
 class UArrowComponent;
 class UCapsuleComponent;
 class UUnitAttributeSet;
+class UUnitAbility;
 
 UCLASS()
 class FAKEXCOM_API AUnit : public AActor, public IAbilitySystemInterface
@@ -41,6 +43,12 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
 	UAbilitySystemComponent* AbilitySystemComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> OwnedAbilitiesClasses;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
+	TArray<UUnitAbility*> OwnedAbilities;
+	
 	UPROPERTY()
 	const UUnitAttributeSet* UnitAttributeSet;
 	
@@ -78,4 +86,6 @@ public:
 	
 private:
 	void GenerateHealthBarAnchorPositionVisualisation() const;
+	
+	UUnitAbility* GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const;
 };

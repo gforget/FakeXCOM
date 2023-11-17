@@ -8,6 +8,7 @@
 #include "UnitAttributeSet.h"
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
+#include "UnitAbility.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -58,7 +59,28 @@ void AUnit::BeginPlay()
 	if (IsValid(ASC))
 	{
 		UnitAttributeSet = ASC->GetSet<UUnitAttributeSet>();
+		for (const TSubclassOf<UGameplayAbility> AbilityClass : OwnedAbilitiesClasses)
+		{
+			const FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AbilityClass, 0, -1));
+			UUnitAbility* CurrentAbility = GetAbilityFromHandle(Handle);
+			OwnedAbilities.Add(CurrentAbility);
+		}
 	}
+}
+
+UUnitAbility* AUnit::GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const
+{
+	if (AbilitySystemComponent)
+	{
+		if (const FGameplayAbilitySpec* AbilitySpec = AbilitySystemComponent->FindAbilitySpecFromHandle(AbilityHandle))
+		{
+			if (UGameplayAbility* AbilityInstance = AbilitySpec->Ability)
+			{
+				return Cast<UUnitAbility>(AbilityInstance);
+			}
+		}
+	}
+	return nullptr;
 }
 
 void AUnit::PostActorCreated()
