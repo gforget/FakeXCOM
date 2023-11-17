@@ -47,6 +47,9 @@ public:
 	TArray<TSubclassOf<UGameplayAbility>> OwnedAbilitiesClasses;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
+	TArray<FGameplayAbilitySpecHandle> OwnedAbilitiesHandle;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
 	TArray<UUnitAbility*> OwnedAbilities;
 	
 	UPROPERTY()

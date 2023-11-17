@@ -64,6 +64,7 @@ void AUnit::BeginPlay()
 			const FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AbilityClass, 0, -1));
 			UUnitAbility* CurrentAbility = GetAbilityFromHandle(Handle);
 			OwnedAbilities.Add(CurrentAbility);
+			OwnedAbilitiesHandle.Add(Handle);
 		}
 	}
 }
