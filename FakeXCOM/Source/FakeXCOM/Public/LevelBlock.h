@@ -50,9 +50,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsStartingPosition"), Category = "Pathfinder")
 	int NodePathIndex = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	AUnit* UnitOnBlock = nullptr;
 	
 	UPROPERTY()
 	UArrowComponent* ArrowComponent = nullptr;

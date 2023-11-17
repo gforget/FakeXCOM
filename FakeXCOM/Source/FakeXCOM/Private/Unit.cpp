@@ -153,12 +153,11 @@ void AUnit::Initialize()
 		{
 			if (ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(HitResult.GetActor()))
 			{
-				LevelBlockPtr->UnitOnBlock = this;
-			
 				TArray<UNodePath*> AllNodePaths;
 				LevelBlockPtr->GetComponents<UNodePath>(AllNodePaths);
 				UNodePath* StartingNodePtr = AllNodePaths[LevelBlockPtr->NodePathIndex];
 				TileMovementComponent->LocatedNodePath = StartingNodePtr;
+				StartingNodePtr->bIsBlocked = true;
 			}
 		}
 	}

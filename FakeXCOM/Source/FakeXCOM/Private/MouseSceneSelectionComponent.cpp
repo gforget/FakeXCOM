@@ -171,8 +171,7 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 		{
 			if (UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation))
 			{
-				const ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(ChosenNodePath->GetOwner());
-				if (LevelBlockPtr->UnitOnBlock == nullptr)
+				if (!ChosenNodePath->bIsBlocked)
 				{
 					TilePathFinder->MoveUnit(TBTacticalGameMode->GetCurrentlySelectedUnit(), ChosenNodePath);
 

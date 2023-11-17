@@ -18,8 +18,8 @@ class FAKEXCOM_API UAbilityButton : public UButton
 	
 public :
 	UAbilityButton();
-	
-	~UAbilityButton();
+
+	virtual ~UAbilityButton() override;
 	
 	UPROPERTY(BlueprintReadWrite)
 	AUnit* UnitRef;

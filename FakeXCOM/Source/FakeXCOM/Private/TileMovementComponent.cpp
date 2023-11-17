@@ -46,9 +46,9 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		UNodePath* NodePathPtr = Path.Pop();
 		if (Path.Size() == 0)
 		{
-			Cast<ALevelBlock>(LocatedNodePath->GetOwner())->UnitOnBlock = nullptr;
+			LocatedNodePath->bIsBlocked = false;
 			LocatedNodePath = NodePathPtr;
-			Cast<ALevelBlock>(NodePathPtr->GetOwner())->UnitOnBlock = Cast<AUnit>(GetOwner());
+			LocatedNodePath->bIsBlocked = true;
 		} 
 		
 		Destination = NodePathPtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f);

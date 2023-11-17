@@ -46,7 +46,8 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Initia
 			UNodePath* next = current->AllNeighbours[i];
 			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllNeighboursBaseCost[i]*next->WeightCost;
 			
-			if (!cost_so_far.Contains(next->IdNode) || new_cost < GetCostFromCostSoFar(cost_so_far, next->IdNode))
+			if ((!cost_so_far.Contains(next->IdNode) || new_cost < GetCostFromCostSoFar(cost_so_far, next->IdNode))
+				&& !next->bIsBlocked )
 			{
 				AddCostToCostSoFar(cost_so_far, next->IdNode, new_cost);
 				AddNodeToCameFrom(came_from, next->IdNode, current);

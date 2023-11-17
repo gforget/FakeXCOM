@@ -62,6 +62,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
 	int NbNeighbour;
+
+	UPROPERTY()
+	bool bIsBlocked = false;
 	
 	// weight cost
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "NodePath Properties")
