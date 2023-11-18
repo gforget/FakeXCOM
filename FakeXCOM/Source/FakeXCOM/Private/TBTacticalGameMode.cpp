@@ -6,9 +6,15 @@
 #include "LevelUI.h"
 #include "NodePath.h"
 #include "TBTacticalMainController.h"
-#include "Unit.h"
 #include "TilePathFinder.h"
+#include "UI3DManager.h"
+#include "Unit.h"
 #include "Blueprint/UserWidget.h"
+
+ATBTacticalGameMode::ATBTacticalGameMode()
+{
+	UI3DManagerComponent = CreateDefaultSubobject<UUI3DManager>(TEXT("UI 3D Manager Component"));
+}
 
 void ATBTacticalGameMode::BeginPlay()
 {
@@ -116,8 +122,7 @@ AUnit* ATBTacticalGameMode::SelectUnit(int UnitId)
 
 	SelectedUnitId = UnitId;
 	MainController->GoToActor(AllUnitReference[SelectedUnitId]);
-	LevelUI->OnUnitSelectedEvent.Broadcast(AllUnitReference[SelectedUnitId]);
-	
+	OnUnitSelectedEvent.Broadcast(AllUnitReference[SelectedUnitId]);
 	return AllUnitReference[SelectedUnitId];
 }
 

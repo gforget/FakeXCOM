@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
 #include "UnitAttributeSet.generated.h"
 
@@ -27,6 +28,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayAttributeData MaxActions;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayAttributeData MaxMoveDistancePerAction;
 public:
 
 	//Health Attribute
@@ -51,5 +54,10 @@ public:
 	void SetMaxActions(float NewVal) const;
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(MaxActions);
 
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UUnitAttributeSet, MaxMoveDistancePerAction);
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(MaxMoveDistancePerAction);
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(MaxMoveDistancePerAction);
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(MaxMoveDistancePerAction);
+	
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 };

@@ -3,24 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Cover3DIcon.h"
 #include "Components/ActorComponent.h"
 #include "MouseSceneSelectionComponent.generated.h"
 class ATBTacticalGameMode;
 class AUnit;
 class UNodePath;
 class UTilePathFinder;
-
-USTRUCT()
-struct NO_API FAssignCover3DIcon
-{
-	GENERATED_BODY()
-	
-	UPROPERTY()
-	TArray<ACover3DIcon*> Entries;
-
-	FAssignCover3DIcon(){}
-};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UMouseSceneSelectionComponent : public UActorComponent
@@ -41,15 +29,6 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mouse Scene Selection Properties")
 	bool bDebugMouseLineTrace = false;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
-	TSubclassOf<ACover3DIcon> Cover3DIconClass;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
-	TSubclassOf<AActor> Select3DIconClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mouse Scene Selection Properties")
-	TSubclassOf<AActor> Path3DIconClass;
 	
 private:
 	void LeftClickSelection();
@@ -68,16 +47,5 @@ private:
 	
 	UPROPERTY()
 	UNodePath* CurrentMouseOverNodePath;
-
-	UPROPERTY()
-	AActor* Select3DIcon;
-
-	UPROPERTY()
-	TArray<AActor*> AllPath3DIcons;
 	
-	UPROPERTY()
-	TArray<ACover3DIcon*> AllMouseOverCover3DIcon;
-
-	UPROPERTY()
-	TMap<int, FAssignCover3DIcon> AllAssignCover3DIcon;
 };

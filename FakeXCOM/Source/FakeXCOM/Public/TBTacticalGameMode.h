@@ -11,10 +11,9 @@
 class UTilePathFinder;
 class ASoldier;
 class ATBTacticalMainController;
+class UUI3DManager;
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSelectedEvent, AUnit*, Unit);
 
 UCLASS()
 class FAKEXCOM_API ATBTacticalGameMode : public AGameModeBase
@@ -27,6 +26,11 @@ protected:
 	
 public:
 
+	ATBTacticalGameMode();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UUI3DManager* UI3DManagerComponent;
+	
 	UPROPERTY(BlueprintReadOnly, Category="Global Object")
 	UTilePathFinder* TilePathFinder;
 	
@@ -57,6 +61,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TMap<int, AUnit*> AllUnitReference;
 
+	UPROPERTY(BlueprintAssignable)
+	FUnitSelectedEvent OnUnitSelectedEvent;
+	
 	void SelectNextUnit();
 	void SelectPreviousUnit();
 

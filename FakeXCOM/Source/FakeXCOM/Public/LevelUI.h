@@ -11,8 +11,8 @@ class UCanvasPanel;
 class UOverlay;
 class UCanvasPanelSlot;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSpawnEvent, AUnit*, Unit);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSelectedEvent, AUnit*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSpawnEvent, AUnit*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSelectedEvent, AUnit*, Unit);
 
 UCLASS()
 class FAKEXCOM_API ULevelUI : public UUserWidget
@@ -26,13 +26,14 @@ public:
 	UPROPERTY()
 	APlayerController*  PlayerController;
 	
+	virtual bool Initialize() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY(BlueprintAssignable, Category = "Main Events")
-	FUnitSpawnEvent OnUnitSpawnEvent;
+	FBPUnitSpawnEvent OnBPUnitSpawnEvent;
 
 	UPROPERTY(BlueprintAssignable, Category = "Main Events")
-	FUnitSelectedEvent OnUnitSelectedEvent;
+	FBPUnitSelectedEvent OnBPUnitSelectedEvent;
 	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
 	void AddHealthBar(UOverlay* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas);
@@ -45,11 +46,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "HealtBar Properties")
 	float UnfocusAlpha = 0.5f;
-	
-protected:
-	
-	// You can add variables here
 
-	private:
-	// You can add private functions or variables here
+private:
+	
+	UFUNCTION()
+	void OnUnitSelected(AUnit* Unit);
 };

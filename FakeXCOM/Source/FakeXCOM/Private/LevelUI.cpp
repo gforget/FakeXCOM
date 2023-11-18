@@ -11,21 +11,30 @@
 #include "Components/Overlay.h"
 #include "GameFramework/GameUserSettings.h"
 
+bool ULevelUI::Initialize()
+{
+	Super::Initialize();
+	
+	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (TBTacticalGameMode)
+	{
+		TBTacticalGameMode->OnUnitSelectedEvent.AddDynamic(this, &ULevelUI::OnUnitSelected);
+	}
+	
+	return true;
+}
+
+void ULevelUI::OnUnitSelected(AUnit* Unit)
+{
+	OnBPUnitSelectedEvent.Broadcast(Unit);
+}
+
 void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	
-	//TODO:maybe define it in the construct script ?
-	if (!TBTacticalGameMode)
-	{
-		TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
-	}
-	
-	if (!PlayerController)
-	{
-		PlayerController = GetWorld()->GetFirstPlayerController();
-	}
-
 	const float ViewPortScale = UWidgetLayoutLibrary::GetViewportScale(GetWorld());
 	const UGameUserSettings* GameUserSettings = UGameUserSettings::GetGameUserSettings();
 	
@@ -44,6 +53,8 @@ void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		Cast<UCanvasPanelSlot>(HealthBarAssoc.Value->Slot)->SetPosition(ScreenLocation);
 	}
 }
+
+
 
 void ULevelUI::AddHealthBar(UOverlay* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas)
 {

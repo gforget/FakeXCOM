@@ -10,6 +10,7 @@
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
 #include "TilePathFinder.h"
+#include "UI3DManager.h"
 
 
 // Sets default values for this component's properties
@@ -58,81 +59,42 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 		if (ChosenNodePath && (!CurrentMouseOverNodePath || CurrentMouseOverNodePath->IdNode != ChosenNodePath->IdNode))
 		{
 			CurrentMouseOverNodePath = ChosenNodePath;
-			
-			//Create Path3dIcons
-			if (Path3DIconClass)
-			{
-				if (AllPath3DIcons.Num() > 0)
-				{
-					for (int i=0; i<AllPath3DIcons.Num();i++)
-					{
-						AllPath3DIcons[i]->Destroy();
-					}
-					AllPath3DIcons.Empty();
-				}
+		
+			TBTacticalGameMode->UI3DManagerComponent->ClearPath3DIcons();
 
-				if (UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder)
-				{
-					GenericStack<UNodePath*> PathStack = TilePathFinderPtr->GetPathToDestination(
-							TBTacticalGameMode->GetCurrentlySelectedUnit()->TileMovementComponent->LocatedNodePath,
-							CurrentMouseOverNodePath
-							);
-					
-					while(!PathStack.IsEmpty())
-					{
-						const UNodePath* CurrentNodePath = PathStack.Pop();
-						AllPath3DIcons.Add(GetWorld()->SpawnActor<AActor>(Path3DIconClass,
-							CurrentNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
-							CurrentNodePath->GetComponentRotation()
-							));
-					}
-				}
-			}
-			
-			//Create Select 3d Icon
-			if (Select3DIconClass)
+			if (UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder)
 			{
-				if (Select3DIcon)
-				{
-					Select3DIcon->Destroy();
-					Select3DIcon = nullptr;
-				}
+				GenericStack<UNodePath*> PathStack = TilePathFinderPtr->GetPathToDestination(
+						TBTacticalGameMode->GetCurrentlySelectedUnit()->TileMovementComponent->LocatedNodePath,
+						CurrentMouseOverNodePath
+						);
 				
-				Select3DIcon = GetWorld()->SpawnActor<AActor>(Select3DIconClass,
-					CurrentMouseOverNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
-					CurrentMouseOverNodePath->GetComponentRotation()
+				while(!PathStack.IsEmpty())
+				{
+					const UNodePath* CurrentNodePath = PathStack.Pop();
+					TBTacticalGameMode->UI3DManagerComponent->AddPath3DIcon(
+					CurrentNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+					CurrentNodePath->GetComponentRotation()
 					);
+				}
 			}
+		
+			//Create Select 3d Icon
+			TBTacticalGameMode->UI3DManagerComponent->ClearSelect3DIcon();
+			TBTacticalGameMode->UI3DManagerComponent->AddSelect3DIcon(
+				CurrentMouseOverNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+				CurrentMouseOverNodePath->GetComponentRotation()
+				);
+			
 
 			//Create Cover 3D Icon
-			if (Cover3DIconClass)
+			TBTacticalGameMode->UI3DManagerComponent->ClearCover3DIcons();
+			for (int i=0; i<CurrentMouseOverNodePath->AllCoverInfos.Num(); i++)
 			{
-				if (AllMouseOverCover3DIcon.Num() > 0)
-				{
-					for (int i=0; i<AllMouseOverCover3DIcon.Num(); i++)
-					{
-						AllMouseOverCover3DIcon[i]->Destroy();
-					}
-					AllMouseOverCover3DIcon.Empty();
-				}
-				
-				for (int i=0; i<CurrentMouseOverNodePath->AllCoverInfos.Num(); i++)
-				{
-					ACover3DIcon* Cover3DIcon = GetWorld()->SpawnActor<ACover3DIcon>(Cover3DIconClass,
-						CurrentMouseOverNodePath->AllCoverInfos[i].IconPosition,
-						CurrentMouseOverNodePath->AllCoverInfos[i].IconRotation);
-
-					if (CurrentMouseOverNodePath->AllCoverInfos[i].FullCover)
-					{
-						Cover3DIcon->FullShield->SetVisibility(true);
-					}
-					else
-					{
-						Cover3DIcon->HalfShield->SetVisibility(true);
-					}
-					
-					AllMouseOverCover3DIcon.Add(Cover3DIcon);
-				}
+				TBTacticalGameMode->UI3DManagerComponent->AddCover3DIcon(
+					CurrentMouseOverNodePath->AllCoverInfos[i].IconPosition,
+					CurrentMouseOverNodePath->AllCoverInfos[i].IconRotation,
+					CurrentMouseOverNodePath->AllCoverInfos[i].FullCover);
 			}
 		}
 	}
@@ -157,14 +119,7 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 		}
 		
 		//clear the path icon
-		if (AllPath3DIcons.Num() > 0)
-		{
-			for (int i=0; i<AllPath3DIcons.Num();i++)
-			{
-				AllPath3DIcons[i]->Destroy();
-			}
-			AllPath3DIcons.Empty();
-		}
+		TBTacticalGameMode->UI3DManagerComponent->ClearPath3DIcons();
 		
 		FVector HitLocation;
 		if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(SelectActorFromMousePosition(HitLocation)))
@@ -176,22 +131,7 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 					TilePathFinder->MoveUnit(TBTacticalGameMode->GetCurrentlySelectedUnit(), ChosenNodePath);
 
 					//Assign the cover icon so they do not get deleted when a unit is assign on a nodepath
-					if (!AllAssignCover3DIcon.Contains(TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit))
-					{
-						AllAssignCover3DIcon.Add(TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit, FAssignCover3DIcon());
-					}
-					
-					if (AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries.Num() > 0)
-					{
-						for (int i=0; i<AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries.Num(); i++)
-						{
-							AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries[i]->Destroy();
-						}
-						AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries.Empty();
-					}
-					
-					AllAssignCover3DIcon[TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit].Entries.Append(AllMouseOverCover3DIcon);
-					AllMouseOverCover3DIcon.Empty();
+					TBTacticalGameMode->UI3DManagerComponent->ConnectCover3DIconsToUnit(TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit);
 				}
 			}
 		}

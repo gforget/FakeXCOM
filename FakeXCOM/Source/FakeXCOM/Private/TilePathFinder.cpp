@@ -6,6 +6,7 @@
 #include "..\Public\GenericPriorityQueue.h"
 #include "NodePath.h"
 #include "TileMovementComponent.h"
+#include "UnitAttributeSet.h"
 
 void UTilePathFinder::SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent)
 {
@@ -86,6 +87,62 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Initia
 	
 	return PathStack;
 }
+void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit, TArray<UNodePath*>& AllBaseDistanceNode,
+	TArray<UNodePath*>& AllLongDistanceNode)
+{
+	const int BaseDistance = Unit->UnitAttributeSet->GetMaxMoveDistancePerAction();
+	const int LongDistance = BaseDistance*2;
+	
+	UNodePath* InitialNode = Unit->TileMovementComponent->LocatedNodePath;
+	
+	GenericPriorityQueue<UNodePath*, float> frontier;
+	frontier.Enqueue(InitialNode, 0.0f);
+
+	TMap<int, UNodePath*> came_from;
+	AddNodeToCameFrom(came_from, InitialNode->IdNode, nullptr);
+	
+	TMap<int, float> cost_so_far;
+	AddCostToCostSoFar(cost_so_far, InitialNode->IdNode, 0.0f);
+	
+	int iteration = 0;
+	while (!frontier.IsEmpty())
+	{
+		iteration++;
+		UNodePath* current = frontier.Dequeue();
+		for (int i = 0; i<current->AllNeighbours.Num(); i++)
+		{
+			UNodePath* next = current->AllNeighbours[i];
+			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllNeighboursBaseCost[i]*next->WeightCost;
+			
+			if ((!cost_so_far.Contains(next->IdNode) || new_cost < GetCostFromCostSoFar(cost_so_far, next->IdNode))
+				&& !next->bIsBlocked )
+			{
+				AddCostToCostSoFar(cost_so_far, next->IdNode, new_cost);
+				AddNodeToCameFrom(came_from, next->IdNode, current);
+				frontier.Enqueue(next, new_cost);
+				
+				if (iteration == BaseDistance)
+				{
+					AllBaseDistanceNode.Add(next);
+				}
+				else if (iteration == LongDistance)
+				{
+					AllLongDistanceNode.Add(next);
+				}
+			}
+		}
+
+		if (iteration == LongDistance)
+		{
+			break;
+		}
+	}
+	
+	// clear memory to avoid memory leak
+	frontier.Clear(); 
+	came_from.Empty();
+	cost_so_far.Empty();
+}
 
 void UTilePathFinder::AddNodeToCameFrom(TMap<int, UNodePath*>& came_from, int IdNode, UNodePath* ValueNode)
 {
@@ -138,3 +195,5 @@ void UTilePathFinder::MoveUnit(const AUnit* Unit, UNodePath* ChosenNode)
 		Unit->TileMovementComponent->FollowPath(GetPathToDestination(Unit->TileMovementComponent->LocatedNodePath, ChosenNode));
 	}
 }
+
+

@@ -164,6 +164,6 @@ void AUnit::Initialize()
 
 	//Adding Reference to this soldier
 	TBTacticalGameMode->AllUnitReference.Add(IdUnit, this);
-	TBTacticalGameMode->LevelUI->OnUnitSpawnEvent.Broadcast(this);
+	TBTacticalGameMode->LevelUI->OnBPUnitSpawnEvent.Broadcast(this);
 }
 

@@ -32,12 +32,15 @@ public:
 	void SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent);
 	
 	GenericStack<UNodePath*> GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode);
+
+	void MoveUnit(const AUnit* Unit, UNodePath* ChosenNode);
+
+	void GetNodeDistanceLimitForUnit(AUnit* Unit, TArray<UNodePath*>& BaseDistance, TArray<UNodePath*>& LongDistance);
 	
+private:
 	void AddNodeToCameFrom(TMap<int, UNodePath*>& came_from, int IdNode, UNodePath* ValueNode);
 	UNodePath* GetNodeFromCameFrom(TMap<int, UNodePath*>& came_from, int IdNode);
 	
 	void AddCostToCostSoFar(TMap<int, float>& cost_so_far,int IdNode, float Cost);
 	float GetCostFromCostSoFar(TMap<int, float>& cost_so_far, int IdNode);
-
-	void MoveUnit(const AUnit* Unit, UNodePath* ChosenNode);
 };
