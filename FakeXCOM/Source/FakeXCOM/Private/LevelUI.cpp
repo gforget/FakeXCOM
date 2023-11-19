@@ -5,6 +5,7 @@
 
 #include "DebugHeader.h"
 #include "TBTacticalGameMode.h"
+#include "UnitManager.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -17,13 +18,16 @@ bool ULevelUI::Initialize()
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
 	PlayerController = GetWorld()->GetFirstPlayerController();
-
-	if (TBTacticalGameMode)
-	{
-		TBTacticalGameMode->OnUnitSelectedEvent.AddDynamic(this, &ULevelUI::OnUnitSelected);
-	}
 	
 	return true;
+}
+
+void ULevelUI::Initialization()
+{
+	if (TBTacticalGameMode)
+	{
+		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &ULevelUI::OnUnitSelected);
+	}
 }
 
 void ULevelUI::OnUnitSelected(AUnit* Unit)
@@ -41,7 +45,7 @@ void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	for (const TPair<int, UOverlay*>& HealthBarAssoc : HealthBarAssociationMap)
 	{
 		FVector2d ScreenLocation;
-		const AUnit* CurrentUnit = TBTacticalGameMode->AllUnitReference[HealthBarAssoc.Key];
+		const AUnit* CurrentUnit = TBTacticalGameMode->UnitManager->AllUnitReference[HealthBarAssoc.Key];
 		const FVector UnitLocation =CurrentUnit->GetActorLocation() + CurrentUnit->HealthBarAnchor;
 		
 		PlayerController->ProjectWorldLocationToScreen(UnitLocation, ScreenLocation, true);
@@ -53,8 +57,6 @@ void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		Cast<UCanvasPanelSlot>(HealthBarAssoc.Value->Slot)->SetPosition(ScreenLocation);
 	}
 }
-
-
 
 void ULevelUI::AddHealthBar(UOverlay* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas)
 {

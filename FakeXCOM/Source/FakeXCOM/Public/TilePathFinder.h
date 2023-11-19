@@ -43,4 +43,7 @@ private:
 	
 	void AddCostToCostSoFar(TMap<int, float>& cost_so_far,int IdNode, float Cost);
 	float GetCostFromCostSoFar(TMap<int, float>& cost_so_far, int IdNode);
+
+	void AddStepToStepSoFar(TMap<int, int>& step_so_far,int IdNode, int Step);
+	int GetStepFromStepSoFar(TMap<int, int>& step_so_far, int IdNode);
 };

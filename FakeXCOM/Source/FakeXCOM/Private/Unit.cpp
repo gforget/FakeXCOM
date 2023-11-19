@@ -9,6 +9,7 @@
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
 #include "UnitAbility.h"
+#include "UnitManager.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -163,7 +164,7 @@ void AUnit::Initialize()
 	}
 
 	//Adding Reference to this soldier
-	TBTacticalGameMode->AllUnitReference.Add(IdUnit, this);
+	TBTacticalGameMode->UnitManager->AllUnitReference.Add(IdUnit, this);
 	TBTacticalGameMode->LevelUI->OnBPUnitSpawnEvent.Broadcast(this);
 }
 

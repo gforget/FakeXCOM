@@ -48,6 +48,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "3D Icons Classes")
 	TSubclassOf<AActor> LongDistanceLimitIconClass;
+
+	void Initialize();
 	
 	void ClearCover3DIcons();
 	void AddCover3DIcon(FVector Location, FRotator Rotation, bool bFullCover);
@@ -65,6 +67,9 @@ private:
 	AActor* Select3DIcon;
 
 	UPROPERTY()
+	TArray<AActor*> AllPathDistance3DIcons;
+	
+	UPROPERTY()
 	TArray<AActor*> AllPath3DIcons;
 	
 	UPROPERTY()
@@ -80,4 +85,5 @@ private:
 	void OnUnitSelected(AUnit* Unit);
 
 	void CreateDistanceLimitUI(AUnit* Unit);
+	void ClearDistanceLimitUI();
 };

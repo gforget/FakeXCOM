@@ -29,6 +29,7 @@ public:
 	virtual bool Initialize() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+	void Initialization();
 	UPROPERTY(BlueprintAssignable, Category = "Main Events")
 	FBPUnitSpawnEvent OnBPUnitSpawnEvent;
 

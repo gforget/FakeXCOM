@@ -4,6 +4,7 @@
 #include "DebugHeader.h"
 #include "TileMovementComponent.h"
 #include "MouseSceneSelectionComponent.h"
+#include "UnitManager.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -237,13 +238,13 @@ void ATBTacticalMainController::RotateCameraTimerFunction()
 void ATBTacticalMainController::PressSelectPreviousSoldier()
 {
 	if (IsCameraControlLock()) return;
-	TBTacticalGameMode->SelectPreviousUnit();
+	TBTacticalGameMode->UnitManager->SelectPreviousUnit();
 }
 
 void ATBTacticalMainController::PressSelectNextSoldier()
 {
 	if (IsCameraControlLock()) return;
-	TBTacticalGameMode->SelectNextUnit();
+	TBTacticalGameMode->UnitManager->SelectNextUnit();
 }
 
 void ATBTacticalMainController::PressCameraUp()

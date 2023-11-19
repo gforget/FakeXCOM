@@ -103,36 +103,47 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit, TArray<UNodePath*
 	
 	TMap<int, float> cost_so_far;
 	AddCostToCostSoFar(cost_so_far, InitialNode->IdNode, 0.0f);
+
+	TMap<int, int> step_so_far;
+	AddStepToStepSoFar(step_so_far, InitialNode->IdNode, 0);
 	
-	int iteration = 0;
 	while (!frontier.IsEmpty())
 	{
-		iteration++;
 		UNodePath* current = frontier.Dequeue();
+		int lowestNewStep = -1;
+		
 		for (int i = 0; i<current->AllNeighbours.Num(); i++)
 		{
 			UNodePath* next = current->AllNeighbours[i];
 			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllNeighboursBaseCost[i]*next->WeightCost;
-			
+			const int new_step = GetStepFromStepSoFar(step_so_far, current->IdNode) + 1;
+			if (lowestNewStep == -1) lowestNewStep = new_step;
+				
 			if ((!cost_so_far.Contains(next->IdNode) || new_cost < GetCostFromCostSoFar(cost_so_far, next->IdNode))
 				&& !next->bIsBlocked )
 			{
+				AddStepToStepSoFar(step_so_far, next->IdNode, new_step);
 				AddCostToCostSoFar(cost_so_far, next->IdNode, new_cost);
 				AddNodeToCameFrom(came_from, next->IdNode, current);
 				frontier.Enqueue(next, new_cost);
 				
-				if (iteration == BaseDistance)
+				if (new_step <= BaseDistance)
 				{
 					AllBaseDistanceNode.Add(next);
 				}
-				else if (iteration == LongDistance)
+				else if (new_step <= LongDistance)
 				{
 					AllLongDistanceNode.Add(next);
+				}
+
+				if (lowestNewStep < new_step)
+				{
+					lowestNewStep = new_step;
 				}
 			}
 		}
 
-		if (iteration == LongDistance)
+		if (lowestNewStep > LongDistance + 3) // optimisation done by approximation, could be higher than +3
 		{
 			break;
 		}
@@ -186,6 +197,28 @@ float UTilePathFinder::GetCostFromCostSoFar(TMap<int, float>& cost_so_far, int I
 	}
 
 	return 0.0f;
+}
+
+void UTilePathFinder::AddStepToStepSoFar(TMap<int, int>& step_so_far, int IdNode, int Step)
+{
+	if (!step_so_far.Contains(IdNode))
+	{
+		step_so_far.Add(IdNode, Step);
+	}
+	else
+	{
+		step_so_far[IdNode] = Step;
+	}
+}
+
+int UTilePathFinder::GetStepFromStepSoFar(TMap<int, int>& step_so_far, int IdNode)
+{
+	if (step_so_far.Contains(IdNode))
+	{
+		return step_so_far[IdNode];
+	}
+
+	return 0;
 }
 
 void UTilePathFinder::MoveUnit(const AUnit* Unit, UNodePath* ChosenNode)

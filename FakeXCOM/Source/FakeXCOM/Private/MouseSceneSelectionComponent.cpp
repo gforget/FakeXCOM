@@ -11,7 +11,7 @@
 #include "TileMovementComponent.h"
 #include "TilePathFinder.h"
 #include "UI3DManager.h"
-
+#include "UnitManager.h"
 
 // Sets default values for this component's properties
 UMouseSceneSelectionComponent::UMouseSceneSelectionComponent()
@@ -32,7 +32,13 @@ void UMouseSceneSelectionComponent::BeginPlay()
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
 	TBTacticalGameMode->MainController = Cast<ATBTacticalMainController>(GetOwner());
+	SetComponentTickEnabled (false);
+}
+
+void UMouseSceneSelectionComponent::Initialize()
+{
 	TilePathFinder = TBTacticalGameMode->TilePathFinder;
+	SetComponentTickEnabled (true);
 }
 
 
@@ -41,13 +47,7 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
-	//TODO: Could create an event so we know when GameMode has finish it begin play
-	if (!TilePathFinder)
-	{
-		TilePathFinder = TBTacticalGameMode->TilePathFinder;
-	}
-	
-	if (!TBTacticalGameMode->GetCurrentlySelectedUnit() || !TilePathFinder->bCanMoveUnit) //Normally there is always a soldier selected
+	if (!TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit() || !TilePathFinder->bCanMoveUnit) //Normally there is always a soldier selected
 	{
 		return;
 	}
@@ -65,7 +65,7 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 			if (UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder)
 			{
 				GenericStack<UNodePath*> PathStack = TilePathFinderPtr->GetPathToDestination(
-						TBTacticalGameMode->GetCurrentlySelectedUnit()->TileMovementComponent->LocatedNodePath,
+						TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->TileMovementComponent->LocatedNodePath,
 						CurrentMouseOverNodePath
 						);
 				
@@ -73,7 +73,7 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 				{
 					const UNodePath* CurrentNodePath = PathStack.Pop();
 					TBTacticalGameMode->UI3DManagerComponent->AddPath3DIcon(
-					CurrentNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+					CurrentNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.6f),
 					CurrentNodePath->GetComponentRotation()
 					);
 				}
@@ -105,13 +105,13 @@ void UMouseSceneSelectionComponent::LeftClickSelection()
 	FVector HitLocation;
 	if (const AUnit* SelectedUnitPtr = Cast<AUnit>(SelectActorFromMousePosition(HitLocation)))
 	{
-		TBTacticalGameMode->SelectUnit(SelectedUnitPtr->IdUnit);
+		TBTacticalGameMode->UnitManager->SelectUnit(SelectedUnitPtr->IdUnit);
 	}
 }
 
 void UMouseSceneSelectionComponent::RightClickSelection()
 {
-	if (TBTacticalGameMode->GetCurrentlySelectedUnit())
+	if (TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit())
 	{
 		if (!TilePathFinder->bCanMoveUnit)
 		{
@@ -128,10 +128,10 @@ void UMouseSceneSelectionComponent::RightClickSelection()
 			{
 				if (!ChosenNodePath->bIsBlocked)
 				{
-					TilePathFinder->MoveUnit(TBTacticalGameMode->GetCurrentlySelectedUnit(), ChosenNodePath);
+					TilePathFinder->MoveUnit(TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit(), ChosenNodePath);
 
 					//Assign the cover icon so they do not get deleted when a unit is assign on a nodepath
-					TBTacticalGameMode->UI3DManagerComponent->ConnectCover3DIconsToUnit(TBTacticalGameMode->GetCurrentlySelectedUnit()->IdUnit);
+					TBTacticalGameMode->UI3DManagerComponent->ConnectCover3DIconsToUnit(TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->IdUnit);
 				}
 			}
 		}

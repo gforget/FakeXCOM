@@ -9,11 +9,9 @@
 #include "TBTacticalGameMode.generated.h"
 
 class UTilePathFinder;
-class ASoldier;
 class ATBTacticalMainController;
 class UUI3DManager;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSelectedEvent, AUnit*, Unit);
+class UUnitManager;
 
 UCLASS()
 class FAKEXCOM_API ATBTacticalGameMode : public AGameModeBase
@@ -30,6 +28,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UUI3DManager* UI3DManagerComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category="Global Object")
+	UUnitManager* UnitManager;
 	
 	UPROPERTY(BlueprintReadOnly, Category="Global Object")
 	UTilePathFinder* TilePathFinder;
@@ -51,22 +52,9 @@ public:
 
 	UPROPERTY()
 	ULevelUI* LevelUI;
-	
+
+	//TODO: will be put in the NodePath to spawn specific unit at a position
 	UPROPERTY(EditDefaultsOnly, Category = "Spawnable Unit")
 	TSubclassOf<AUnit> UnitClass;
-
-	UPROPERTY()
-	int SelectedUnitId = -1;
 	
-	UPROPERTY(BlueprintReadOnly)
-	TMap<int, AUnit*> AllUnitReference;
-
-	UPROPERTY(BlueprintAssignable)
-	FUnitSelectedEvent OnUnitSelectedEvent;
-	
-	void SelectNextUnit();
-	void SelectPreviousUnit();
-
-	AUnit* SelectUnit(int UnitId);
-	AUnit* GetCurrentlySelectedUnit();
 };

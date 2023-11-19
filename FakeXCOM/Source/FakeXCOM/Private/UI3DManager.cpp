@@ -8,33 +8,31 @@
 #include "NodePath.h"
 #include "TBTacticalGameMode.h"
 #include "TilePathFinder.h"
+#include "UnitManager.h"
 
-
-// Sets default values for this component's properties
 UUI3DManager::UUI3DManager()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
 }
 
-
-// Called when the game starts
 void UUI3DManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+}
+
+void UUI3DManager::Initialize()
+{
 	if (TBTacticalGameMode)
 	{
-		TBTacticalGameMode->OnUnitSelectedEvent.AddDynamic(this, &UUI3DManager::OnUnitSelected);
+		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &UUI3DManager::OnUnitSelected);
 	}
 }
 
 void UUI3DManager::OnUnitSelected(AUnit* Unit)
 {
+	ClearDistanceLimitUI();
 	CreateDistanceLimitUI(Unit);
 }
 
@@ -49,11 +47,31 @@ void UUI3DManager::CreateDistanceLimitUI(AUnit* Unit)
 
 		for (int i=0; i<AllBaseDistanceNode.Num(); i++)
 		{
-				GetWorld()->SpawnActor<AActor>(BaseDistanceLimitIconClass,
-					AllBaseDistanceNode[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
-					AllBaseDistanceNode[i]->GetComponentRotation()
-					);
+			AllPathDistance3DIcons.Add(GetWorld()->SpawnActor<AActor>(BaseDistanceLimitIconClass,
+				AllBaseDistanceNode[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+				AllBaseDistanceNode[i]->GetComponentRotation()
+				));
 		}
+		
+		for (int i=0; i<AllLongDistanceNode.Num(); i++)
+		{
+			AllPathDistance3DIcons.Add(GetWorld()->SpawnActor<AActor>(LongDistanceLimitIconClass,
+				AllLongDistanceNode[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+				AllLongDistanceNode[i]->GetComponentRotation()
+				));
+		}
+	}
+}
+
+void UUI3DManager::ClearDistanceLimitUI()
+{
+	if (AllPathDistance3DIcons.Num() > 0)
+	{
+		for (int i=0; i<AllPathDistance3DIcons.Num(); i++)
+		{
+			AllPathDistance3DIcons[i]->Destroy();
+		}
+		AllPathDistance3DIcons.Empty();
 	}
 }
 

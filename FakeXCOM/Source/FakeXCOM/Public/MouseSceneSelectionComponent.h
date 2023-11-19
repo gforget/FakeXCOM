@@ -10,6 +10,10 @@ class AUnit;
 class UNodePath;
 class UTilePathFinder;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLeftClickSelectActorEvent, AActor*, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRightClickSelectActorEvent, AActor*, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseOverActorEvent, AActor*, Actor);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UMouseSceneSelectionComponent : public UActorComponent
 {
@@ -24,11 +28,22 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	void Initialize();
+	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mouse Scene Selection Properties")
 	bool bDebugMouseLineTrace = false;
+
+	UPROPERTY(BlueprintAssignable)
+	FLeftClickSelectActorEvent OnLeftClickSelectActorEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FRightClickSelectActorEvent OnRightClickSelectActorEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FMouseOverActorEvent OnMouseOverActorEvent;
 	
 private:
 	void LeftClickSelection();

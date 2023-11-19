@@ -4,11 +4,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "LevelBlock.h"
 #include "LevelUI.h"
+#include "MouseSceneSelectionComponent.h"
 #include "NodePath.h"
 #include "TBTacticalMainController.h"
 #include "TilePathFinder.h"
 #include "UI3DManager.h"
 #include "Unit.h"
+#include "UnitManager.h"
 #include "Blueprint/UserWidget.h"
 
 ATBTacticalGameMode::ATBTacticalGameMode()
@@ -27,9 +29,10 @@ void ATBTacticalGameMode::BeginPlay()
 		LevelUI->AddToViewport();
 	}
 	
-	//Setup TilePathFinder
+	//Setup UObject
 	TilePathFinder = NewObject<UTilePathFinder>(GetTransientPackage(), UTilePathFinder::StaticClass());
-
+	UnitManager = NewObject<UUnitManager>(GetTransientPackage(), UUnitManager::StaticClass());
+	
 	//For some reason, assigning pointer generated here on other object result on them being deleted or not recognise later
 	TArray<AActor*> AllActors;
 	const UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
@@ -86,52 +89,14 @@ void ATBTacticalGameMode::BeginPlay()
 			}
 		}
 		
-		SelectUnit(CurrentIdUnit);
+		UnitManager->Initialize(this);
+		UI3DManagerComponent->Initialize();
+		MainController->MouseSceneSelectionComponent->Initialize();
+		LevelUI->Initialization();
+		bInitialized = true;
+		
+		UnitManager->SelectUnit(CurrentIdUnit);
 	}
-	
-	bInitialized = true;
 }
 
-void ATBTacticalGameMode::SelectNextUnit()
-{
-	//TODO: create a loop to select soldier who turn didn't finish and can perform action this turn
-	//Soldier are never removed from the list, even when dead
-	
-	SelectedUnitId++;
-	if (SelectedUnitId >= AllUnitReference.Num())
-	{
-		SelectedUnitId = 0;
-	}
 
-	SelectUnit(SelectedUnitId);
-}
-
-void ATBTacticalGameMode::SelectPreviousUnit()
-{
-	SelectedUnitId--;
-	if (SelectedUnitId < 0)
-	{
-		SelectedUnitId = AllUnitReference.Num()-1;
-	}
-	SelectUnit(SelectedUnitId);
-}
-
-AUnit* ATBTacticalGameMode::SelectUnit(int UnitId)
-{
-	DebugScreen("New Soldier Selected !", FColor::Yellow);
-
-	SelectedUnitId = UnitId;
-	MainController->GoToActor(AllUnitReference[SelectedUnitId]);
-	OnUnitSelectedEvent.Broadcast(AllUnitReference[SelectedUnitId]);
-	return AllUnitReference[SelectedUnitId];
-}
-
-AUnit* ATBTacticalGameMode::GetCurrentlySelectedUnit()
-{
-	if (SelectedUnitId != -1)
-	{
-		return AllUnitReference[SelectedUnitId];	
-	}
-	
-	return nullptr;
-}
