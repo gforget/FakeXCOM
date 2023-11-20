@@ -132,20 +132,20 @@ bool UUI3DManager::TrySpawnIcon(const UNodePath* NodePath, int DistanceLimit)
 	//0 to 3 index are all vertical neighbour, which are the only one we are interested in
 	for (int i=0; i<4; i++)
 	{
-		if (!NodePath->AllNeighbours[i])
+		if (!NodePath->AllNeighboursConnectionInfo[i])
 		{
 			bSpawnIcon = true;
 			break;
 		}
 		
-		// if (NodePath->AllNeighboursConnectedStatus[i])
-		// {
-		// 	if (NodePath->AllNeighboursConnectedStatus[i]->NbSteps > DistanceLimit)
-		// 	{
-		// 		bSpawnIcon = true;
-		// 		break;
-		// 	}
-		// }
+		if (NodePath->AllNeighboursConnectionInfo[i])
+		{
+			if (NodePath->AllNeighboursConnectionInfo[i]->NbSteps > DistanceLimit)
+			{
+				bSpawnIcon = true;
+				break;
+			}
+		}
 	}
 
 	return bSpawnIcon;

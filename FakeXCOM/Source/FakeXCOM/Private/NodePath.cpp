@@ -10,21 +10,13 @@
 // Sets default values for this component's properties
 UNodePath::UNodePath()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UNodePath::Initialize()
 {
-	//Get Game Mode
-	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
-	if (TBTacticalGameMode)
-	{
-		TBTacticalGameMode->TilePathFinder->AllNodePaths.Add(this);
-	}
-	
 	//Initiate AllNeighbour
-	//AllNeighbours.Init(false, 8);
-	AllNeighbours.Init(nullptr, 8);
+	AllNeighboursConnectionInfo.Init(nullptr, 8);
 	
 	//Calculate Rotation of the point compare to the ground alignment
 	FHitResult HitResult1;
@@ -44,7 +36,7 @@ void UNodePath::Initialize()
 	ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(GetOwner());
 	FVector LevelBlockPosition = GetComponentLocation() + (LevelBlockPtr->GetActorUpVector() * 50.0f);
 	
-	//Get Neighbour in all 8 directions
+	//Get Neighbour in all 8 directionsa
 	TArray<FVector> DirectionVectors;
 
 	//vertical direction
@@ -130,8 +122,7 @@ void UNodePath::Initialize()
 				{
 					if (TryConnectNeighbour(i, DirectionVectors, foundBlock, foundVoid, ChosenNodePath, LevelBlockPtr, NeighbourLevelBlock))
 					{
-						//AllNeighbours[i] = true;
-						AllNeighbours[i] = ChosenNodePath;
+						AllNeighboursConnectionInfo[i] = ChosenNodePath;
 						AllConnectedNeighbours.Add(ChosenNodePath);
 						if (i<4)
 						{
@@ -163,7 +154,6 @@ void UNodePath::Initialize()
 void UNodePath::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 bool UNodePath::TryConnectNeighbour(int IndexDirection, TArray<FVector>& DirectionVectors, TArray<bool>& foundBlock, TArray<bool>& foundVoid, UNodePath* ChosenNodePath, ALevelBlock* LevelBlockPtr, ALevelBlock* NeighbourLevelBlock)
@@ -257,7 +247,12 @@ bool UNodePath::TryConnectNeighbour(int IndexDirection, TArray<FVector>& Directi
 void UNodePath::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	
+	if (TBTacticalGameMode->bInitialized)
+	{
+		TBTacticalGameMode->TilePathFinder->AllNodePaths.Add(this);
+		SetComponentTickEnabled(false);
+	}
 }
 

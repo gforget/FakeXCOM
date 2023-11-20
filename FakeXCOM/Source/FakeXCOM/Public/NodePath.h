@@ -54,10 +54,10 @@ public:
 	ATBTacticalGameMode*  TBTacticalGameMode;
 	
 	UPROPERTY()
-	TArray<UNodePath*> AllNeighbours;
+	TArray<UNodePath*> AllNeighboursConnectionInfo; //use 0-3 vertical position, 4-7 diagonal setup, can have null reference
 	
 	UPROPERTY()
-	TArray<UNodePath*> AllConnectedNeighbours;
+	TArray<UNodePath*> AllConnectedNeighbours; //Only contain connected neighbour
 
 	UPROPERTY()
 	TArray<float> AllConnectedNeighboursBaseCost;
