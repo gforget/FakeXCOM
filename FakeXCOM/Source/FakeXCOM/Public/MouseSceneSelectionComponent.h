@@ -10,9 +10,9 @@ class AUnit;
 class UNodePath;
 class UTilePathFinder;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLeftClickSelectActorEvent, AActor*, Actor);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRightClickSelectActorEvent, AActor*, Actor);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseOverActorEvent, AActor*, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLeftClickSelectActorEvent, AActor*, Actor, FVector, HitLocation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRightClickSelectActorEvent, AActor*, Actor, FVector, HitLocation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMouseOverActorEvent, AActor*, Actor, FVector, HitLocation);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UMouseSceneSelectionComponent : public UActorComponent
@@ -59,8 +59,7 @@ private:
 	
 	UPROPERTY()
 	UTilePathFinder* TilePathFinder;
-	
+
 	UPROPERTY()
-	UNodePath* CurrentMouseOverNodePath;
-	
+	AActor* CurrentMouseOverActor;
 };

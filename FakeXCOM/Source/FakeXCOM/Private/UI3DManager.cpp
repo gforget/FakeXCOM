@@ -5,8 +5,11 @@
 
 #include "Cover3DIcon.h"
 #include "DebugHeader.h"
+#include "MouseSceneSelectionComponent.h"
 #include "NodePath.h"
 #include "TBTacticalGameMode.h"
+#include "TBTacticalMainController.h"
+#include "TileMovementComponent.h"
 #include "TilePathFinder.h"
 #include "UnitManager.h"
 
@@ -27,6 +30,8 @@ void UUI3DManager::Initialize()
 	if (TBTacticalGameMode)
 	{
 		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &UUI3DManager::OnUnitSelected);
+		TBTacticalGameMode->UnitManager->OnUnitOrderedToMoveEvent.AddDynamic(this, &UUI3DManager::OnUnitOrderedToMove);
+		TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnMouseOverActorEvent.AddDynamic(this, &UUI3DManager::OnMouseOverActor);
 	}
 }
 
@@ -34,6 +39,51 @@ void UUI3DManager::OnUnitSelected(AUnit* Unit)
 {
 	ClearDistanceLimitUI();
 	CreateDistanceLimitUI(Unit);
+}
+
+void UUI3DManager::OnUnitOrderedToMove(AUnit* Unit)
+{
+	ClearPath3DIcons();
+	ClearDistanceLimitUI();
+	ConnectCover3DIconsToUnit(Unit->IdUnit);
+}
+
+void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
+{
+	if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(Actor))
+	{
+		UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
+		if (ChosenNodePath && (!CurrentMouseOverNodePath || CurrentMouseOverNodePath->IdNode != ChosenNodePath->IdNode))
+		{
+			CurrentMouseOverNodePath = ChosenNodePath;
+			ClearPath3DIcons();
+
+			if (UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder)
+			{
+				GenericStack<UNodePath*> PathStack = TilePathFinderPtr->GetPathToDestination(
+						TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->TileMovementComponent->LocatedNodePath,
+						CurrentMouseOverNodePath
+						);
+				
+				while(!PathStack.IsEmpty())
+				{
+					const UNodePath* CurrentNodePath = PathStack.Pop();
+					AddPath3DIcon(CurrentNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.6f), CurrentNodePath->GetComponentRotation());
+				}
+			}
+		
+			//Create Select 3d Icon
+			ClearSelect3DIcon();
+			AddSelect3DIcon(CurrentMouseOverNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f), CurrentMouseOverNodePath->GetComponentRotation());
+			
+			//Create Cover 3D Icon
+			ClearCover3DIcons();
+			for (int i=0; i<CurrentMouseOverNodePath->AllCoverInfos.Num(); i++)
+			{
+				AddCover3DIcon(CurrentMouseOverNodePath->AllCoverInfos[i].IconPosition,CurrentMouseOverNodePath->AllCoverInfos[i].IconRotation, CurrentMouseOverNodePath->AllCoverInfos[i].FullCover);
+			}
+		}
+	}
 }
 
 void UUI3DManager::CreateDistanceLimitUI(AUnit* Unit)

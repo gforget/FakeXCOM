@@ -11,14 +11,20 @@ class ATBTacticalGameMode;
  * 
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSelectedEvent, AUnit*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitOrderedToMoveEvent, AUnit*, Unit);
+
 UCLASS()
 class FAKEXCOM_API UUnitManager : public UObject
 {
 	GENERATED_BODY()
 public :
+
 	UPROPERTY(BlueprintAssignable)
 	FUnitSelectedEvent OnUnitSelectedEvent;
 
+	UPROPERTY(BlueprintAssignable)
+	FUnitOrderedToMoveEvent OnUnitOrderedToMoveEvent;
+	
 	UPROPERTY()
 	int SelectedUnitId = -1;
 	
@@ -33,4 +39,10 @@ public :
 
 	ATBTacticalGameMode* TBTacticalGameMode;
 	void Initialize(ATBTacticalGameMode* TBTacticalGameModePtr);
+	
+	UFUNCTION()
+	void OnRightClickSelectActor(AActor* Actor, FVector HitLocation);
+	
+	UFUNCTION()
+	void OnLeftClickSelectActor(AActor* Actor, FVector HitLocation);
 };

@@ -2,10 +2,13 @@
 
 
 #include "UnitManager.h"
-
 #include "DebugHeader.h"
+#include "MouseSceneSelectionComponent.h"
+#include "NodePath.h"
 #include "TBTacticalGameMode.h"
 #include "TBTacticalMainController.h"
+#include "TilePathFinder.h"
+#include "UI3DManager.h"
 
 void UUnitManager::SelectNextUnit()
 {
@@ -54,4 +57,43 @@ AUnit* UUnitManager::GetCurrentlySelectedUnit()
 void UUnitManager::Initialize(ATBTacticalGameMode* TBTacticalGameModePtr)
 {
 	TBTacticalGameMode = TBTacticalGameModePtr;
+	TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnLeftClickSelectActorEvent.AddDynamic(this, &UUnitManager::OnLeftClickSelectActor);
+	TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnRightClickSelectActorEvent.AddDynamic(this, &UUnitManager::OnRightClickSelectActor);
+}
+
+void UUnitManager::OnRightClickSelectActor(AActor* Actor, FVector HitLocation)
+{
+	if (GetCurrentlySelectedUnit())
+	{
+		if (!TBTacticalGameMode->TilePathFinder->bCanMoveUnit)
+		{
+			return;
+		}
+		
+		//clear the path icon
+		//TBTacticalGameMode->UI3DManagerComponent->ClearPath3DIcons();
+		
+		if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(Actor))
+		{
+			if (UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation))
+			{
+				if (!ChosenNodePath->bIsBlocked)
+				{
+					OnUnitOrderedToMoveEvent.Broadcast(GetCurrentlySelectedUnit());
+					TBTacticalGameMode->TilePathFinder->MoveUnit(GetCurrentlySelectedUnit(), ChosenNodePath);
+					
+					//Assign the cover icon so they do not get deleted when a unit is assign on a nodepath
+					//TBTacticalGameMode->UI3DManagerComponent->ConnectCover3DIconsToUnit(TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->IdUnit);
+				}
+			}
+		}
+	}
+}
+
+void UUnitManager::OnLeftClickSelectActor(AActor* Actor, FVector HitLocation)
+{
+	if (const AUnit* SelectedUnitPtr = Cast<AUnit>(Actor))
+	{
+		SelectUnit(SelectedUnitPtr->IdUnit);
+	}
 }

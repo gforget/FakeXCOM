@@ -8,6 +8,7 @@
 
 class ACover3DIcon;
 class ATBTacticalGameMode;
+class UNodePath;
 
 USTRUCT()
 struct NO_API FAssignCover3DIcon
@@ -62,6 +63,8 @@ public:
 	void AddPath3DIcon(FVector Location, FRotator Rotation);
 
 private:
+	UPROPERTY()
+	UNodePath* CurrentMouseOverNodePath;
 	
 	UPROPERTY()
 	AActor* Select3DIcon;
@@ -83,7 +86,13 @@ private:
 	
 	UFUNCTION()
 	void OnUnitSelected(AUnit* Unit);
-
+	
+	UFUNCTION()
+	void OnUnitOrderedToMove(AUnit* Unit);
+	
+	UFUNCTION()
+	void OnMouseOverActor(AActor* Actor, FVector HitLocation);
+	
 	void CreateDistanceLimitUI(AUnit* Unit);
 	void ClearDistanceLimitUI();
 };

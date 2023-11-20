@@ -89,12 +89,12 @@ void ATBTacticalGameMode::BeginPlay()
 			}
 		}
 		
+		MainController->MouseSceneSelectionComponent->Initialize();
 		UnitManager->Initialize(this);
 		UI3DManagerComponent->Initialize();
-		MainController->MouseSceneSelectionComponent->Initialize();
 		LevelUI->Initialization();
-		bInitialized = true;
 		
+		bInitialized = true;
 		UnitManager->SelectUnit(CurrentIdUnit);
 	}
 }
