@@ -41,11 +41,11 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Initia
 	while (!frontier.IsEmpty())
 	{
 		UNodePath* current = frontier.Dequeue();
-		for (int i = 0; i<current->AllNeighbours.Num(); i++)
+		for (int i = 0; i<current->AllConnectedNeighbours.Num(); i++)
 		{
 			iteration++;
-			UNodePath* next = current->AllNeighbours[i];
-			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllNeighboursBaseCost[i]*next->WeightCost;
+			UNodePath* next = current->AllConnectedNeighbours[i];
+			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllConnectedNeighboursBaseCost[i]*next->WeightCost;
 			
 			if ((!cost_so_far.Contains(next->IdNode) || new_cost < GetCostFromCostSoFar(cost_so_far, next->IdNode))
 				&& !next->bIsBlocked )
@@ -87,11 +87,20 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Initia
 	
 	return PathStack;
 }
-void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit, TArray<UNodePath*>& AllBaseDistanceNode,
-	TArray<UNodePath*>& AllLongDistanceNode)
+void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
+	TArray<UNodePath*>& AllBaseDistanceNode,
+	TArray<UNodePath*>& AllLongDistanceNode,
+	int& BaseDistance,
+	int& LongDistance)
 {
-	const int BaseDistance = Unit->UnitAttributeSet->GetMaxMoveDistancePerAction();
-	const int LongDistance = BaseDistance*2;
+	//Reset NbStep
+	for (int i=0;i<AllNodePaths.Num();i++)
+	{
+		AllNodePaths[i]->NbSteps = -1;
+	}
+	
+	BaseDistance = Unit->UnitAttributeSet->GetMaxMoveDistancePerAction();
+	LongDistance = BaseDistance*2;
 	
 	UNodePath* InitialNode = Unit->TileMovementComponent->LocatedNodePath;
 	
@@ -112,16 +121,17 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit, TArray<UNodePath*
 		UNodePath* current = frontier.Dequeue();
 		int lowestNewStep = -1;
 		
-		for (int i = 0; i<current->AllNeighbours.Num(); i++)
+		for (int i = 0; i<current->AllConnectedNeighbours.Num(); i++)
 		{
-			UNodePath* next = current->AllNeighbours[i];
-			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllNeighboursBaseCost[i]*next->WeightCost;
+			UNodePath* next = current->AllConnectedNeighbours[i];
+			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllConnectedNeighboursBaseCost[i]*next->WeightCost;
 			const int new_step = GetStepFromStepSoFar(step_so_far, current->IdNode) + 1;
 			if (lowestNewStep == -1) lowestNewStep = new_step;
 				
 			if ((!cost_so_far.Contains(next->IdNode) || new_cost < GetCostFromCostSoFar(cost_so_far, next->IdNode))
 				&& !next->bIsBlocked )
 			{
+				next->NbSteps = new_step;
 				AddStepToStepSoFar(step_so_far, next->IdNode, new_step);
 				AddCostToCostSoFar(cost_so_far, next->IdNode, new_cost);
 				AddNodeToCameFrom(came_from, next->IdNode, current);

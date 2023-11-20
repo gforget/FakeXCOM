@@ -3,6 +3,8 @@
 
 #include "NodePath.h"
 #include "LevelBlock.h"
+#include "TBTacticalGameMode.h"
+#include "TilePathFinder.h"
 
 
 // Sets default values for this component's properties
@@ -13,6 +15,17 @@ UNodePath::UNodePath()
 
 void UNodePath::Initialize()
 {
+	//Get Game Mode
+	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	if (TBTacticalGameMode)
+	{
+		TBTacticalGameMode->TilePathFinder->AllNodePaths.Add(this);
+	}
+	
+	//Initiate AllNeighbour
+	//AllNeighbours.Init(false, 8);
+	AllNeighbours.Init(nullptr, 8);
+	
 	//Calculate Rotation of the point compare to the ground alignment
 	FHitResult HitResult1;
 	FCollisionQueryParams CollisionParams1;
@@ -27,7 +40,7 @@ void UNodePath::Initialize()
 	}
 	
 	//Connecting Neighbour
-	NbNeighbour = 0;
+	NbConnectedNeighbour = 0;
 	ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(GetOwner());
 	FVector LevelBlockPosition = GetComponentLocation() + (LevelBlockPtr->GetActorUpVector() * 50.0f);
 	
@@ -117,16 +130,19 @@ void UNodePath::Initialize()
 				{
 					if (TryConnectNeighbour(i, DirectionVectors, foundBlock, foundVoid, ChosenNodePath, LevelBlockPtr, NeighbourLevelBlock))
 					{
-						AllNeighbours.Add(ChosenNodePath);
+						//AllNeighbours[i] = true;
+						AllNeighbours[i] = ChosenNodePath;
+						AllConnectedNeighbours.Add(ChosenNodePath);
 						if (i<4)
 						{
-							AllNeighboursBaseCost.Add(100.0f);
+							AllConnectedNeighboursBaseCost.Add(100.0f);
 						}
 						else
 						{
-							AllNeighboursBaseCost.Add(141.42f);
+							AllConnectedNeighboursBaseCost.Add(141.42f);
 						}
-						NbNeighbour = AllNeighbours.Num();	
+						
+						NbConnectedNeighbour = AllConnectedNeighbours.Num();	
 					}
 				}
 			}
@@ -139,14 +155,14 @@ void UNodePath::Initialize()
 			}
 		}
 	}
+
+	
 }
 
 // Called when the game starts
 void UNodePath::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
 	
 }
 

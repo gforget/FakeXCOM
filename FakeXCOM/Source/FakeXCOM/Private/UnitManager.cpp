@@ -34,12 +34,15 @@ void UUnitManager::SelectPreviousUnit()
 	SelectUnit(SelectedUnitId);
 }
 
-AUnit* UUnitManager::SelectUnit(int UnitId)
+AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 {
 	DebugScreen("New Soldier Selected !", FColor::Yellow);
 
 	SelectedUnitId = UnitId;
-	TBTacticalGameMode->MainController->GoToActor(AllUnitReference[SelectedUnitId]);
+	if (bGoToUnit)
+	{
+		TBTacticalGameMode->MainController->GoToActor(AllUnitReference[SelectedUnitId]);
+	}
 	OnUnitSelectedEvent.Broadcast(AllUnitReference[SelectedUnitId]);
 	return AllUnitReference[SelectedUnitId];
 }

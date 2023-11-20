@@ -133,7 +133,7 @@ void ATBTacticalMainController::OnUnitStopMovingEvent(AActor* MovingActor)
 	UnFollowActor();
 	if (const AUnit* Unit = Cast<AUnit>(MovingActor))
 	{
-		TBTacticalGameMode->UnitManager->SelectUnit(Unit->IdUnit);
+		TBTacticalGameMode->UnitManager->SelectUnit(Unit->IdUnit, false);
 	}
 }
 

@@ -6,6 +6,8 @@
 #include "Components/SceneComponent.h"
 #include "NodePath.generated.h"
 
+class ATBTacticalGameMode;
+
 USTRUCT(BlueprintType)
 struct NO_API FCoverInfo
 {
@@ -47,12 +49,18 @@ public:
 	UNodePath();
 	
 	void Initialize();
+
+	UPROPERTY()
+	ATBTacticalGameMode*  TBTacticalGameMode;
 	
 	UPROPERTY()
 	TArray<UNodePath*> AllNeighbours;
+	
+	UPROPERTY()
+	TArray<UNodePath*> AllConnectedNeighbours;
 
 	UPROPERTY()
-	TArray<float> AllNeighboursBaseCost;
+	TArray<float> AllConnectedNeighboursBaseCost;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
 	TArray<FCoverInfo> AllCoverInfos;
@@ -61,8 +69,11 @@ public:
 	int IdNode = -1;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
-	int NbNeighbour;
+	int NbConnectedNeighbour;
 
+	UPROPERTY()
+	int NbSteps = -1;
+	
 	UPROPERTY()
 	bool bIsBlocked = false;
 	

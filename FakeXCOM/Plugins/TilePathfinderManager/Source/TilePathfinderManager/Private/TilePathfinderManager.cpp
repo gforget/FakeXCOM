@@ -143,11 +143,11 @@ void FTilePathfinderManagerModule::OnActorSelected(const TArray<UObject*>& objec
 				
 				for(int j=0; j<AllNodePaths.Num(); j++)
 				{
-					for (int k=0; k<AllNodePaths[j]->AllNeighbours.Num(); k++)
+					for (int k=0; k<AllNodePaths[j]->AllConnectedNeighbours.Num(); k++)
 					{
-						if (AllNodePaths[j]->AllNeighbours[k])
+						if (AllNodePaths[j]->AllConnectedNeighbours[k])
 						{
-							DrawDebugLine(WorldPtr, AllNodePaths[j]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), AllNodePaths[j]->AllNeighbours[k]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), FColor::Blue, true, 0.0f, 0.0f, 2.0f);
+							DrawDebugLine(WorldPtr, AllNodePaths[j]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), AllNodePaths[j]->AllConnectedNeighbours[k]->GetComponentLocation() + FVector(0.0f, 0.0f, 25.0f), FColor::Blue, true, 0.0f, 0.0f, 2.0f);
 						}
 						else
 						{

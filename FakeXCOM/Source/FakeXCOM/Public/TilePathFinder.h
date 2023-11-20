@@ -21,6 +21,9 @@ class FAKEXCOM_API UTilePathFinder : public UObject
 public:
 
 	UPROPERTY()
+	TArray<UNodePath*> AllNodePaths;
+	
+	UPROPERTY()
 	bool bCanMoveUnit = true;
 
 	UFUNCTION()
@@ -35,7 +38,11 @@ public:
 
 	void MoveUnit(const AUnit* Unit, UNodePath* ChosenNode);
 
-	void GetNodeDistanceLimitForUnit(AUnit* Unit, TArray<UNodePath*>& BaseDistance, TArray<UNodePath*>& LongDistance);
+	void GetNodeDistanceLimitForUnit(AUnit* Unit,
+		TArray<UNodePath*>& AllBaseDistanceNode,
+		TArray<UNodePath*>& AllLongDistanceNode,
+		int& BaseDistance,
+		int& LongDistance);
 	
 private:
 	void AddNodeToCameFrom(TMap<int, UNodePath*>& came_from, int IdNode, UNodePath* ValueNode);

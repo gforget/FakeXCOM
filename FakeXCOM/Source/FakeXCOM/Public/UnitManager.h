@@ -34,7 +34,7 @@ public :
 	void SelectNextUnit();
 	void SelectPreviousUnit();
 
-	AUnit* SelectUnit(int UnitId);
+	AUnit* SelectUnit(int UnitId, bool bGoToUnit = true);
 	AUnit* GetCurrentlySelectedUnit();
 
 	ATBTacticalGameMode* TBTacticalGameMode;

@@ -95,4 +95,6 @@ private:
 	
 	void CreateDistanceLimitUI(AUnit* Unit);
 	void ClearDistanceLimitUI();
+
+	bool TrySpawnIcon(const UNodePath* NodePath, int DistanceLimit);
 };

@@ -90,27 +90,65 @@ void UUI3DManager::CreateDistanceLimitUI(AUnit* Unit)
 {
 	if (TBTacticalGameMode && BaseDistanceLimitIconClass)
 	{
+		int BaseDistance;
+		int LongDistance;
 		TArray<UNodePath*> AllLongDistanceNode;
 		TArray<UNodePath*> AllBaseDistanceNode;
 		
-		TBTacticalGameMode->TilePathFinder->GetNodeDistanceLimitForUnit(Unit, AllBaseDistanceNode, AllLongDistanceNode);
+		TBTacticalGameMode->TilePathFinder->GetNodeDistanceLimitForUnit(Unit,
+			AllBaseDistanceNode,
+			AllLongDistanceNode,
+			BaseDistance,
+			LongDistance);
 
 		for (int i=0; i<AllBaseDistanceNode.Num(); i++)
 		{
-			AllPathDistance3DIcons.Add(GetWorld()->SpawnActor<AActor>(BaseDistanceLimitIconClass,
-				AllBaseDistanceNode[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
-				AllBaseDistanceNode[i]->GetComponentRotation()
-				));
+			if (TrySpawnIcon(AllBaseDistanceNode[i], BaseDistance))
+			{
+				AllPathDistance3DIcons.Add(GetWorld()->SpawnActor<AActor>(BaseDistanceLimitIconClass,
+					AllBaseDistanceNode[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+					AllBaseDistanceNode[i]->GetComponentRotation()
+					));
+			}
 		}
 		
 		for (int i=0; i<AllLongDistanceNode.Num(); i++)
 		{
-			AllPathDistance3DIcons.Add(GetWorld()->SpawnActor<AActor>(LongDistanceLimitIconClass,
-				AllLongDistanceNode[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
-				AllLongDistanceNode[i]->GetComponentRotation()
-				));
+			if (TrySpawnIcon(AllLongDistanceNode[i], LongDistance))
+			{
+				AllPathDistance3DIcons.Add(GetWorld()->SpawnActor<AActor>(LongDistanceLimitIconClass,
+                	AllLongDistanceNode[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+                	AllLongDistanceNode[i]->GetComponentRotation()
+                	));
+			}
 		}
+		
 	}
+}
+bool UUI3DManager::TrySpawnIcon(const UNodePath* NodePath, int DistanceLimit)
+{
+	bool bSpawnIcon = false;
+
+	//0 to 3 index are all vertical neighbour, which are the only one we are interested in
+	for (int i=0; i<4; i++)
+	{
+		if (!NodePath->AllNeighbours[i])
+		{
+			bSpawnIcon = true;
+			break;
+		}
+		
+		// if (NodePath->AllNeighboursConnectedStatus[i])
+		// {
+		// 	if (NodePath->AllNeighboursConnectedStatus[i]->NbSteps > DistanceLimit)
+		// 	{
+		// 		bSpawnIcon = true;
+		// 		break;
+		// 	}
+		// }
+	}
+
+	return bSpawnIcon;
 }
 
 void UUI3DManager::ClearDistanceLimitUI()
