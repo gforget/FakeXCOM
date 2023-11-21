@@ -44,7 +44,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (bChangeDestination)
 	{
 		UNodePath* NodePathPtr = Path.Pop();
-		if (Path.Size() == 0)
+		if (Path.Num() == 0)
 		{
 			LocatedNodePath->bIsBlocked = false;
 			LocatedNodePath = NodePathPtr;
@@ -78,7 +78,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 	else
 	{
-		if (Path.Size() > 0)
+		if (Path.Num() > 0)
 		{
 			bChangeDestination = true;
 		}

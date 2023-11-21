@@ -7,8 +7,10 @@
 #include "NodePath.h"
 #include "TBTacticalGameMode.h"
 #include "TBTacticalMainController.h"
+#include "TileMovementComponent.h"
 #include "TilePathFinder.h"
 #include "UI3DManager.h"
+#include "UnitAttributeSet.h"
 
 void UUnitManager::SelectNextUnit()
 {
@@ -73,20 +75,27 @@ void UUnitManager::OnRightClickSelectActor(AActor* Actor, FVector HitLocation)
 			return;
 		}
 		
-		//clear the path icon
-		//TBTacticalGameMode->UI3DManagerComponent->ClearPath3DIcons();
-		
 		if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(Actor))
 		{
 			if (UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation))
 			{
 				if (!ChosenNodePath->bIsBlocked)
 				{
-					OnUnitOrderedToMoveEvent.Broadcast(GetCurrentlySelectedUnit());
-					TBTacticalGameMode->TilePathFinder->MoveUnit(GetCurrentlySelectedUnit(), ChosenNodePath);
+					const AUnit* Unit = GetCurrentlySelectedUnit();
+					const int BaseDistance = Unit->UnitAttributeSet->GetMaxMoveDistancePerAction();
+					const int LongDistance = BaseDistance*2;
 					
-					//Assign the cover icon so they do not get deleted when a unit is assign on a nodepath
-					//TBTacticalGameMode->UI3DManagerComponent->ConnectCover3DIconsToUnit(TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->IdUnit);
+					GenericStack<UNodePath*> Path = TBTacticalGameMode->TilePathFinder->GetPathToDestination(
+						Unit->TileMovementComponent->LocatedNodePath,
+						ChosenNodePath);
+					
+					if (Path.Num() > 0
+						&& ChosenNodePath->NbSteps != -1
+						&& ChosenNodePath->NbSteps <= LongDistance)
+					{
+						OnUnitOrderedToMoveEvent.Broadcast(GetCurrentlySelectedUnit());
+						TBTacticalGameMode->TilePathFinder->MoveUnit(GetCurrentlySelectedUnit(), Path);
+					}
 				}
 			}
 		}

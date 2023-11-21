@@ -7,10 +7,12 @@
 #include "DebugHeader.h"
 #include "MouseSceneSelectionComponent.h"
 #include "NodePath.h"
+#include "Select3DIcon.h"
 #include "TBTacticalGameMode.h"
 #include "TBTacticalMainController.h"
 #include "TileMovementComponent.h"
 #include "TilePathFinder.h"
+#include "UnitAttributeSet.h"
 #include "UnitManager.h"
 
 UUI3DManager::UUI3DManager()
@@ -57,7 +59,18 @@ void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 		{
 			CurrentMouseOverNodePath = ChosenNodePath;
 			ClearPath3DIcons();
-
+			ClearSelect3DIcon();
+			ClearCover3DIcons();
+			
+			const AUnit* SelectedUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
+			const int BaseDistance = SelectedUnit->UnitAttributeSet->GetMaxMoveDistancePerAction();
+			const int LongDistance = BaseDistance*2;
+			
+			if (ChosenNodePath->NbSteps == -1 || ChosenNodePath->NbSteps > LongDistance)
+			{
+				return;
+			}
+			
 			if (UTilePathFinder* TilePathFinderPtr = TBTacticalGameMode->TilePathFinder)
 			{
 				GenericStack<UNodePath*> PathStack = TilePathFinderPtr->GetPathToDestination(
@@ -73,14 +86,18 @@ void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 			}
 		
 			//Create Select 3d Icon
-			ClearSelect3DIcon();
-			AddSelect3DIcon(CurrentMouseOverNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f), CurrentMouseOverNodePath->GetComponentRotation());
+			AddSelect3DIcon(
+				CurrentMouseOverNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+				CurrentMouseOverNodePath->GetComponentRotation(),
+				ChosenNodePath->NbSteps <= BaseDistance
+				);
 			
 			//Create Cover 3D Icon
-			ClearCover3DIcons();
 			for (int i=0; i<CurrentMouseOverNodePath->AllCoverInfos.Num(); i++)
 			{
-				AddCover3DIcon(CurrentMouseOverNodePath->AllCoverInfos[i].IconPosition,CurrentMouseOverNodePath->AllCoverInfos[i].IconRotation, CurrentMouseOverNodePath->AllCoverInfos[i].FullCover);
+				AddCover3DIcon(CurrentMouseOverNodePath->AllCoverInfos[i].IconPosition,
+					CurrentMouseOverNodePath->AllCoverInfos[i].IconRotation,
+					CurrentMouseOverNodePath->AllCoverInfos[i].FullCover);
 			}
 		}
 	}
@@ -215,11 +232,11 @@ void UUI3DManager::AddCover3DIcon(FVector Location, FRotator Rotation, bool bFul
 
 		if (bFullCover)
 		{
-			Cover3DIcon->FullShield->SetVisibility(true);
+			Cover3DIcon->FullShieldIcon->SetVisibility(true);
 		}
 		else
 		{
-			Cover3DIcon->HalfShield->SetVisibility(true);
+			Cover3DIcon->HalfShieldIcon->SetVisibility(true);
 		}
 					
 		AllMouseOverCover3DIcon.Add(Cover3DIcon);
@@ -255,11 +272,19 @@ void UUI3DManager::ClearSelect3DIcon()
 	}	
 }
 
-void UUI3DManager::AddSelect3DIcon(FVector Location, FRotator Rotation)
+void UUI3DManager::AddSelect3DIcon(const FVector& Location, const FRotator& Rotation, bool bIsBaseDistance)
 {
 	if (Select3DIconClass)
 	{
-		Select3DIcon = GetWorld()->SpawnActor<AActor>(Select3DIconClass, Location, Rotation);
+		Select3DIcon = GetWorld()->SpawnActor<ASelect3DIcon>(Select3DIconClass, Location, Rotation);
+		if (bIsBaseDistance)
+		{
+			Select3DIcon->BaseDistanceIcon->SetVisibility(true);
+		}
+		else
+		{
+			Select3DIcon->LongDistanceIcon->SetVisibility(true);
+		}
 	}
 }
 

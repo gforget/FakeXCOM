@@ -7,6 +7,7 @@
 #include "UI3DManager.generated.h"
 
 class ACover3DIcon;
+class ASelect3DIcon;
 class ATBTacticalGameMode;
 class UNodePath;
 
@@ -39,7 +40,7 @@ public:
 	TSubclassOf<ACover3DIcon> Cover3DIconClass;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "3D Icons Classes")
-	TSubclassOf<AActor> Select3DIconClass;
+	TSubclassOf<ASelect3DIcon> Select3DIconClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "3D Icons Classes")
 	TSubclassOf<AActor> Path3DIconClass;
@@ -57,7 +58,7 @@ public:
 	void ConnectCover3DIconsToUnit(int IdUnit);
 
 	void ClearSelect3DIcon();
-	void AddSelect3DIcon(FVector Location, FRotator Rotation);
+	void AddSelect3DIcon(const FVector& Location, const FRotator& Rotation, bool bIsBaseDistance);
 	
 	void ClearPath3DIcons();
 	void AddPath3DIcon(FVector Location, FRotator Rotation);
@@ -67,7 +68,7 @@ private:
 	UNodePath* CurrentMouseOverNodePath;
 	
 	UPROPERTY()
-	AActor* Select3DIcon;
+	ASelect3DIcon* Select3DIcon;
 
 	UPROPERTY()
 	TArray<AActor*> AllPathDistance3DIcons;

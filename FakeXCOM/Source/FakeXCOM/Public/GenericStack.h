@@ -45,7 +45,7 @@ public:
 	}
 
 	// Get the size of the stack
-	int32 Size()
+	int32 Num()
 	{
 		return Stack.Num();
 	}

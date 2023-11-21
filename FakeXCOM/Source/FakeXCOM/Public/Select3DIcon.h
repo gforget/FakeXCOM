@@ -4,26 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Cover3DIcon.generated.h"
+#include "Select3DIcon.generated.h"
 
 UCLASS()
-class FAKEXCOM_API ACover3DIcon : public AActor
+class FAKEXCOM_API ASelect3DIcon : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ACover3DIcon();
+	ASelect3DIcon();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Icon Properties")
-	UStaticMeshComponent* HalfShieldIcon;
+	UStaticMeshComponent* BaseDistanceIcon;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Icon Properties")
-	UStaticMeshComponent* FullShieldIcon;
+	UStaticMeshComponent* LongDistanceIcon;
 };

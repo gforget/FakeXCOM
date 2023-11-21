@@ -5,12 +5,9 @@
 
 #include "DebugHeader.h"
 #include "LevelBlock.h"
-#include "NodePath.h"
 #include "TBTacticalMainController.h"
 #include "TBTacticalGameMode.h"
-#include "TileMovementComponent.h"
 #include "TilePathFinder.h"
-#include "UI3DManager.h"
 #include "UnitManager.h"
 
 // Sets default values for this component's properties
