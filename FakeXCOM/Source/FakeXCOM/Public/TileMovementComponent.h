@@ -71,4 +71,6 @@ private:
 
 	UPROPERTY()
 	ATBTacticalGameMode* TBTacticalGameMode;
+
+	void MovementActionCost();
 };

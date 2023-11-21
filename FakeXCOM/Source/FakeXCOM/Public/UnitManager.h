@@ -52,4 +52,5 @@ private:
 	
 	UFUNCTION()
 	void OnUnitRanOutOfActions(AUnit* Unit);
+	
 };
