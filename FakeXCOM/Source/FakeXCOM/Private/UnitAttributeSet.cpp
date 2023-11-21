@@ -3,6 +3,7 @@
 #include "UnitAttributeSet.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystemComponent.h"
+#include "Unit.h"
 
 float UUnitAttributeSet::GetHealth() const
 {
@@ -46,6 +47,11 @@ void UUnitAttributeSet::SetActions(float NewVal) const
 	if (ensure(ASC))
 	{
 		ASC->SetNumericAttributeBase(GetActionsAttribute(), NewVal);
+		if (GetActions() == 0)
+		{
+			//Can't create listenable Delegate in UAttributes, Actor can still do it
+			Cast<AUnit>(GetOwningActor())->CallRanOutOfActions();
+		}
 	}
 }
 

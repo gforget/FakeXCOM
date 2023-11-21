@@ -9,31 +9,51 @@
 #include "TBTacticalMainController.h"
 #include "TileMovementComponent.h"
 #include "TilePathFinder.h"
-#include "UI3DManager.h"
 #include "UnitAttributeSet.h"
 
 void UUnitManager::SelectNextUnit()
 {
-	//TODO: create a loop to select soldier who turn didn't finish and can perform action this turn
 	//Soldier are never removed from the list, even when dead
+	//TODO unit reference need to be seperated from ally and ennemy
 	
-	SelectedUnitId++;
-	if (SelectedUnitId >= AllUnitReference.Num())
+	bool haveSelectedAUnit = false;
+	for (int i=0; i<AllUnitReference.Num(); i++)
 	{
-		SelectedUnitId = 0;
-	}
+		SelectedUnitId++;
+		if (SelectedUnitId >= AllUnitReference.Num())
+		{
+			SelectedUnitId = 0;
+		}
 
-	SelectUnit(SelectedUnitId);
+		if (AllUnitReference[SelectedUnitId]->UnitAttributeSet->GetActions() != 0)
+		{
+			haveSelectedAUnit = true;
+			break;
+		}
+	}
+	
+	if (haveSelectedAUnit) SelectUnit(SelectedUnitId);
 }
 
 void UUnitManager::SelectPreviousUnit()
 {
-	SelectedUnitId--;
-	if (SelectedUnitId < 0)
+	bool haveSelectedAUnit = false;
+	for (int i=0; i<AllUnitReference.Num(); i++)
 	{
-		SelectedUnitId = AllUnitReference.Num()-1;
+		SelectedUnitId--;
+		if (SelectedUnitId < 0)
+		{
+			SelectedUnitId = AllUnitReference.Num()-1;
+		}
+
+		if (AllUnitReference[SelectedUnitId]->UnitAttributeSet->GetActions() != 0)
+		{
+			haveSelectedAUnit = true;
+			break;
+		}
 	}
-	SelectUnit(SelectedUnitId);
+	
+	if (haveSelectedAUnit) SelectUnit(SelectedUnitId);
 }
 
 AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
@@ -62,8 +82,39 @@ AUnit* UUnitManager::GetCurrentlySelectedUnit()
 void UUnitManager::Initialize(ATBTacticalGameMode* TBTacticalGameModePtr)
 {
 	TBTacticalGameMode = TBTacticalGameModePtr;
+
 	TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnLeftClickSelectActorEvent.AddDynamic(this, &UUnitManager::OnLeftClickSelectActor);
 	TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnRightClickSelectActorEvent.AddDynamic(this, &UUnitManager::OnRightClickSelectActor);
+}
+
+void UUnitManager::AddUnitToManager(int IdUnit, AUnit* Unit)
+{
+	AllUnitReference.Add(IdUnit, Unit);
+	Unit->OnUnitRanOutOfActionsEvent.AddDynamic(this, &UUnitManager::OnUnitRanOutOfActions);
+}
+
+void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
+{
+	DebugScreen("Unit out of actions", FColor::Blue);
+
+	//TODO: seperate friendly unit and ennemy unit
+	
+	bool bEndOfTurn = true;
+	for(int i=0; i<AllUnitReference.Num(); i++)
+	{
+		if (AllUnitReference[i]->UnitAttributeSet->GetActions() > 0)
+		{
+			bEndOfTurn = false;
+			break;
+		}
+	}
+
+	//All unit have no remaining actions left, call end of turn
+	if (bEndOfTurn)
+	{
+		DebugScreen("End of turn", FColor::Red);
+		//Call end of turn
+	}
 }
 
 void UUnitManager::OnRightClickSelectActor(AActor* Actor, FVector HitLocation)
@@ -83,7 +134,7 @@ void UUnitManager::OnRightClickSelectActor(AActor* Actor, FVector HitLocation)
 				{
 					const AUnit* Unit = GetCurrentlySelectedUnit();
 					const int BaseDistance = Unit->UnitAttributeSet->GetMaxMoveDistancePerAction();
-					const int LongDistance = BaseDistance*2;
+					const int AllowedDistance = BaseDistance*Unit->UnitAttributeSet->GetActions();
 					
 					GenericStack<UNodePath*> Path = TBTacticalGameMode->TilePathFinder->GetPathToDestination(
 						Unit->TileMovementComponent->LocatedNodePath,
@@ -91,7 +142,8 @@ void UUnitManager::OnRightClickSelectActor(AActor* Actor, FVector HitLocation)
 					
 					if (Path.Num() > 0
 						&& ChosenNodePath->NbSteps != -1
-						&& ChosenNodePath->NbSteps <= LongDistance)
+						&& ChosenNodePath->NbSteps <= AllowedDistance
+						&& Unit->UnitAttributeSet->GetActions() > 0)
 					{
 						OnUnitOrderedToMoveEvent.Broadcast(GetCurrentlySelectedUnit());
 						TBTacticalGameMode->TilePathFinder->MoveUnit(GetCurrentlySelectedUnit(), Path);
@@ -109,3 +161,5 @@ void UUnitManager::OnLeftClickSelectActor(AActor* Actor, FVector HitLocation)
 		SelectUnit(SelectedUnitPtr->IdUnit);
 	}
 }
+
+

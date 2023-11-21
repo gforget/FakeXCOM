@@ -52,7 +52,6 @@ public:
 	TSubclassOf<AActor> LongDistanceLimitIconClass;
 
 	void Initialize();
-	
 	void ClearCover3DIcons();
 	void AddCover3DIcon(FVector Location, FRotator Rotation, bool bFullCover);
 	void ConnectCover3DIconsToUnit(int IdUnit);
@@ -96,6 +95,6 @@ private:
 	
 	void CreateDistanceLimitUI(AUnit* Unit);
 	void ClearDistanceLimitUI();
-
-	bool TrySpawnIcon(const UNodePath* NodePath, int DistanceLimit, TArray<bool>& CornerToSpawn);
+	void SpawnDistanceIcons(TArray<UNodePath*> AllNodes, int Distance, TSubclassOf<AActor> IconSubClass);
+	bool TrySpawnDistanceIcon(const UNodePath* NodePath, int DistanceLimit, TArray<bool>& CornerToSpawn);
 };

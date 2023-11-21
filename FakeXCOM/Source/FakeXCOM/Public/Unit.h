@@ -16,6 +16,8 @@ class UCapsuleComponent;
 class UUnitAttributeSet;
 class UUnitAbility;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitRanOutOfActionsDelegate, AUnit*, Unit);
+
 UCLASS()
 class FAKEXCOM_API AUnit : public AActor, public IAbilitySystemInterface
 {
@@ -35,6 +37,9 @@ protected:
 	virtual void Destroyed() override;
 	
 public:
+	UPROPERTY(BlueprintAssignable)
+	FUnitRanOutOfActionsDelegate OnUnitRanOutOfActionsEvent;
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -86,6 +91,8 @@ public:
 	FString UnitName = "";
 	
 	void Initialize();
+
+	void CallRanOutOfActions();
 	
 private:
 	void GenerateHealthBarAnchorPositionVisualisation() const;

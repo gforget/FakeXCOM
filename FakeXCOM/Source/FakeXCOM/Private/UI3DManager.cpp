@@ -64,9 +64,9 @@ void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 			
 			const AUnit* SelectedUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
 			const int BaseDistance = SelectedUnit->UnitAttributeSet->GetMaxMoveDistancePerAction();
-			const int LongDistance = BaseDistance*2;
+			const int AllowedDistance = BaseDistance*SelectedUnit->UnitAttributeSet->GetActions();
 			
-			if (ChosenNodePath->NbSteps == -1 || ChosenNodePath->NbSteps > LongDistance)
+			if (ChosenNodePath->NbSteps == -1 || ChosenNodePath->NbSteps > AllowedDistance)
 			{
 				return;
 			}
@@ -89,7 +89,7 @@ void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 			AddSelect3DIcon(
 				CurrentMouseOverNodePath->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
 				CurrentMouseOverNodePath->GetComponentRotation(),
-				ChosenNodePath->NbSteps <= BaseDistance
+				ChosenNodePath->NbSteps <= BaseDistance && AllowedDistance > BaseDistance
 				);
 			
 			//Create Cover 3D Icon
@@ -105,72 +105,60 @@ void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 
 void UUI3DManager::CreateDistanceLimitUI(AUnit* Unit)
 {
-	if (TBTacticalGameMode && BaseDistanceLimitIconClass)
+	if (TBTacticalGameMode && BaseDistanceLimitIconClass && LongDistanceLimitIconClass)
 	{
 		int BaseDistance;
 		int LongDistance;
-		TArray<UNodePath*> AllLongDistanceNode;
 		TArray<UNodePath*> AllBaseDistanceNode;
+		TArray<UNodePath*> AllLongDistanceNode;
 		
 		TBTacticalGameMode->TilePathFinder->GetNodeDistanceLimitForUnit(Unit,
 			AllBaseDistanceNode,
 			AllLongDistanceNode,
 			BaseDistance,
 			LongDistance);
-
-		for (int i=0; i<AllBaseDistanceNode.Num(); i++)
-		{
-			TArray<bool> CornerToSpawn;
-			if (TrySpawnIcon(AllBaseDistanceNode[i], BaseDistance,CornerToSpawn))
-			{
-				for (int j=0; j<CornerToSpawn.Num(); j++)
-				{
-					if (CornerToSpawn[j])
-					{
-						FRotator IconRotation = AllBaseDistanceNode[i]->GetComponentRotation();
-						IconRotation.Yaw = 0.0f;
-				
-						AActor* Icon =GetWorld()->SpawnActor<AActor>(BaseDistanceLimitIconClass,
-							AllBaseDistanceNode[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
-							IconRotation);
-
-						//0 = down, 90 = left, 180 = top, 270 = right
-						Icon->AddActorLocalRotation(FRotator(0.0f,90.0f + (90.0f*j),0.0f));
-				
-						AllPathDistance3DIcons.Add(Icon);
-					}
-				}
-			}
-		}
 		
-		for (int i=0; i<AllLongDistanceNode.Num(); i++)
+		if (Unit->UnitAttributeSet->GetActions() == 2)
 		{
-			TArray<bool> CornerToSpawn;
-			if (TrySpawnIcon(AllLongDistanceNode[i], LongDistance, CornerToSpawn))
-			{
-				for (int j=0; j<CornerToSpawn.Num(); j++)
-				{
-					if (CornerToSpawn[j])
-					{
-						FRotator IconRotation = AllLongDistanceNode[i]->GetComponentRotation();
-						IconRotation.Yaw = 0.0f;
-				
-						AActor* Icon =GetWorld()->SpawnActor<AActor>(LongDistanceLimitIconClass,
-							AllLongDistanceNode[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
-							IconRotation);
-
-						//0 = down, 90 = left, 180 = top, 270 = right
-						Icon->AddActorLocalRotation(FRotator(0.0f,90.0f + (90.0f*j),0.0f));
-				
-						AllPathDistance3DIcons.Add(Icon);
-					}
-				}
-			}
+			SpawnDistanceIcons(AllBaseDistanceNode, BaseDistance, BaseDistanceLimitIconClass);
+			SpawnDistanceIcons(AllLongDistanceNode, LongDistance, LongDistanceLimitIconClass);
 		}
-		
+		else if (Unit->UnitAttributeSet->GetActions() == 1)
+		{
+			SpawnDistanceIcons(AllBaseDistanceNode, BaseDistance, LongDistanceLimitIconClass);
+		}
 	}
 }
-bool UUI3DManager::TrySpawnIcon(const UNodePath* NodePath, int DistanceLimit, TArray<bool>& CornerToSpawn)
+
+void UUI3DManager::SpawnDistanceIcons(TArray<UNodePath*> AllNodes, int Distance, TSubclassOf<AActor> IconSubClass)
+{
+	for (int i=0; i<AllNodes.Num(); i++)
+	{
+		TArray<bool> CornerToSpawn;
+		if (TrySpawnDistanceIcon(AllNodes[i], Distance, CornerToSpawn))
+		{
+			for (int j=0; j<CornerToSpawn.Num(); j++)
+			{
+				if (CornerToSpawn[j])
+				{
+					FRotator IconRotation = AllNodes[i]->GetComponentRotation();
+					IconRotation.Yaw = 0.0f;
+				
+					AActor* Icon =GetWorld()->SpawnActor<AActor>(IconSubClass,
+						AllNodes[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
+						IconRotation);
+
+					//0 = down, 90 = left, 180 = top, 270 = right
+					Icon->AddActorLocalRotation(FRotator(0.0f,90.0f + (90.0f*j),0.0f));
+				
+					AllPathDistance3DIcons.Add(Icon);
+				}
+			}
+		}
+	}
+}
+
+bool UUI3DManager::TrySpawnDistanceIcon(const UNodePath* NodePath, int DistanceLimit, TArray<bool>& CornerToSpawn)
 {
 	bool bSpawnIcon = false;
 	CornerToSpawn.Init(false, 4);
@@ -209,6 +197,7 @@ void UUI3DManager::ClearDistanceLimitUI()
 		AllPathDistance3DIcons.Empty();
 	}
 }
+
 
 void UUI3DManager::ClearCover3DIcons()
 {

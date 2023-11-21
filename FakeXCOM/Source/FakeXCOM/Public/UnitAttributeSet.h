@@ -10,6 +10,7 @@
 /**
  * 
  */
+
 UCLASS()
 class FAKEXCOM_API UUnitAttributeSet : public UAttributeSet
 {
@@ -30,8 +31,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayAttributeData MaxMoveDistancePerAction;
+	
 public:
-
+	
 	//Health Attribute
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UUnitAttributeSet, Health);
 	float GetHealth() const;

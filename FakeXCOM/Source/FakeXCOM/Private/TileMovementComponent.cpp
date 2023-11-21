@@ -6,6 +6,7 @@
 #include "TBTacticalGameMode.h"
 #include "TBTacticalMainController.h"
 #include "TilePathFinder.h"
+#include "UnitAttributeSet.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
@@ -36,6 +37,15 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (bStopMoving)
 	{
 		CurrentVelocity = 0.0f;
+
+		//End of movement cost action
+		if (const AUnit* Unit = Cast<AUnit>(GetOwner()))
+		{
+			const int BaseDistance = Unit->UnitAttributeSet->GetMaxMoveDistancePerAction();
+			const int ActionCost = LocatedNodePath->NbSteps > BaseDistance ? 2 : 1;
+			Unit->UnitAttributeSet->SetActions(Unit->UnitAttributeSet->GetActions()-ActionCost);
+		}
+		
 		OnUnitStopMovingEvent.Broadcast(GetOwner());
 		SetComponentTickEnabled(false);
 		return;

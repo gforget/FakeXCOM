@@ -27,6 +27,8 @@ public :
 	
 	UPROPERTY()
 	int SelectedUnitId = -1;
+
+	void AddUnitToManager(int IdUnit, AUnit* Unit);
 	
 	UPROPERTY(BlueprintReadOnly)
 	TMap<int, AUnit*> AllUnitReference;
@@ -39,10 +41,15 @@ public :
 
 	ATBTacticalGameMode* TBTacticalGameMode;
 	void Initialize(ATBTacticalGameMode* TBTacticalGameModePtr);
-	
+
+private:
+
 	UFUNCTION()
 	void OnRightClickSelectActor(AActor* Actor, FVector HitLocation);
 	
 	UFUNCTION()
 	void OnLeftClickSelectActor(AActor* Actor, FVector HitLocation);
+	
+	UFUNCTION()
+	void OnUnitRanOutOfActions(AUnit* Unit);
 };

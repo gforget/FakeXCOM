@@ -4,6 +4,7 @@
 #include "DebugHeader.h"
 #include "TileMovementComponent.h"
 #include "MouseSceneSelectionComponent.h"
+#include "UnitAttributeSet.h"
 #include "UnitManager.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -133,7 +134,14 @@ void ATBTacticalMainController::OnUnitStopMovingEvent(AActor* MovingActor)
 	UnFollowActor();
 	if (const AUnit* Unit = Cast<AUnit>(MovingActor))
 	{
-		TBTacticalGameMode->UnitManager->SelectUnit(Unit->IdUnit, false);
+		if (Unit->UnitAttributeSet->GetActions() > 0)
+		{
+			TBTacticalGameMode->UnitManager->SelectUnit(Unit->IdUnit, false);
+		}
+		else
+		{
+			TBTacticalGameMode->UnitManager->SelectNextUnit();
+		}
 	}
 }
 
