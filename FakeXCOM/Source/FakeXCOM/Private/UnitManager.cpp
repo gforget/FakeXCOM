@@ -13,67 +13,88 @@
 
 void UUnitManager::SelectNextUnit()
 {
-	//Soldier are never removed from the list, even when dead
-	//TODO unit reference need to be seperated from ally and ennemy
+	//TODO: Manage dead soldier
 	
 	bool haveSelectedAUnit = false;
-	for (int i=0; i<AllUnitReference.Num(); i++)
+	for (int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{
-		SelectedUnitId++;
-		if (SelectedUnitId >= AllUnitReference.Num())
+		SelectedUnitIndex++;
+		if (SelectedUnitIndex >= AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num())
 		{
-			SelectedUnitId = 0;
+			SelectedUnitIndex = 0;
 		}
 
-		if (AllUnitReference[SelectedUnitId]->UnitAttributeSet->GetActions() != 0)
+		const int UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
+		const AUnit* SelectedUnit = AllUnitReference[UnitID];
+		
+		if (SelectedUnit->UnitAttributeSet->GetActions() != 0)
 		{
 			haveSelectedAUnit = true;
 			break;
 		}
 	}
 	
-	if (haveSelectedAUnit) SelectUnit(SelectedUnitId);
+	if (haveSelectedAUnit) SelectUnit(SelectedUnitIndex);
 }
 
 void UUnitManager::SelectPreviousUnit()
 {
 	bool haveSelectedAUnit = false;
-	for (int i=0; i<AllUnitReference.Num(); i++)
+	for (int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{
-		SelectedUnitId--;
-		if (SelectedUnitId < 0)
+		SelectedUnitIndex--;
+		if (SelectedUnitIndex < 0)
 		{
-			SelectedUnitId = AllUnitReference.Num()-1;
+			SelectedUnitIndex = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num()-1;
 		}
 
-		if (AllUnitReference[SelectedUnitId]->UnitAttributeSet->GetActions() != 0)
+		const int UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
+		const AUnit* SelectedUnit = AllUnitReference[UnitID];
+		
+		if (SelectedUnit->UnitAttributeSet->GetActions() != 0)
 		{
 			haveSelectedAUnit = true;
 			break;
 		}
 	}
 	
-	if (haveSelectedAUnit) SelectUnit(SelectedUnitId);
+	if (haveSelectedAUnit) SelectUnit(SelectedUnitIndex);
 }
 
 AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 {
 	DebugScreen("New Soldier Selected !", FColor::Yellow);
-
-	SelectedUnitId = UnitId;
+	
+	AUnit* SelectedUnit = AllUnitReference[UnitId];
+	if (SelectedUnit->Faction != SelectedFaction)
+	{
+		//TODO: could select an enemy if the unit is on sight
+		return nullptr;
+	}
+	
+	for (int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
+	{
+		if (AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[i] == UnitId)
+		{
+			SelectedUnitIndex = i;
+		}
+	}
+	
 	if (bGoToUnit)
 	{
-		TBTacticalGameMode->MainController->GoToActor(AllUnitReference[SelectedUnitId]);
+		TBTacticalGameMode->MainController->GoToActor(SelectedUnit);
 	}
-	OnUnitSelectedEvent.Broadcast(AllUnitReference[SelectedUnitId]);
-	return AllUnitReference[SelectedUnitId];
+	
+	OnUnitSelectedEvent.Broadcast(SelectedUnit);
+	return SelectedUnit;
 }
 
 AUnit* UUnitManager::GetCurrentlySelectedUnit()
 {
-	if (SelectedUnitId != -1)
+	if (SelectedUnitIndex != -1)
 	{
-		return AllUnitReference[SelectedUnitId];	
+		const int UnitId = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
+		return AllUnitReference[UnitId];	
 	}
 	
 	return nullptr;
@@ -89,17 +110,26 @@ void UUnitManager::Initialize(ATBTacticalGameMode* TBTacticalGameModePtr)
 
 void UUnitManager::AddUnitToManager(int IdUnit, AUnit* Unit)
 {
+	if (!AllUnitFactionReferenceMap.Contains(Unit->Faction))
+	{
+		AllUnitFactionReferenceMap.Add(Unit->Faction, FUnitFactionStruct());
+	}
+	
+	AllUnitFactionReferenceMap[Unit->Faction].UnitInFaction.Add(IdUnit);
 	AllUnitReference.Add(IdUnit, Unit);
+	
 	Unit->OnUnitRanOutOfActionsEvent.AddDynamic(this, &UUnitManager::OnUnitRanOutOfActions);
 }
 
 void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
 {
-	//TODO: seperate friendly unit and ennemy unit
 	bAllUnitOutOfAction = true;
-	for(int i=0; i<AllUnitReference.Num(); i++)
+	for(int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{
-		if (AllUnitReference[i]->UnitAttributeSet->GetActions() > 0)
+		const int UnitId = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[i];
+		const AUnit* UnitPtr = AllUnitReference[UnitId];
+		
+		if (UnitPtr->UnitAttributeSet->GetActions() > 0)
 		{
 			bAllUnitOutOfAction = false;
 			break;

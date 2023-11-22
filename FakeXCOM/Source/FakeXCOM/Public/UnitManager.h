@@ -11,6 +11,36 @@ class UNodePath;
 /**
  * 
  */
+
+UENUM(BlueprintType)
+enum EFaction
+{
+	Player,
+	Ally,
+	Enemy,
+	Neutral
+};
+
+USTRUCT(BlueprintType)
+struct NO_API FUnitFactionStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<int> UnitInFaction;
+	
+	FUnitFactionStruct()
+	{
+		// Initialize the struct members with default values
+		UnitInFaction = TArray<int>();
+	}
+	
+	FUnitFactionStruct(TArray<int> _UnitFactionMap)
+	{
+		UnitInFaction = _UnitFactionMap;
+	}
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSelectedEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitOrderedToMoveEvent, AUnit*, Unit);
 
@@ -27,13 +57,15 @@ public :
 	FUnitOrderedToMoveEvent OnUnitOrderedToMoveEvent;
 	
 	UPROPERTY()
-	int SelectedUnitId = -1;
+	int SelectedUnitIndex = -1;
 
-	void AddUnitToManager(int IdUnit, AUnit* Unit);
+	UPROPERTY()
+	TEnumAsByte<EFaction> SelectedFaction = EFaction::Player;
 	
-	UPROPERTY(BlueprintReadOnly)
-	TMap<int, AUnit*> AllUnitReference;
+	void AddUnitToManager(int IdUnit, AUnit* Unit);
 
+	TMap<int, AUnit*> AllUnitReference;
+	
 	void SelectNextUnit();
 	void SelectPreviousUnit();
 
@@ -49,6 +81,9 @@ public :
 	
 private:
 
+	UPROPERTY()
+	TMap<TEnumAsByte<EFaction>, FUnitFactionStruct> AllUnitFactionReferenceMap;
+	
 	UPROPERTY()
 	bool bAllUnitOutOfAction = false;
 	

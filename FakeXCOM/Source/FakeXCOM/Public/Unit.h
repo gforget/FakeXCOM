@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayAbilitySpec.h"
+#include "UnitManager.h"
 #include "GameFramework/Actor.h"
 #include "Unit.generated.h"
 
@@ -56,6 +57,9 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
 	TArray<UUnitAbility*> OwnedAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
+	TEnumAsByte<EFaction> Faction = EFaction::Player;
 	
 	UPROPERTY()
 	const UUnitAttributeSet* UnitAttributeSet;
