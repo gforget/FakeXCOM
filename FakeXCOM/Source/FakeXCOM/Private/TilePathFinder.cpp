@@ -231,11 +231,11 @@ int UTilePathFinder::GetStepFromStepSoFar(TMap<int, int>& step_so_far, int IdNod
 	return 0;
 }
 
-void UTilePathFinder::MoveUnit(const AUnit* Unit, GenericStack<UNodePath*> Path)
+void UTilePathFinder::MoveUnit(const AUnit* Unit, GenericStack<UNodePath*> Path, bool CallEndOfAbility)
 {
 	if (bCanMoveUnit)
 	{
-		Unit->TileMovementComponent->FollowPath(Path);
+		Unit->TileMovementComponent->FollowPath(Path, CallEndOfAbility);
 	}
 }
 

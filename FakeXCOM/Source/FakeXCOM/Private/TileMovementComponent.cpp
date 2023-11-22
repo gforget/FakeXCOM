@@ -7,6 +7,7 @@
 #include "TBTacticalMainController.h"
 #include "TilePathFinder.h"
 #include "UnitAttributeSet.h"
+#include "UnitManager.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
@@ -36,8 +37,12 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (bStopMoving)
 	{
+		if (bCallEndOfAbility)
+		{
+			TBTacticalGameMode->UnitManager->EndOfAbility();
+		}
+		
 		CurrentVelocity = 0.0f;
-		MovementActionCost();
 		OnUnitStopMovingEvent.Broadcast(GetOwner());
 		SetComponentTickEnabled(false);
 		return;
@@ -92,23 +97,16 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
-void UTileMovementComponent::FollowPath(const GenericStack<UNodePath*>& NewPath)
+void UTileMovementComponent::FollowPath(const GenericStack<UNodePath*>& NewPath, bool CallEndOfAbility)
 {
 	Path.Clear();
 	Path = NewPath;
+	bCallEndOfAbility = CallEndOfAbility;
 	bChangeDestination = true;
 	bStopMoving = false;
 	OnUnitStartMovingEvent.Broadcast(GetOwner());
 	SetComponentTickEnabled(true);
 }
 
-void UTileMovementComponent::MovementActionCost()
-{
-	if (const AUnit* Unit = Cast<AUnit>(GetOwner()))
-	{
-		const int BaseDistance = Unit->UnitAttributeSet->GetMaxMoveDistancePerAction();
-		const int ActionCost = LocatedNodePath->NbSteps > BaseDistance ? 2 : 1;
-		Unit->UnitAttributeSet->SetActions(Unit->UnitAttributeSet->GetActions()-ActionCost);
-	}
-}
+
 

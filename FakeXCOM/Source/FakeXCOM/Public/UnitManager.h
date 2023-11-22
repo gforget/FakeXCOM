@@ -7,6 +7,7 @@
 #include "UnitManager.generated.h"
 
 class ATBTacticalGameMode;
+class UNodePath;
 /**
  * 
  */
@@ -40,10 +41,17 @@ public :
 	AUnit* GetCurrentlySelectedUnit();
 
 	ATBTacticalGameMode* TBTacticalGameMode;
+	
 	void Initialize(ATBTacticalGameMode* TBTacticalGameModePtr);
 
+	UFUNCTION(BlueprintCallable)
+	void EndOfAbility();
+	
 private:
 
+	UPROPERTY()
+	bool bAllUnitOutOfAction = false;
+	
 	UFUNCTION()
 	void OnRightClickSelectActor(AActor* Actor, FVector HitLocation);
 	
@@ -52,5 +60,6 @@ private:
 	
 	UFUNCTION()
 	void OnUnitRanOutOfActions(AUnit* Unit);
-	
+
+	void MovementActionCost(const UNodePath* Destination);
 };

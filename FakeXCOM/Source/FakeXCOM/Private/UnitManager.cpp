@@ -95,22 +95,21 @@ void UUnitManager::AddUnitToManager(int IdUnit, AUnit* Unit)
 
 void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
 {
-	DebugScreen("Unit out of actions", FColor::Blue);
-
 	//TODO: seperate friendly unit and ennemy unit
-	
-	bool bEndOfTurn = true;
+	bAllUnitOutOfAction = true;
 	for(int i=0; i<AllUnitReference.Num(); i++)
 	{
 		if (AllUnitReference[i]->UnitAttributeSet->GetActions() > 0)
 		{
-			bEndOfTurn = false;
+			bAllUnitOutOfAction = false;
 			break;
 		}
 	}
+}
 
-	//All unit have no remaining actions left, call end of turn
-	if (bEndOfTurn)
+void UUnitManager::EndOfAbility()
+{
+	if (bAllUnitOutOfAction)
 	{
 		DebugScreen("End of turn", FColor::Red);
 		//Call end of turn
@@ -146,12 +145,20 @@ void UUnitManager::OnRightClickSelectActor(AActor* Actor, FVector HitLocation)
 						&& Unit->UnitAttributeSet->GetActions() > 0)
 					{
 						OnUnitOrderedToMoveEvent.Broadcast(GetCurrentlySelectedUnit());
+						MovementActionCost(ChosenNodePath);
 						TBTacticalGameMode->TilePathFinder->MoveUnit(GetCurrentlySelectedUnit(), Path);
 					}
 				}
 			}
 		}
 	}
+}
+
+void UUnitManager::MovementActionCost(const UNodePath* Destination)
+{
+	const int BaseDistance = GetCurrentlySelectedUnit()->UnitAttributeSet->GetMaxMoveDistancePerAction();
+	const int ActionCost = Destination->NbSteps > BaseDistance ? 2 : 1;
+	GetCurrentlySelectedUnit()->UnitAttributeSet->SetActions(GetCurrentlySelectedUnit()->UnitAttributeSet->GetActions()-ActionCost);
 }
 
 void UUnitManager::OnLeftClickSelectActor(AActor* Actor, FVector HitLocation)

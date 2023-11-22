@@ -58,11 +58,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FUnitStopMovingDelegate OnUnitStopMovingEvent;
 	
-	void FollowPath(const GenericStack<UNodePath*>& NewPath);
+	void FollowPath(const GenericStack<UNodePath*>& NewPath, bool CallEndOfAbility);
 
 private:
 	GenericStack<UNodePath*> Path;
 
+	UPROPERTY()
+	bool bCallEndOfAbility = false;
+	
 	UPROPERTY()
 	bool bChangeDestination = false;
 
@@ -71,6 +74,4 @@ private:
 
 	UPROPERTY()
 	ATBTacticalGameMode* TBTacticalGameMode;
-
-	void MovementActionCost();
 };

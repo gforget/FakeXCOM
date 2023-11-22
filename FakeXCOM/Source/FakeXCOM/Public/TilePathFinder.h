@@ -36,7 +36,7 @@ public:
 	
 	GenericStack<UNodePath*> GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode);
 
-	void MoveUnit(const AUnit* Unit, GenericStack<UNodePath*> Path);
+	void MoveUnit(const AUnit* Unit, GenericStack<UNodePath*> Path, bool CallEndOfAbility = true);
 
 	void GetNodeDistanceLimitForUnit(AUnit* Unit,
 		TArray<UNodePath*>& AllBaseDistanceNode,
