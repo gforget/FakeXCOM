@@ -112,7 +112,17 @@ void UUnitManager::EndOfAbility()
 	if (bAllUnitOutOfAction)
 	{
 		DebugScreen("End of turn", FColor::Red);
-		//Call end of turn
+	}
+	else
+	{
+		if (GetCurrentlySelectedUnit()->UnitAttributeSet->GetActions() > 0)
+		{
+			SelectUnit(GetCurrentlySelectedUnit()->IdUnit, false);
+		}
+		else
+		{
+			SelectNextUnit();
+		}
 	}
 }
 

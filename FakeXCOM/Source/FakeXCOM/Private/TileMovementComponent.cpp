@@ -37,13 +37,14 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (bStopMoving)
 	{
+		CurrentVelocity = 0.0f;
+		
+		OnUnitStopMovingEvent.Broadcast(GetOwner());
 		if (bCallEndOfAbility)
 		{
 			TBTacticalGameMode->UnitManager->EndOfAbility();
 		}
 		
-		CurrentVelocity = 0.0f;
-		OnUnitStopMovingEvent.Broadcast(GetOwner());
 		SetComponentTickEnabled(false);
 		return;
 	}
