@@ -50,16 +50,32 @@ void ATBTacticalGameMode::BeginPlay()
 				TArray<UNodePath*> AllNodePaths;
 				LevelBlockPtr->GetComponents<UNodePath>(AllNodePaths);
 				
-				if (LevelBlockPtr->bIsStartingPosition)
+				if (LevelBlockPtr->bIsSpawningPosition)
 				{
-					const UNodePath* StartingNodePtr = AllNodePaths[LevelBlockPtr->NodePathIndex];
-					if (UnitClass)
+					for (int j=0; j<LevelBlockPtr->SpawningNodePathIndexes.Num(); j++)
 					{
-						CurrentIdUnit++;
-						AUnit* UnitPtr = GetWorld()->SpawnActor<AUnit>(UnitClass, StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f), FRotator(0.0f, 90.0f, 0.0f));
-						UnitPtr->IdUnit = CurrentIdUnit;
-						UnitPtr->UnitName = TEXT("Soldier " + FString::FromInt(CurrentIdUnit));
-						UnitPtr->Initialize();
+						const UNodePath* StartingNodePtr = AllNodePaths[LevelBlockPtr->SpawningNodePathIndexes[j]];
+						
+						if (LevelBlockPtr->UnitClasses[j] && j < LevelBlockPtr->SpawningRotation.Num())
+						{
+							CurrentIdUnit++;
+							AUnit* UnitPtr = GetWorld()->SpawnActor<AUnit>(LevelBlockPtr->UnitClasses[j],
+								StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f),
+								FRotator(0.0f, LevelBlockPtr->SpawningRotation[j], 0.0f))
+							;
+							UnitPtr->IdUnit = CurrentIdUnit;
+							
+							if (UnitPtr->Faction == EFaction::Ally)
+							{
+								UnitPtr->UnitName = TEXT("Soldier " + FString::FromInt(CurrentIdUnit));
+							}
+							else if (UnitPtr->Faction == EFaction::Enemy)
+							{
+								UnitPtr->UnitName = TEXT("Alien Soldier " + FString::FromInt(CurrentIdUnit));
+							}
+							
+							UnitPtr->Initialize();
+						}
 					}
 				}
 				

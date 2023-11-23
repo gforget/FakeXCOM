@@ -45,11 +45,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pathfinder")
 	TArray<FVector> NodePathPositions;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pathfinder")
-	bool bIsStartingPosition = false;
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Spawning Position")
+	bool bIsSpawningPosition = false;
 	
-	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsStartingPosition"), Category = "Pathfinder")
-	int NodePathIndex = 0;
+	UPROPERTY(EditInstanceOnly, meta = (EditCondition = "bIsSpawningPosition"), Category = "Spawning Position")
+	TArray<int> SpawningNodePathIndexes;
+
+	UPROPERTY(EditInstanceOnly, meta = (EditCondition = "bIsSpawningPosition"), Category = "Spawning Position")
+	TArray<TSubclassOf<AUnit>> UnitClasses;
+
+	UPROPERTY(EditInstanceOnly, meta = (EditCondition = "bIsSpawningPosition"), Category = "Spawning Position")
+	TArray<float> SpawningRotation;
 	
 	UPROPERTY()
 	UArrowComponent* ArrowComponent = nullptr;

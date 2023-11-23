@@ -82,13 +82,19 @@ void ALevelBlock::GenerateNodePathPositionVisualisation()
 
 void ALevelBlock::ActivateArrowComponent()
 {
-	if (bIsStartingPosition && NodePathIndex != -1 && NodePathIndex < NodePathPositions.Num())
+	if (bIsSpawningPosition)
 	{
-		ArrowComponent->SetVisibility(true);
-		FVector ArrowPosition = NodePathPositions[NodePathIndex];
-		ArrowPosition.Z += 100.0f;
-		ArrowComponent->SetRelativeLocation(ArrowPosition);
-		ArrowComponent->SetRelativeRotation(FRotator(-90.0f,0.0f,0.0f));
+		for (int i=0; i<SpawningNodePathIndexes.Num(); i++)
+		{
+			if (SpawningNodePathIndexes[i] < NodePathPositions.Num())
+			{
+				ArrowComponent->SetVisibility(true);
+				FVector ArrowPosition = NodePathPositions[SpawningNodePathIndexes[i]];
+				ArrowPosition.Z += 100.0f;
+				ArrowComponent->SetRelativeLocation(ArrowPosition);
+				ArrowComponent->SetRelativeRotation(FRotator(-90.0f,0.0f,0.0f));
+			}
+		}
 	}
 	else
 	{

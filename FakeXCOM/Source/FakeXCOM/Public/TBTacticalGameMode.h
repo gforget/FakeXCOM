@@ -52,9 +52,5 @@ public:
 
 	UPROPERTY()
 	ULevelUI* LevelUI;
-
-	//TODO: will be put in the NodePath to spawn specific unit at a position
-	UPROPERTY(EditDefaultsOnly, Category = "Spawnable Unit")
-	TSubclassOf<AUnit> UnitClass;
 	
 };

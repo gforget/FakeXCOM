@@ -46,15 +46,25 @@ void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	{
 		FVector2d ScreenLocation;
 		const AUnit* CurrentUnit = TBTacticalGameMode->UnitManager->AllUnitReference[HealthBarAssoc.Key];
-		const FVector UnitLocation =CurrentUnit->GetActorLocation() + CurrentUnit->HealthBarAnchor;
-		
-		PlayerController->ProjectWorldLocationToScreen(UnitLocation, ScreenLocation, true);
 
-		//Prevent offsetting caused by the UMG system
-		ScreenLocation = ScreenLocation/ViewPortScale;
-		ScreenLocation *= GameUserSettings->GetResolutionScaleNormalized();
-		
-		Cast<UCanvasPanelSlot>(HealthBarAssoc.Value->Slot)->SetPosition(ScreenLocation);
+		if (CurrentUnit->SkeletalMeshComponent->WasRecentlyRendered())
+		{
+			const FVector UnitLocation = CurrentUnit->GetActorLocation() + CurrentUnit->HealthBarAnchor;
+	
+			PlayerController->ProjectWorldLocationToScreen(UnitLocation, ScreenLocation, true);
+
+			//Prevent offsetting caused by the UMG system
+			ScreenLocation = ScreenLocation/ViewPortScale;
+			ScreenLocation *= GameUserSettings->GetResolutionScaleNormalized();
+
+			Cast<UCanvasPanelSlot>(HealthBarAssoc.Value->Slot)->SetPosition(ScreenLocation);
+
+			HealthBarAssoc.Value->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			HealthBarAssoc.Value->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
 

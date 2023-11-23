@@ -156,7 +156,7 @@ void AUnit::Initialize()
 			{
 				TArray<UNodePath*> AllNodePaths;
 				LevelBlockPtr->GetComponents<UNodePath>(AllNodePaths);
-				UNodePath* StartingNodePtr = AllNodePaths[LevelBlockPtr->NodePathIndex];
+				UNodePath* StartingNodePtr = LevelBlockPtr->GetClosestNodePathFromLocation(HitResult.Location);
 				TileMovementComponent->LocatedNodePath = StartingNodePtr;
 				StartingNodePtr->bIsBlocked = true;
 			}

@@ -16,6 +16,8 @@ void UUnitManager::SelectNextUnit()
 	//TODO: Manage dead soldier
 	
 	bool haveSelectedAUnit = false;
+	int UnitID = -1;
+	
 	for (int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{
 		SelectedUnitIndex++;
@@ -24,7 +26,7 @@ void UUnitManager::SelectNextUnit()
 			SelectedUnitIndex = 0;
 		}
 
-		const int UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
+		UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
 		const AUnit* SelectedUnit = AllUnitReference[UnitID];
 		
 		if (SelectedUnit->UnitAttributeSet->GetActions() != 0)
@@ -34,12 +36,17 @@ void UUnitManager::SelectNextUnit()
 		}
 	}
 	
-	if (haveSelectedAUnit) SelectUnit(SelectedUnitIndex);
+	if (haveSelectedAUnit && UnitID != -1)
+	{
+		SelectUnit(UnitID);
+	}
 }
 
 void UUnitManager::SelectPreviousUnit()
 {
 	bool haveSelectedAUnit = false;
+	int UnitID = -1;
+	
 	for (int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{
 		SelectedUnitIndex--;
@@ -48,7 +55,7 @@ void UUnitManager::SelectPreviousUnit()
 			SelectedUnitIndex = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num()-1;
 		}
 
-		const int UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
+		UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
 		const AUnit* SelectedUnit = AllUnitReference[UnitID];
 		
 		if (SelectedUnit->UnitAttributeSet->GetActions() != 0)
@@ -58,7 +65,10 @@ void UUnitManager::SelectPreviousUnit()
 		}
 	}
 	
-	if (haveSelectedAUnit) SelectUnit(SelectedUnitIndex);
+	if (haveSelectedAUnit && UnitID != -1)
+	{
+		SelectUnit(UnitID);
+	}
 }
 
 AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
