@@ -21,6 +21,11 @@ ATBTacticalGameMode::ATBTacticalGameMode()
 	TurnManagerComponent = CreateDefaultSubobject<UTurnManager>(TEXT("Turn Manager Component"));
 }
 
+void ATBTacticalGameMode::EndTurnBP()
+{
+	TurnManagerComponent->EndTurn();
+}
+
 void ATBTacticalGameMode::BeginPlay()
 {
 	Super::BeginPlay();

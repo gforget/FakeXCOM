@@ -60,5 +60,7 @@ public:
 
 	UPROPERTY()
 	ULevelUI* LevelUI;
-	
+
+	UFUNCTION(BlueprintCallable, Category="TurnManager Function")
+	void EndTurnBP();
 };
