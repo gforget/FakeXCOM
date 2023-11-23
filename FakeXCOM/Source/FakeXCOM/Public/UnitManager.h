@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FactionManager.h"
 #include "UObject/Object.h"
 #include "UnitManager.generated.h"
 
@@ -11,16 +12,6 @@ class UNodePath;
 /**
  * 
  */
-
-UENUM(BlueprintType)
-enum EFaction
-{
-	Player,
-	Ally,
-	Enemy,
-	Neutral
-};
-
 USTRUCT(BlueprintType)
 struct NO_API FUnitFactionStruct
 {
@@ -58,9 +49,6 @@ public :
 	
 	UPROPERTY()
 	int SelectedUnitIndex = -1;
-
-	UPROPERTY()
-	TEnumAsByte<EFaction> SelectedFaction = EFaction::Player;
 	
 	void AddUnitToManager(int IdUnit, AUnit* Unit);
 
@@ -78,6 +66,9 @@ public :
 
 	UFUNCTION(BlueprintCallable)
 	void EndOfAbility();
+
+	void SelectFirstUnitOfFaction(EFaction Faction);
+	void ResetAllActionsOfFaction(EFaction Faction);
 	
 private:
 

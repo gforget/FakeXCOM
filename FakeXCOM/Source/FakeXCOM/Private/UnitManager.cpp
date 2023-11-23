@@ -9,6 +9,7 @@
 #include "TBTacticalMainController.h"
 #include "TileMovementComponent.h"
 #include "TilePathFinder.h"
+#include "TurnManager.h"
 #include "UnitAttributeSet.h"
 
 void UUnitManager::SelectNextUnit()
@@ -18,6 +19,7 @@ void UUnitManager::SelectNextUnit()
 	bool haveSelectedAUnit = false;
 	int UnitID = -1;
 	
+	const EFaction SelectedFaction = TBTacticalGameMode->TurnManagerComponent->GetSelectedFaction();
 	for (int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{
 		SelectedUnitIndex++;
@@ -46,6 +48,7 @@ void UUnitManager::SelectPreviousUnit()
 {
 	bool haveSelectedAUnit = false;
 	int UnitID = -1;
+	const EFaction SelectedFaction = TBTacticalGameMode->TurnManagerComponent->GetSelectedFaction();
 	
 	for (int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{
@@ -76,6 +79,8 @@ AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 	DebugScreen("New Soldier Selected !", FColor::Yellow);
 	
 	AUnit* SelectedUnit = AllUnitReference[UnitId];
+	const EFaction SelectedFaction = TBTacticalGameMode->TurnManagerComponent->GetSelectedFaction();
+	
 	if (SelectedUnit->Faction != SelectedFaction)
 	{
 		//TODO: could select an enemy if the unit is on sight
@@ -103,6 +108,7 @@ AUnit* UUnitManager::GetCurrentlySelectedUnit()
 {
 	if (SelectedUnitIndex != -1)
 	{
+		const EFaction SelectedFaction = TBTacticalGameMode->TurnManagerComponent->GetSelectedFaction();
 		const int UnitId = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
 		return AllUnitReference[UnitId];	
 	}
@@ -134,6 +140,8 @@ void UUnitManager::AddUnitToManager(int IdUnit, AUnit* Unit)
 void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
 {
 	bAllUnitOutOfAction = true;
+	const EFaction SelectedFaction = TBTacticalGameMode->TurnManagerComponent->GetSelectedFaction();
+	
 	for(int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{
 		const int UnitId = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[i];
@@ -151,7 +159,8 @@ void UUnitManager::EndOfAbility()
 {
 	if (bAllUnitOutOfAction)
 	{
-		DebugScreen("End of turn", FColor::Red);
+		//End the turn
+		TBTacticalGameMode->TurnManagerComponent->EndTurn();
 	}
 	else
 	{
@@ -163,6 +172,25 @@ void UUnitManager::EndOfAbility()
 		{
 			SelectNextUnit();
 		}
+	}
+}
+
+void UUnitManager::SelectFirstUnitOfFaction(EFaction Faction)
+{
+	if (AllUnitFactionReferenceMap[Faction].UnitInFaction.Num() > 0)
+	{
+		SelectedUnitIndex = 0;
+		SelectUnit(GetCurrentlySelectedUnit()->IdUnit);
+	}
+}
+
+void UUnitManager::ResetAllActionsOfFaction(EFaction Faction)
+{
+	bAllUnitOutOfAction = false;
+	for (int i=0; i<AllUnitFactionReferenceMap[Faction].UnitInFaction.Num(); i++)
+	{
+		const AUnit* UnitPtr = AllUnitReference[AllUnitFactionReferenceMap[Faction].UnitInFaction[i]];
+		UnitPtr->UnitAttributeSet->SetActions(UnitPtr->UnitAttributeSet->GetMaxActions());
 	}
 }
 

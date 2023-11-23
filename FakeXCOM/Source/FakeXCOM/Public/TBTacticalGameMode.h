@@ -8,8 +8,10 @@
 #include "LevelUI.h"
 #include "TBTacticalGameMode.generated.h"
 
-class UTilePathFinder;
 class ATBTacticalMainController;
+class UTurnManager;
+class UTilePathFinder;
+class UFactionManager;
 class UUI3DManager;
 class UUnitManager;
 
@@ -26,9 +28,15 @@ public:
 
 	ATBTacticalGameMode();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Global Object")
 	UUI3DManager* UI3DManagerComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Global Object")
+	UFactionManager* FactionManagerComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Global Object")
+	UTurnManager* TurnManagerComponent;
+	
 	UPROPERTY(BlueprintReadOnly, Category="Global Object")
 	UUnitManager* UnitManager;
 	

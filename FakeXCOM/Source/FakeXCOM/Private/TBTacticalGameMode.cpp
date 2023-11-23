@@ -8,6 +8,7 @@
 #include "NodePath.h"
 #include "TBTacticalMainController.h"
 #include "TilePathFinder.h"
+#include "TurnManager.h"
 #include "UI3DManager.h"
 #include "Unit.h"
 #include "UnitManager.h"
@@ -16,6 +17,8 @@
 ATBTacticalGameMode::ATBTacticalGameMode()
 {
 	UI3DManagerComponent = CreateDefaultSubobject<UUI3DManager>(TEXT("UI 3D Manager Component"));
+	FactionManagerComponent = CreateDefaultSubobject<UFactionManager>(TEXT("Faction Manager Component"));
+	TurnManagerComponent = CreateDefaultSubobject<UTurnManager>(TEXT("Turn Manager Component"));
 }
 
 void ATBTacticalGameMode::BeginPlay()
@@ -38,6 +41,7 @@ void ATBTacticalGameMode::BeginPlay()
 	const UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
 	UGameplayStatics::GetAllActorsOfClass(WorldPtr,AActor::StaticClass(),AllActors);
 
+	int FirstUnitToSelectId = -1;
 	if (WorldPtr && AllActors.Num() > 0)
 	{
 		int CurrentIdUnit = -1;
@@ -63,10 +67,15 @@ void ATBTacticalGameMode::BeginPlay()
 								StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f),
 								FRotator(0.0f, LevelBlockPtr->SpawningRotation[j], 0.0f))
 							;
+							
 							UnitPtr->IdUnit = CurrentIdUnit;
 							
-							if (UnitPtr->Faction == EFaction::Ally)
+							if (UnitPtr->Faction == EFaction::Player)
 							{
+								if (FirstUnitToSelectId == -1)
+								{
+									FirstUnitToSelectId = CurrentIdUnit;
+								}
 								UnitPtr->UnitName = TEXT("Soldier " + FString::FromInt(CurrentIdUnit));
 							}
 							else if (UnitPtr->Faction == EFaction::Enemy)
@@ -111,7 +120,7 @@ void ATBTacticalGameMode::BeginPlay()
 		LevelUI->Initialization();
 		
 		bInitialized = true;
-		UnitManager->SelectUnit(CurrentIdUnit);
+		UnitManager->SelectUnit(FirstUnitToSelectId);
 	}
 }
 
