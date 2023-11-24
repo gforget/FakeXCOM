@@ -131,7 +131,8 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 			if ((!cost_so_far.Contains(next->IdNode) || new_cost < GetCostFromCostSoFar(cost_so_far, next->IdNode))
 				&& !next->bIsBlocked )
 			{
-				next->NbSteps = new_step;
+				if (next->NbSteps == -1 || next->NbSteps > new_step) next->NbSteps = new_step;
+				
 				AddStepToStepSoFar(step_so_far, next->IdNode, new_step);
 				AddCostToCostSoFar(cost_so_far, next->IdNode, new_cost);
 				AddNodeToCameFrom(came_from, next->IdNode, current);

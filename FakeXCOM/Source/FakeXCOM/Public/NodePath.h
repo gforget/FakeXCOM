@@ -71,7 +71,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
 	int NbConnectedNeighbour;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
 	int NbSteps = -1;
 	
 	UPROPERTY()
