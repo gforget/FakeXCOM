@@ -78,11 +78,14 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	
 	//Move to destination
 	const FVector Delta = Destination - GetOwner()->GetActorLocation();
-	if (Delta.SizeSquared() > 10.0f)
+	const float DeltaSize = Delta.SizeSquared();
+	
+	if (DeltaSize < DeltaMem || DeltaMem == -1.0f) 
 	{
 		const FVector DeltaDisplacement = MovementDirection*MovementSpeed*DeltaTime;
 		CurrentVelocity = MovementSpeed;
 		GetOwner()->SetActorLocation(GetOwner()->GetActorLocation() + DeltaDisplacement);
+		DeltaMem = Delta.SizeSquared();
 	}
 	else
 	{
@@ -95,6 +98,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 			bStopMoving = true;
 			GetOwner()->SetActorLocation(Destination);
 		}
+		DeltaMem = -1;
 	}
 }
 

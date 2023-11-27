@@ -74,4 +74,7 @@ private:
 
 	UPROPERTY()
 	ATBTacticalGameMode* TBTacticalGameMode;
+
+	UPROPERTY()
+	float DeltaMem = -1.0f;
 };
