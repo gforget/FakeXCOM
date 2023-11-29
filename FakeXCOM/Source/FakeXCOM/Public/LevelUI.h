@@ -52,4 +52,7 @@ private:
 	
 	UFUNCTION()
 	void OnUnitSelected(AUnit* Unit);
+
+	UFUNCTION()
+	void OnUnitSpawned(AUnit* Unit);
 };

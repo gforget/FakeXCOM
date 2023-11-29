@@ -26,6 +26,7 @@ void ULevelUI::Initialization()
 {
 	if (TBTacticalGameMode)
 	{
+		TBTacticalGameMode->UnitManager->OnUnitSpawnedEvent.AddDynamic(this,  &ULevelUI::OnUnitSpawned);
 		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &ULevelUI::OnUnitSelected);
 	}
 }
@@ -33,6 +34,11 @@ void ULevelUI::Initialization()
 void ULevelUI::OnUnitSelected(AUnit* Unit)
 {
 	OnBPUnitSelectedEvent.Broadcast(Unit);
+}
+
+void ULevelUI::OnUnitSpawned(AUnit* Unit)
+{
+	OnBPUnitSpawnEvent.Broadcast(Unit);
 }
 
 void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

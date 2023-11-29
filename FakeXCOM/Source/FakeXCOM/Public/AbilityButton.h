@@ -11,6 +11,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCallAbilityDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FClickDelegate);
 
 class AUnit;
+class ULevelUI;
+
 UCLASS()
 class FAKEXCOM_API UAbilityButton : public UButton
 {
@@ -23,6 +25,9 @@ public :
 	
 	UPROPERTY(BlueprintReadWrite)
 	AUnit* UnitRef;
+
+	UPROPERTY(BlueprintReadWrite)
+	ULevelUI* LevelUIRef;
 	
 	UPROPERTY(BlueprintReadWrite)
 	FGameplayAbilitySpecHandle AbilityHandle;

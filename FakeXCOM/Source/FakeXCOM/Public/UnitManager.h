@@ -32,6 +32,7 @@ struct NO_API FUnitFactionStruct
 	}
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSpawnedEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSelectedEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitOrderedToMoveEvent, AUnit*, Unit);
 
@@ -41,6 +42,9 @@ class FAKEXCOM_API UUnitManager : public UObject
 	GENERATED_BODY()
 public :
 
+	UPROPERTY(BlueprintAssignable)
+	FUnitSpawnedEvent OnUnitSpawnedEvent;
+	
 	UPROPERTY(BlueprintAssignable)
 	FUnitSelectedEvent OnUnitSelectedEvent;
 

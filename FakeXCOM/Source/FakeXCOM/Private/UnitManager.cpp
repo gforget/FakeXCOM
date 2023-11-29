@@ -133,7 +133,8 @@ void UUnitManager::AddUnitToManager(int IdUnit, AUnit* Unit)
 	
 	AllUnitFactionReferenceMap[Unit->Faction].UnitInFaction.Add(IdUnit);
 	AllUnitReference.Add(IdUnit, Unit);
-	
+
+	OnUnitSpawnedEvent.Broadcast(Unit);
 	Unit->OnUnitRanOutOfActionsEvent.AddDynamic(this, &UUnitManager::OnUnitRanOutOfActions);
 }
 
