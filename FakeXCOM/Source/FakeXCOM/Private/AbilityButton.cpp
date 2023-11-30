@@ -3,13 +3,13 @@
 
 #include "AbilityButton.h"
 
-#include "AbilitySystemComponent.h"
-#include "Unit.h"
+#include "LevelUI.h"
+#include "TBTacticalGameMode.h"
+#include "UnitAbilityManager.h"
 
 UAbilityButton::UAbilityButton()
 {
 	OnClicked.AddDynamic(this, &UAbilityButton::OnClick);
-	CallAbility.AddDynamic(this,&UAbilityButton::OnCallAbility);
 }
 
 UAbilityButton::~UAbilityButton()
@@ -19,19 +19,14 @@ UAbilityButton::~UAbilityButton()
 
 void UAbilityButton::OnClick()
 {
-	CallAbility.Broadcast();
-}
-
-void UAbilityButton::OnCallAbility()
-{
-	if (UnitRef)
+	if (const ATBTacticalGameMode* TBTacticalGameModePtr = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>())
 	{
-		UnitRef->AbilitySystemComponent->TryActivateAbility(AbilityHandle);
+		//TODO: The reference are set in blueprint, might want to change that
+		TBTacticalGameModePtr->UnitAbilityManager->ActivateAbilitySelectionMode(UnitAbilityRef, AbilityHandle);
 	}
 }
 
 void UAbilityButton::UnbindEvents()
 {
 	OnClicked.RemoveDynamic(this, &UAbilityButton::OnClick);
-	CallAbility.RemoveDynamic(this,&UAbilityButton::OnCallAbility);
 }

@@ -10,6 +10,7 @@
 #include "TileMovementComponent.h"
 #include "TilePathFinder.h"
 #include "TurnManager.h"
+#include "UnitAbilityManager.h"
 #include "UnitAttributeSet.h"
 
 void UUnitManager::SelectNextUnit()
@@ -233,6 +234,20 @@ void UUnitManager::OnRightClickSelectActor(AActor* Actor, FVector HitLocation)
 	}
 }
 
+void UUnitManager::OnLeftClickSelectActor(AActor* Actor, FVector HitLocation)
+{
+	if(TBTacticalGameMode->UnitAbilityManager->GetAbilitySelectionMode())
+	{
+		//TODO: modify this part so you can select target from the 3D scene depending on the faction target
+		return;	
+	}
+	
+	if (const AUnit* SelectedUnitPtr = Cast<AUnit>(Actor))
+	{
+		SelectUnit(SelectedUnitPtr->IdUnit);
+	}
+}
+
 void UUnitManager::MovementActionCost(const UNodePath* Destination)
 {
 	const int BaseDistance = GetCurrentlySelectedUnit()->UnitAttributeSet->GetMaxMoveDistancePerAction();
@@ -240,12 +255,6 @@ void UUnitManager::MovementActionCost(const UNodePath* Destination)
 	GetCurrentlySelectedUnit()->UnitAttributeSet->SetActions(GetCurrentlySelectedUnit()->UnitAttributeSet->GetActions()-ActionCost);
 }
 
-void UUnitManager::OnLeftClickSelectActor(AActor* Actor, FVector HitLocation)
-{
-	if (const AUnit* SelectedUnitPtr = Cast<AUnit>(Actor))
-	{
-		SelectUnit(SelectedUnitPtr->IdUnit);
-	}
-}
+
 
 

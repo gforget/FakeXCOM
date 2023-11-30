@@ -14,6 +14,7 @@ class UTilePathFinder;
 class UFactionManager;
 class UUI3DManager;
 class UUnitManager;
+class UUnitAbilityManager;
 
 UCLASS()
 class FAKEXCOM_API ATBTacticalGameMode : public AGameModeBase
@@ -27,7 +28,7 @@ protected:
 public:
 
 	ATBTacticalGameMode();
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Global Object")
 	UUI3DManager* UI3DManagerComponent;
 
@@ -36,6 +37,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Global Object")
 	UTurnManager* TurnManagerComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category="Global Object")
+	UUnitAbilityManager* UnitAbilityManager;
 	
 	UPROPERTY(BlueprintReadOnly, Category="Global Object")
 	UUnitManager* UnitManager;
@@ -48,7 +52,7 @@ public:
 
 	UPROPERTY()
 	bool bInitialized = false;
-
+	
 	UPROPERTY()
 	FVector TopPosition = FVector(TNumericLimits<float>::Min(), TNumericLimits<float>::Min(), 0.0f);
 
@@ -61,6 +65,7 @@ public:
 	UPROPERTY()
 	ULevelUI* LevelUI;
 
-	UFUNCTION(BlueprintCallable, Category="TurnManager Function")
-	void EndTurnBP();
+private:
+	UPROPERTY()
+	bool bAbilitySelectionMode = false;
 };

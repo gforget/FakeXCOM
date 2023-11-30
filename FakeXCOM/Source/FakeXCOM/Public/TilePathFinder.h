@@ -7,8 +7,9 @@
 #include "UObject/Object.h"
 #include "TilePathFinder.generated.h"
 
-class UNodePath;
 class AUnit;
+class ATBTacticalGameMode;
+class UNodePath;
 class UTileMovementComponent;
 /**
  * 
@@ -25,14 +26,9 @@ public:
 	
 	UPROPERTY()
 	bool bCanMoveUnit = true;
-
-	UFUNCTION()
-	void OnUnitStartMovingEvent(AActor* MovingActor);
-
-	UFUNCTION()
-	void OnUnitStopMovingEvent(AActor* MovingActor);
 	
 	void SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent);
+	void SubscribeGameModeEvent(ATBTacticalGameMode* TBTacticalGameMode);
 	
 	GenericStack<UNodePath*> GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode);
 
@@ -45,6 +41,16 @@ public:
 		int& LongDistance);
 	
 private:
+
+	UFUNCTION()
+	void OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue);
+	
+	UFUNCTION()
+	void OnUnitStartMovingEvent(AActor* MovingActor);
+
+	UFUNCTION()
+	void OnUnitStopMovingEvent(AActor* MovingActor);
+	
 	void AddNodeToCameFrom(TMap<int, UNodePath*>& came_from, int IdNode, UNodePath* ValueNode);
 	UNodePath* GetNodeFromCameFrom(TMap<int, UNodePath*>& came_from, int IdNode);
 	

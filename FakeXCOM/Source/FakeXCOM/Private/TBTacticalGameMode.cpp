@@ -11,6 +11,7 @@
 #include "TurnManager.h"
 #include "UI3DManager.h"
 #include "Unit.h"
+#include "UnitAbilityManager.h"
 #include "UnitManager.h"
 #include "Blueprint/UserWidget.h"
 
@@ -19,11 +20,6 @@ ATBTacticalGameMode::ATBTacticalGameMode()
 	UI3DManagerComponent = CreateDefaultSubobject<UUI3DManager>(TEXT("UI 3D Manager Component"));
 	FactionManagerComponent = CreateDefaultSubobject<UFactionManager>(TEXT("Faction Manager Component"));
 	TurnManagerComponent = CreateDefaultSubobject<UTurnManager>(TEXT("Turn Manager Component"));
-}
-
-void ATBTacticalGameMode::EndTurnBP()
-{
-	TurnManagerComponent->EndTurn();
 }
 
 void ATBTacticalGameMode::BeginPlay()
@@ -38,8 +34,18 @@ void ATBTacticalGameMode::BeginPlay()
 	}
 	
 	//Setup UObject
+	UnitAbilityManager = NewObject<UUnitAbilityManager>(GetTransientPackage(), UUnitAbilityManager::StaticClass());
+	
 	TilePathFinder = NewObject<UTilePathFinder>(GetTransientPackage(), UTilePathFinder::StaticClass());
+	TilePathFinder->SubscribeGameModeEvent(this);
+	
 	UnitManager = NewObject<UUnitManager>(GetTransientPackage(), UUnitManager::StaticClass());
+
+	//Initialize component and manager
+	MainController->MouseSceneSelectionComponent->Initialize();
+	UnitManager->Initialize(this);
+	UI3DManagerComponent->Initialize();
+	LevelUI->Initialization();
 	
 	//For some reason, assigning pointer generated here on other object result on them being deleted or not recognise later
 	TArray<AActor*> AllActors;
@@ -118,11 +124,6 @@ void ATBTacticalGameMode::BeginPlay()
 				}
 			}
 		}
-		
-		MainController->MouseSceneSelectionComponent->Initialize();
-		UnitManager->Initialize(this);
-		UI3DManagerComponent->Initialize();
-		LevelUI->Initialization();
 		
 		bInitialized = true;
 		UnitManager->SelectUnit(FirstUnitToSelectId);

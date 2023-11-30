@@ -6,6 +6,7 @@
 #include "TBTacticalGameMode.h"
 #include "GameFramework/Actor.h"
 #include "TBTacticalMainController.generated.h"
+
 class USpringArmComponent;
 class UCameraComponent;
 class UMouseSceneSelectionComponent;
@@ -170,6 +171,8 @@ private:
 
 	void PressCameraUp();
 	void PressCameraDown();
+
+	void PressRightClick();
 	
 	//Player Move Camera Function
 	void MouseScroll();

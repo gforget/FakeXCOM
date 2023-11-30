@@ -5,13 +5,32 @@
 #include "GenericStack.h"
 #include "GenericPriorityQueue.h"
 #include "NodePath.h"
+#include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
+#include "UnitAbilityManager.h"
 #include "UnitAttributeSet.h"
 
 void UTilePathFinder::SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent)
 {
 	UnitMovementComponent->OnUnitStartMovingEvent.AddDynamic(this, &UTilePathFinder::OnUnitStartMovingEvent);
 	UnitMovementComponent->OnUnitStopMovingEvent.AddDynamic(this, &UTilePathFinder::OnUnitStopMovingEvent);
+}
+
+void UTilePathFinder::SubscribeGameModeEvent(ATBTacticalGameMode* TBTacticalGameMode)
+{
+	TBTacticalGameMode->UnitAbilityManager->OnAbilitySelectionModeChangeEvent.AddDynamic(this, &UTilePathFinder::OnAbilitySelectionModeChangeEvent);
+}
+
+void UTilePathFinder::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue)
+{
+	if (AbilitySelectionModeValue == true)
+	{
+		bCanMoveUnit = false;	
+	}
+	else
+	{
+		bCanMoveUnit = true;
+	}
 }
 
 void UTilePathFinder::OnUnitStartMovingEvent(AActor* MovingActor)

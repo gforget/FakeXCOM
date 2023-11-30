@@ -26,6 +26,7 @@ public:
 
 	EFaction GetSelectedFaction();
 	
+	UFUNCTION(BlueprintCallable, Category="TurnManager Function")
 	void EndTurn();
 
 private:

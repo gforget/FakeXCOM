@@ -12,6 +12,7 @@
 #include "TBTacticalMainController.h"
 #include "TileMovementComponent.h"
 #include "TilePathFinder.h"
+#include "UnitAbilityManager.h"
 #include "UnitAttributeSet.h"
 #include "UnitManager.h"
 
@@ -23,7 +24,6 @@ UUI3DManager::UUI3DManager()
 void UUI3DManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
 }
 
@@ -34,6 +34,7 @@ void UUI3DManager::Initialize()
 		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &UUI3DManager::OnUnitSelected);
 		TBTacticalGameMode->UnitManager->OnUnitOrderedToMoveEvent.AddDynamic(this, &UUI3DManager::OnUnitOrderedToMove);
 		TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnMouseOverActorEvent.AddDynamic(this, &UUI3DManager::OnMouseOverActor);
+		TBTacticalGameMode->UnitAbilityManager->OnAbilitySelectionModeChangeEvent.AddDynamic(this, &UUI3DManager::OnAbilitySelectionModeChangeEvent);
 	}
 }
 
@@ -52,6 +53,11 @@ void UUI3DManager::OnUnitOrderedToMove(AUnit* Unit)
 
 void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 {
+	if (!TBTacticalGameMode->TilePathFinder->bCanMoveUnit)
+	{
+		return;
+	}
+	
 	if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(Actor))
 	{
 		UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation);
@@ -100,6 +106,21 @@ void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 					CurrentMouseOverNodePath->AllCoverInfos[i].FullCover);
 			}
 		}
+	}
+}
+
+void UUI3DManager::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue)
+{
+	if (AbilitySelectionModeValue)
+	{
+		ClearPath3DIcons();
+		ClearSelect3DIcon();
+		ClearCover3DIcons();
+		ClearDistanceLimitUI();
+	}
+	else
+	{
+		CreateDistanceLimitUI(TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit());
 	}
 }
 

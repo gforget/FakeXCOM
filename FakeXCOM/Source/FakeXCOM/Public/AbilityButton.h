@@ -7,11 +7,11 @@
 #include "Components/Button.h"
 #include "AbilityButton.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCallAbilityDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FClickDelegate);
 
 class AUnit;
 class ULevelUI;
+class UUnitAbility;
 
 UCLASS()
 class FAKEXCOM_API UAbilityButton : public UButton
@@ -22,27 +22,18 @@ public :
 	UAbilityButton();
 
 	virtual ~UAbilityButton() override;
-	
-	UPROPERTY(BlueprintReadWrite)
-	AUnit* UnitRef;
 
 	UPROPERTY(BlueprintReadWrite)
-	ULevelUI* LevelUIRef;
+	UUnitAbility* UnitAbilityRef;
 	
 	UPROPERTY(BlueprintReadWrite)
 	FGameplayAbilitySpecHandle AbilityHandle;
-	
-	UPROPERTY()
-	FCallAbilityDelegate CallAbility;
 	
 	UPROPERTY()
 	FClickDelegate Click;
 
 	UFUNCTION()
 	void OnClick();
-	
-	UFUNCTION()
-	void OnCallAbility();
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void UnbindEvents();

@@ -92,6 +92,9 @@ private:
 	
 	UFUNCTION()
 	void OnMouseOverActor(AActor* Actor, FVector HitLocation);
+
+	UFUNCTION()
+	void OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue);
 	
 	void CreateDistanceLimitUI(AUnit* Unit);
 	void ClearDistanceLimitUI();

@@ -5,6 +5,7 @@
 
 #include "DebugHeader.h"
 #include "TBTacticalGameMode.h"
+#include "UnitAbilityManager.h"
 #include "UnitManager.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanel.h"
@@ -28,6 +29,7 @@ void ULevelUI::Initialization()
 	{
 		TBTacticalGameMode->UnitManager->OnUnitSpawnedEvent.AddDynamic(this,  &ULevelUI::OnUnitSpawned);
 		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &ULevelUI::OnUnitSelected);
+		TBTacticalGameMode->UnitAbilityManager->OnAbilitySelectionModeChangeEvent.AddDynamic(this, &ULevelUI::OnAbilitySelectionModeChangeEvent);
 	}
 }
 
@@ -39,6 +41,11 @@ void ULevelUI::OnUnitSelected(AUnit* Unit)
 void ULevelUI::OnUnitSpawned(AUnit* Unit)
 {
 	OnBPUnitSpawnEvent.Broadcast(Unit);
+}
+
+void ULevelUI::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue)
+{
+	OnBPAbilitySelectionModeChangeEvent.Broadcast(AbilitySelectionModeValue);
 }
 
 void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

@@ -4,6 +4,7 @@
 #include "DebugHeader.h"
 #include "TileMovementComponent.h"
 #include "MouseSceneSelectionComponent.h"
+#include "UnitAbilityManager.h"
 #include "UnitAttributeSet.h"
 #include "UnitManager.h"
 #include "Camera/CameraComponent.h"
@@ -78,6 +79,8 @@ void ATBTacticalMainController::BeginPlay()
 
 		InputComponent->BindAction("CameraUp", IE_Pressed, this, &ATBTacticalMainController::PressCameraUp);
 		InputComponent->BindAction("CameraDown", IE_Pressed, this, &ATBTacticalMainController::PressCameraDown);
+
+		InputComponent->BindAction("RightClick", IE_Pressed, this, &ATBTacticalMainController::PressRightClick);
 	}
 }
 
@@ -286,6 +289,14 @@ void ATBTacticalMainController::PressCameraDown()
 		  &ATBTacticalMainController::CameraHeightTimerFunction,
 		  TimerClock, 
 		  true);
+	}
+}
+
+void ATBTacticalMainController::PressRightClick()
+{
+	if (TBTacticalGameMode->UnitAbilityManager->GetAbilitySelectionMode())
+	{
+		TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
 	}
 }
 
