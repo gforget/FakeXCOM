@@ -6,6 +6,7 @@
 #include "LevelUI.h"
 #include "MouseSceneSelectionComponent.h"
 #include "NodePath.h"
+#include "TargetManager.h"
 #include "TBTacticalMainController.h"
 #include "TilePathFinder.h"
 #include "TurnManager.h"
@@ -41,9 +42,12 @@ void ATBTacticalGameMode::BeginPlay()
 	
 	UnitManager = NewObject<UUnitManager>(GetTransientPackage(), UUnitManager::StaticClass());
 
+	TargetManager = NewObject<UTargetManager>(GetTransientPackage(), UTargetManager::StaticClass());
+
 	//Initialize component and manager
 	MainController->MouseSceneSelectionComponent->Initialize();
 	UnitManager->Initialize(this);
+	TargetManager->Initialize(this);
 	UI3DManagerComponent->Initialize();
 	LevelUI->Initialization();
 	

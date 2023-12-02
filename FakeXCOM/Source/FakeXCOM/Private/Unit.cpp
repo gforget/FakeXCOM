@@ -60,12 +60,13 @@ void AUnit::BeginPlay()
 	if (IsValid(ASC))
 	{
 		UnitAttributeSet = ASC->GetSet<UUnitAttributeSet>();
-		for (const TSubclassOf<UGameplayAbility> AbilityClass : OwnedAbilitiesClasses)
+		for (int i=0; i<OwnedAbilitiesClasses.Num();i++)
 		{
-			const FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AbilityClass, 0, -1));
+			const FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(OwnedAbilitiesClasses[i], 0, -1));
 			UUnitAbility* CurrentAbility = GetAbilityFromHandle(Handle);
 			OwnedAbilities.Add(CurrentAbility);
 			OwnedAbilitiesHandle.Add(Handle);
+			CurrentAbility->OnAbilityAssigned(TBTacticalGameMode);
 		}
 	}
 }
@@ -88,19 +89,19 @@ UUnitAbility* AUnit::GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHand
 void AUnit::PostActorCreated()
 {
 	Super::PostActorCreated();
-	GenerateHealthBarAnchorPositionVisualisation();	
+	GenerateEditorAnchorPositionVisualisation();	
 }
 
 void AUnit::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	GenerateHealthBarAnchorPositionVisualisation();
+	GenerateEditorAnchorPositionVisualisation();
 }
 
 void AUnit::PostEditMove(bool bFinished)
 {
 	Super::PostEditMove(bFinished);
-	GenerateHealthBarAnchorPositionVisualisation();
+	GenerateEditorAnchorPositionVisualisation();
 }
 
 void AUnit::Destroyed()
@@ -109,7 +110,7 @@ void AUnit::Destroyed()
 	UKismetSystemLibrary::FlushPersistentDebugLines(this);
 }
 
-void AUnit::GenerateHealthBarAnchorPositionVisualisation() const
+void AUnit::GenerateEditorAnchorPositionVisualisation() const
 {
 #if WITH_EDITOR
 	if (const UWorld* World = GetWorld())
@@ -118,7 +119,12 @@ void AUnit::GenerateHealthBarAnchorPositionVisualisation() const
 		{
 			UKismetSystemLibrary::FlushPersistentDebugLines(this);
 			const FVector ActorLocation = GetActorLocation();
-			DrawDebugSphere(GetWorld(), ActorLocation + HealthBarAnchor, 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
+			
+			// HealtBar Anchor
+			DrawDebugSphere(GetWorld(), ActorLocation + HealthBarAnchor, 5.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
+
+			// SightStartingPosition Anchor
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor, 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
 		}
 	}
 #endif

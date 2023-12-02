@@ -9,6 +9,7 @@
 #include "TBTacticalGameMode.generated.h"
 
 class ATBTacticalMainController;
+class UTargetManager;
 class UTurnManager;
 class UTilePathFinder;
 class UFactionManager;
@@ -38,6 +39,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Global Object")
 	UTurnManager* TurnManagerComponent;
 
+	UPROPERTY(BlueprintReadOnly, Category="Global Object")
+	UTargetManager* TargetManager;
+	
 	UPROPERTY(BlueprintReadOnly, Category="Global Object")
 	UUnitAbilityManager* UnitAbilityManager;
 	

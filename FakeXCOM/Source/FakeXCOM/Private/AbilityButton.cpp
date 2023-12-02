@@ -21,7 +21,7 @@ void UAbilityButton::OnClick()
 {
 	if (const ATBTacticalGameMode* TBTacticalGameModePtr = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>())
 	{
-		//TODO: The reference are set in blueprint, might want to change that
+		//TODO: The Ref Variables are set in blueprint, might want to change that
 		TBTacticalGameModePtr->UnitAbilityManager->ActivateAbilitySelectionMode(UnitAbilityRef, AbilityHandle);
 	}
 }

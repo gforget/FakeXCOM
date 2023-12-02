@@ -105,6 +105,11 @@ AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 	return SelectedUnit;
 }
 
+AUnit* UUnitManager::GetUnitFromId(int UnitId)
+{
+	return AllUnitReference[UnitId];
+}
+
 AUnit* UUnitManager::GetCurrentlySelectedUnit()
 {
 	if (SelectedUnitIndex != -1)
@@ -123,6 +128,17 @@ void UUnitManager::Initialize(ATBTacticalGameMode* TBTacticalGameModePtr)
 
 	TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnLeftClickSelectActorEvent.AddDynamic(this, &UUnitManager::OnLeftClickSelectActor);
 	TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnRightClickSelectActorEvent.AddDynamic(this, &UUnitManager::OnRightClickSelectActor);
+}
+
+TArray<int> UUnitManager::GetAllUnitsIdFromFactions(EFaction Faction)
+{
+	TArray<int> AllUnitsIdFromFaction;
+	for (int i=0; i<AllUnitFactionReferenceMap[Faction].UnitInFaction.Num(); i++)
+	{
+		AllUnitsIdFromFaction.Add(AllUnitFactionReferenceMap[Faction].UnitInFaction[i]);
+	}
+
+	return AllUnitsIdFromFaction;
 }
 
 void UUnitManager::AddUnitToManager(int IdUnit, AUnit* Unit)

@@ -4,6 +4,7 @@
 #include "LevelUI.h"
 
 #include "DebugHeader.h"
+#include "TargetManager.h"
 #include "TBTacticalGameMode.h"
 #include "UnitAbilityManager.h"
 #include "UnitManager.h"
@@ -29,8 +30,14 @@ void ULevelUI::Initialization()
 	{
 		TBTacticalGameMode->UnitManager->OnUnitSpawnedEvent.AddDynamic(this,  &ULevelUI::OnUnitSpawned);
 		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &ULevelUI::OnUnitSelected);
+		TBTacticalGameMode->TargetManager->OnTargetSelectedEvent.AddDynamic(this, &ULevelUI::OnTargetSelected);
 		TBTacticalGameMode->UnitAbilityManager->OnAbilitySelectionModeChangeEvent.AddDynamic(this, &ULevelUI::OnAbilitySelectionModeChangeEvent);
 	}
+}
+
+void ULevelUI::OnTargetSelected(int TargetIndex)
+{
+	OnBPTargetSelectedEvent.Broadcast(TargetIndex);
 }
 
 void ULevelUI::OnUnitSelected(AUnit* Unit)

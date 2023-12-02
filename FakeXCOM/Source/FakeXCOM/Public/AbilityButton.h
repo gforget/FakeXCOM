@@ -7,8 +7,6 @@
 #include "Components/Button.h"
 #include "AbilityButton.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FClickDelegate);
-
 class AUnit;
 class ULevelUI;
 class UUnitAbility;
@@ -28,9 +26,6 @@ public :
 	
 	UPROPERTY(BlueprintReadWrite)
 	FGameplayAbilitySpecHandle AbilityHandle;
-	
-	UPROPERTY()
-	FClickDelegate Click;
 
 	UFUNCTION()
 	void OnClick();

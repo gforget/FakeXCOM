@@ -39,9 +39,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitOrderedToMoveEvent, AUnit*, Uni
 UCLASS()
 class FAKEXCOM_API UUnitManager : public UObject
 {
+	
 	GENERATED_BODY()
+	
 public :
-
+	
+	UPROPERTY()
+	ATBTacticalGameMode* TBTacticalGameMode;
+	
 	UPROPERTY(BlueprintAssignable)
 	FUnitSpawnedEvent OnUnitSpawnedEvent;
 	
@@ -50,21 +55,23 @@ public :
 
 	UPROPERTY(BlueprintAssignable)
 	FUnitOrderedToMoveEvent OnUnitOrderedToMoveEvent;
+
+	UPROPERTY()
+	TMap<int, AUnit*> AllUnitReference;
 	
 	UPROPERTY()
 	int SelectedUnitIndex = -1;
+
+	TArray<int> GetAllUnitsIdFromFactions(EFaction Faction);
 	
 	void AddUnitToManager(int IdUnit, AUnit* Unit);
-
-	TMap<int, AUnit*> AllUnitReference;
 	
 	void SelectNextUnit();
 	void SelectPreviousUnit();
-
+	
 	AUnit* SelectUnit(int UnitId, bool bGoToUnit = true);
+	AUnit* GetUnitFromId(int UnitId);
 	AUnit* GetCurrentlySelectedUnit();
-
-	ATBTacticalGameMode* TBTacticalGameMode;
 	
 	void Initialize(ATBTacticalGameMode* TBTacticalGameModePtr);
 

@@ -14,6 +14,7 @@ class UUnitAbility;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSpawnEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSelectedEvent, AUnit*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPTargetSelectedEvent, int, TargetIndex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPAbilitySelectionModeChangeEvent, bool, AbilitySelectionModeValue);
 
 UCLASS()
@@ -40,6 +41,9 @@ public:
 	FBPUnitSelectedEvent OnBPUnitSelectedEvent;
 
 	UPROPERTY(BlueprintAssignable, Category = "Main Events")
+	FBPTargetSelectedEvent OnBPTargetSelectedEvent;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Main Events")
 	FBPAbilitySelectionModeChangeEvent OnBPAbilitySelectionModeChangeEvent;
 	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
@@ -50,13 +54,22 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite)
 	TMap<int, UOverlay*> HealthBarAssociationMap;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "TargetBar Properties")
+	UTexture2D* EnemyTargetImage;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "TargetBar Properties")
+	UTexture2D* EnemyTargetCritImage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "TargetBar Properties")
+	UTexture2D* AllyTargetImage;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "HealtBar Properties")
 	float UnfocusAlpha = 0.5f;
-
-	void CallPlayerAbilitySelected(UUnitAbility* UnitAbility);
 	
 private:
+	UFUNCTION()
+	void OnTargetSelected(int TargetIndex);
 	
 	UFUNCTION()
 	void OnUnitSelected(AUnit* Unit);

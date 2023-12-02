@@ -50,6 +50,9 @@ public:
 	UAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
+	TArray<int> DefaultAbilitiesIndexes;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> OwnedAbilitiesClasses;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
@@ -58,8 +61,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
 	TArray<UUnitAbility*> OwnedAbilities;
 
-	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Unit Properties")
 	TEnumAsByte<EFaction> Faction = EFaction::Player;
+
+	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
+	FVector SightStartingAnchor;
 	
 	UPROPERTY()
 	const UUnitAttributeSet* UnitAttributeSet;
@@ -99,7 +105,7 @@ public:
 	void CallRanOutOfActions();
 	
 private:
-	void GenerateHealthBarAnchorPositionVisualisation() const;
+	void GenerateEditorAnchorPositionVisualisation() const;
 	
 	UUnitAbility* GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const;
 };
