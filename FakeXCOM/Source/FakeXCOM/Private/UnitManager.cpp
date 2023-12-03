@@ -10,6 +10,7 @@
 #include "TileMovementComponent.h"
 #include "TilePathFinder.h"
 #include "TurnManager.h"
+#include "UnitAbility.h"
 #include "UnitAbilityManager.h"
 #include "UnitAttributeSet.h"
 
@@ -102,6 +103,10 @@ AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 	}
 	
 	OnUnitSelectedEvent.Broadcast(SelectedUnit);
+	for(int i=0; i<SelectedUnit->OwnedAbilities.Num(); i++)
+	{
+		SelectedUnit->OwnedAbilities[i]->SetTargets();
+	}
 	return SelectedUnit;
 }
 

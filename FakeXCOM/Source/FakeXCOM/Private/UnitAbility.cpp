@@ -2,30 +2,34 @@
 
 
 #include "UnitAbility.h"
-
 #include "TBTacticalGameMode.h"
 
-void UUnitAbility::OnAbilityAssigned_Implementation(ATBTacticalGameMode* TBTacticalGameModeArg)
+void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef)
+{
+	TBTacticalGameMode = TBTacticalGameModeRef;
+	SetAbilityPropertiesOnAssigned();
+}
+
+void UUnitAbility::SetTargets_Implementation()
+{
+	if (TBTacticalGameMode)
+	{
+		AllAvailableTarget.Empty();
+		AllAvailableTarget = TBTacticalGameMode->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this);	
+	}
+}
+
+void UUnitAbility::SetAbilityPropertiesOnAssigned_Implementation()
 {
 }
 
-void UUnitAbility::SetRangeValue_Implementation()
+void UUnitAbility::OnTargetSelected(int TargetIndex)
+{
+	SetAbilityPropertiesBaseOnTargetSelected(TBTacticalGameMode->TargetManager->GetTargetFromIndex(TargetIndex));
+}
+
+void UUnitAbility::SetAbilityPropertiesBaseOnTargetSelected_Implementation(AActor* TargetActor)
 {
 }
 
-void UUnitAbility::OnTargetSelected_Implementation(int TargetIndex)
-{
-}
 
-void UUnitAbility::SetDamageValue_Implementation(AActor* TargetActor)
-{
-}
-
-void UUnitAbility::SetHitChanceValue_Implementation(AActor* TargetActor)
-{
-}
-
-void UUnitAbility::SetCritChanceValue_Implementation(AActor* TargetActor)
-{
-	
-}

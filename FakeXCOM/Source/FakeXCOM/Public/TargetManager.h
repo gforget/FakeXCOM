@@ -13,16 +13,16 @@
 
 class ATBTacticalGameMode;
 class AUnit;
+class UUnitAbility;
+
 UENUM(BlueprintType)
 
 enum ETargetType
 {
 	Self,
 	SingleTarget,
-	SelfAOE,
-	SingleTargetAOE, 
-	GroundAOE,
-	SingleGroundPosition
+	FreeGroundPosition,
+	SpecificGroundPosition
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetSelectedEvent, int, TargetIndex);
@@ -44,7 +44,7 @@ public:
 	int SelectedUnitIndex = -1;
 	
 	UPROPERTY(BlueprintReadWrite, category = "Data")
-	TArray<AActor*> AllAvailableTarget;
+	TArray<AActor*> AllCurrentAvailableTarget;
 
 	void Initialize(ATBTacticalGameMode* TBTacticalGameModeRef);
 
@@ -56,16 +56,26 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
 	AActor* GetTargetFromIndex(int TargetIndex);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
-	void UpdateTargetsUsingLineOfSight(
+	TArray<AActor*> GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility* UnitAbility);
+	
+private:
+	TArray<AActor*> GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility);
+	
+	TArray<AActor*> GetTargetsInRange(
+		AUnit* SeekingUnit,
+		TArray<TEnumAsByte<EFaction>> ValidFactions,
+		float Range
+		);
+	
+	TArray<AActor*> GetTargetsInRangeUsingLineOfSight(
 		AUnit* SeekingUnit,
 		TArray<TEnumAsByte<EFaction>> ValidFactions,
 		float LineOfSightRange
 		);
 	
-	UFUNCTION(BlueprintCallable, Category = "Main Functions")
-	void UpdateTargetsUsingMeleeRange(
+	TArray<AActor*>  GetTargetsUsingMeleeRange(
 		AUnit* SeekingUnit,
 		TArray<TEnumAsByte<EFaction>> ValidFactions
 	); 	

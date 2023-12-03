@@ -16,7 +16,8 @@ UENUM(BlueprintType)
 enum EAbilityRange
 {
 	Melee,
-	Range
+	Range,
+	RangeLineOfSight
 };
 
 UCLASS()
@@ -26,6 +27,7 @@ class FAKEXCOM_API UUnitAbility : public UGameplayAbility
 
 public :
 
+	UPROPERTY(BlueprintReadOnly, Category="Default")
 	ATBTacticalGameMode* TBTacticalGameMode;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
@@ -37,6 +39,9 @@ public :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	FString AbilityDescription;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	bool bIsAOE = false;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	TEnumAsByte<EAbilityRange> AbilityRange;
 	
@@ -69,22 +74,20 @@ public :
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (EditCondition = "bHasCritChance"), Category = "Ability Properties")
 	float CritChance = 0.0f;
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ini")
-	void OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeArg);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ini")
+	
+	void OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef);
+	
 	void OnTargetSelected(int TargetIndex);
-    	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetRangeValue();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetDamageValue(AActor* TargetActor);
+	void SetTargets();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
+	void SetAbilityPropertiesOnAssigned();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetHitChanceValue(AActor* TargetActor);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetCritChanceValue(AActor* TargetActor);
+	void SetAbilityPropertiesBaseOnTargetSelected(AActor* TargetActor);
+	
+	UPROPERTY(BlueprintReadWrite, category = "Data")
+	TArray<AActor*> AllAvailableTarget;
 };

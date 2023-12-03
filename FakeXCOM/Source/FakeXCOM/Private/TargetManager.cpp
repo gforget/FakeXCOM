@@ -12,12 +12,27 @@ void UTargetManager::Initialize(ATBTacticalGameMode* TBTacticalGameModeRef)
 	TBTacticalGameMode = TBTacticalGameModeRef;
 }
 
+void UTargetManager::SelectTarget(int TargetIndex)
+{
+	if (TargetIndex >= 0 && TargetIndex < AllCurrentAvailableTarget.Num())
+	{
+		SelectedUnitIndex = TargetIndex;
+		AActor* UnitTarget = AllCurrentAvailableTarget[SelectedUnitIndex];
+		TBTacticalGameMode->MainController->GoToActor(UnitTarget);
+		
+		OnTargetSelectedEvent.Broadcast(SelectedUnitIndex);
+		
+		//for some reason, can't bind event through add dynamic in a UAbility, so the event need to be called directly
+		TBTacticalGameMode->UnitAbilityManager->CurrentSelectedAbility->OnTargetSelected(SelectedUnitIndex);
+	}
+}
+
 void UTargetManager::SelectNextTarget()
 {
 	if (SelectedUnitIndex == -1) return;
 
 	SelectedUnitIndex++;
-	if (SelectedUnitIndex > AllAvailableTarget.Num())
+	if (SelectedUnitIndex > AllCurrentAvailableTarget.Num())
 	{
 		SelectedUnitIndex = 0;
 	}
@@ -32,7 +47,7 @@ void UTargetManager::SelectPreviousTarget()
 	SelectedUnitIndex--;
 	if (SelectedUnitIndex < 0)
 	{
-		SelectedUnitIndex = AllAvailableTarget.Num()-1;
+		SelectedUnitIndex = AllCurrentAvailableTarget.Num()-1;
 	}
 
 	SelectTarget(SelectedUnitIndex);
@@ -40,36 +55,73 @@ void UTargetManager::SelectPreviousTarget()
 
 AActor* UTargetManager::GetTargetFromIndex(int TargetIndex)
 {
-	if (TargetIndex >= 0 && TargetIndex < AllAvailableTarget.Num())
+	if (TargetIndex >= 0 && TargetIndex < AllCurrentAvailableTarget.Num())
 	{
-		return AllAvailableTarget[TargetIndex];
+		return AllCurrentAvailableTarget[TargetIndex];
 	}
 	return nullptr;
 }
 
-void UTargetManager::SelectTarget(int TargetIndex)
+TArray<AActor*> UTargetManager::GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility* UnitAbility)
 {
-	if (TargetIndex >= 0 && TargetIndex < AllAvailableTarget.Num())
+	//UnitAbility->GetOwningActorFromActorInfo() cannot get actor that way unless the ability execute
+	
+	TArray<AActor*> ReturnedTargets;
+	AUnit* CurrentUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
+	
+	switch (UnitAbility->TargetType)
 	{
-		SelectedUnitIndex = TargetIndex;
-		AActor* UnitTarget = AllAvailableTarget[SelectedUnitIndex];
-		TBTacticalGameMode->MainController->GoToActor(UnitTarget);
+	case ETargetType::Self:
+		ReturnedTargets.Add(CurrentUnit);
+		break;
 		
-		OnTargetSelectedEvent.Broadcast(SelectedUnitIndex);
+	case ETargetType::SingleTarget:
+		ReturnedTargets.Append(GetTargetsFromAbiiltyRange(UnitAbility));
+		break;
 		
-		//for some reason, can't bind event through add dynamic in a UAbility
-		TBTacticalGameMode->UnitAbilityManager->CurrentSelectedAbility->OnTargetSelected(SelectedUnitIndex);
+	case ETargetType::SpecificGroundPosition:
+		
+		break;
+		
+	default:
+		break;
 	}
+
+	return ReturnedTargets;
 }
 
-void UTargetManager::UpdateTargetsUsingLineOfSight(
+TArray<AActor*> UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility)
+{
+	//UnitAbility->GetOwningActorFromActorInfo() cannot get actor that way unless the ability execute
+	
+	AUnit* SeekingUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
+	TArray<AActor*> ReturnedTargets;
+	
+	switch(UnitAbility->AbilityRange)
+	{
+		case Melee:
+			ReturnedTargets = GetTargetsUsingMeleeRange(SeekingUnit, UnitAbility->ValidTargetFaction);
+			break;
+		case Range:
+			ReturnedTargets = GetTargetsInRange(SeekingUnit, UnitAbility->ValidTargetFaction, UnitAbility->RangeValue);
+			break;
+		case RangeLineOfSight:
+			ReturnedTargets = GetTargetsInRangeUsingLineOfSight(SeekingUnit, UnitAbility->ValidTargetFaction, UnitAbility->RangeValue);
+			break;
+		default: ;
+	}
+	
+	return ReturnedTargets;
+	
+}
+
+TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	AUnit* SeekingUnit,
 	TArray<TEnumAsByte<EFaction>> ValidFactions,
 	float LineOfSightRange
 	)
 {
-	//Reset Collection
-	AllAvailableTarget.Empty();
+	TArray<AActor*> ReturnedTargets;
 	
 	//Get all Unit from the valid factions
 	TArray<int> AllValidUnitId;
@@ -102,19 +154,32 @@ void UTargetManager::UpdateTargetsUsingLineOfSight(
 			{
 				if (ReturnedUnit->IdUnit == PotentialTarget->IdUnit)
 				{
-					AllAvailableTarget.Add(Cast<AActor>(PotentialTarget));
+					ReturnedTargets.Add(Cast<AActor>(PotentialTarget));
+					//AllCurrentAvailableTarget.Add();
 				}
 			}
 		}
 	}
+
+	return ReturnedTargets;
 	
 	//TODO: later do the same thing with interactible object when they are available
 }
 
-void UTargetManager::UpdateTargetsUsingMeleeRange(
+TArray<AActor*> UTargetManager::GetTargetsInRange(
+	AUnit* SeekingUnit,
+	TArray<TEnumAsByte<EFaction>> ValidFactions,
+	float Range)
+{
+	TArray<AActor*> ReturnedTargets;
+	return ReturnedTargets;
+}
+
+TArray<AActor*> UTargetManager::GetTargetsUsingMeleeRange(
 	AUnit* SeekingUnit,
 	TArray<TEnumAsByte<EFaction>> ValidFactions
 	)
 {
-	
+	TArray<AActor*> ReturnedTargets;
+	return ReturnedTargets;
 }
