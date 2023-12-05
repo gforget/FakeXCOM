@@ -55,20 +55,7 @@ void AUnit::BeginPlay()
 	{
 		DebugScreen("No Gun Set to this soldier", FColor::Red);
 	}
-
-	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
-	if (IsValid(ASC))
-	{
-		UnitAttributeSet = ASC->GetSet<UUnitAttributeSet>();
-		for (int i=0; i<OwnedAbilitiesClasses.Num();i++)
-		{
-			const FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(OwnedAbilitiesClasses[i], 0, -1));
-			UUnitAbility* CurrentAbility = GetAbilityFromHandle(Handle);
-			OwnedAbilities.Add(CurrentAbility);
-			OwnedAbilitiesHandle.Add(Handle);
-			CurrentAbility->OnAbilityAssigned(TBTacticalGameMode);
-		}
-	}
+	
 }
 
 UUnitAbility* AUnit::GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const
@@ -143,8 +130,6 @@ UAbilitySystemComponent* AUnit::GetAbilitySystemComponent() const
 
 void AUnit::Initialize()
 {
-	// Assign Node Reference
-	
 	// Define the line trace parameters
 	FHitResult HitResult;
 	FCollisionQueryParams TraceParams;
@@ -171,6 +156,20 @@ void AUnit::Initialize()
 
 	//Adding Reference to this soldier
 	TBTacticalGameMode->UnitManager->AddUnitToManager(IdUnit, this);
+	
+	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (IsValid(ASC))
+	{
+		UnitAttributeSet = ASC->GetSet<UUnitAttributeSet>();
+		for (int i=0; i<OwnedAbilitiesClasses.Num();i++)
+		{
+			const FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(OwnedAbilitiesClasses[i], 0, -1));
+			UUnitAbility* CurrentAbility = GetAbilityFromHandle(Handle);
+			OwnedAbilities.Add(CurrentAbility);
+			OwnedAbilitiesHandle.Add(Handle);
+			CurrentAbility->OnAbilityAssigned(TBTacticalGameMode, IdUnit);
+		}
+	}
 }
 
 void AUnit::CallRanOutOfActions()

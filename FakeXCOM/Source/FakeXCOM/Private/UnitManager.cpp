@@ -103,10 +103,13 @@ AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 	}
 	
 	OnUnitSelectedEvent.Broadcast(SelectedUnit);
+	
+	//the ability cannot subscribe to the event, have to manually call the event
 	for(int i=0; i<SelectedUnit->OwnedAbilities.Num(); i++)
 	{
-		SelectedUnit->OwnedAbilities[i]->SetTargets();
+		SelectedUnit->OwnedAbilities[i]->OnUnitSelected(SelectedUnit->IdUnit);
 	}
+	
 	return SelectedUnit;
 }
 

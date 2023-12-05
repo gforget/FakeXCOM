@@ -12,6 +12,7 @@ class UNodePath;
 /**
  * 
  */
+
 USTRUCT(BlueprintType)
 struct NO_API FUnitFactionStruct
 {
@@ -26,9 +27,9 @@ struct NO_API FUnitFactionStruct
 		UnitInFaction = TArray<int>();
 	}
 	
-	FUnitFactionStruct(TArray<int> _UnitFactionMap)
+	FUnitFactionStruct(const TArray<int>& _UnitFactionArray)
 	{
-		UnitInFaction = _UnitFactionMap;
+		UnitInFaction = _UnitFactionArray;
 	}
 };
 

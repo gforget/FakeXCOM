@@ -21,9 +21,6 @@ void UTargetManager::SelectTarget(int TargetIndex)
 		TBTacticalGameMode->MainController->GoToActor(UnitTarget);
 		
 		OnTargetSelectedEvent.Broadcast(SelectedUnitIndex);
-		
-		//for some reason, can't bind event through add dynamic in a UAbility, so the event need to be called directly
-		TBTacticalGameMode->UnitAbilityManager->CurrentSelectedAbility->OnTargetSelected(SelectedUnitIndex);
 	}
 }
 

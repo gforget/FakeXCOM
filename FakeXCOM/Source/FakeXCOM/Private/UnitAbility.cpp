@@ -4,32 +4,69 @@
 #include "UnitAbility.h"
 #include "TBTacticalGameMode.h"
 
-void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef)
+void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, int IdUnit)
 {
 	TBTacticalGameMode = TBTacticalGameModeRef;
-	SetAbilityPropertiesOnAssigned();
+	UnitAbilityInfos.Add(IdUnit, FUnitAbilityInfoStruct());
+	SetAbilityPropertiesOnAssigned(IdUnit);
 }
 
-void UUnitAbility::SetTargets_Implementation()
+void UUnitAbility::SetAbilityPropertiesOnAssigned(int IdUnit)
 {
-	if (TBTacticalGameMode)
+	SetDynamicRangeValue(IdUnit);
+	SetDynamicDamageValue(IdUnit);
+}
+
+void UUnitAbility::SetDynamicRangeValue_Implementation(int IdUnit)
+{
+	UnitAbilityInfos[IdUnit].RangeValue = RangeValue;
+}
+
+void UUnitAbility::SetDynamicDamageValue_Implementation(int IdUnit)
+{
+	UnitAbilityInfos[IdUnit].MinDamage = MinDamage;
+	UnitAbilityInfos[IdUnit].MaxDamage = MaxDamage;
+}
+
+void UUnitAbility::OnUnitSelected(int IdUnit)
+{
+	SetTargets(IdUnit);
+	for (int i=0; i<UnitAbilityInfos[IdUnit].AllAvailableTargets.Num(); i++)
 	{
-		AllAvailableTarget.Empty();
-		AllAvailableTarget = TBTacticalGameMode->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this);	
+		SetHitChance(UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
+		SetCritChance(UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
 	}
 }
 
-void UUnitAbility::SetAbilityPropertiesOnAssigned_Implementation()
+void UUnitAbility::SetTargets_Implementation(int IdUnit)
+{
+	if (TBTacticalGameMode)
+	{
+		UnitAbilityInfos[IdUnit].AllAvailableTargets.Empty();
+		UnitAbilityInfos[IdUnit].TargetsHitChances.Empty();
+		UnitAbilityInfos[IdUnit].TargetsCritChances.Empty();
+		
+		UnitAbilityInfos[IdUnit].AllAvailableTargets = TBTacticalGameMode->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this);
+		for (int i=0; i<UnitAbilityInfos[IdUnit].AllAvailableTargets.Num(); i++)
+		{
+			AActor* TargetActor = UnitAbilityInfos[IdUnit].AllAvailableTargets[i];
+			UnitAbilityInfos[IdUnit].TargetsHitChances.Add(TargetActor, HitChance);
+			UnitAbilityInfos[IdUnit].TargetsCritChances.Add(TargetActor, CritChance);
+		}
+	}
+}
+void UUnitAbility::SetHitChance_Implementation(AActor* Target)
 {
 }
 
-void UUnitAbility::OnTargetSelected(int TargetIndex)
+void UUnitAbility::SetCritChance_Implementation(AActor* Target)
 {
-	SetAbilityPropertiesBaseOnTargetSelected(TBTacticalGameMode->TargetManager->GetTargetFromIndex(TargetIndex));
 }
 
-void UUnitAbility::SetAbilityPropertiesBaseOnTargetSelected_Implementation(AActor* TargetActor)
-{
-}
+
+
+
+
+
 
 

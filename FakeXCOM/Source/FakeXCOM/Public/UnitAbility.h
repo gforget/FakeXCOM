@@ -20,6 +20,57 @@ enum EAbilityRange
 	RangeLineOfSight
 };
 
+USTRUCT(BlueprintType)
+struct NO_API FUnitAbilityInfoStruct
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadWrite)
+	float RangeValue;
+
+	UPROPERTY(BlueprintReadWrite)
+	float MinDamage;
+
+	UPROPERTY(BlueprintReadWrite)
+	float MaxDamage;
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> AllAvailableTargets;
+	
+	UPROPERTY(BlueprintReadWrite)
+	TMap<AActor*, float> TargetsHitChances;
+
+	UPROPERTY(BlueprintReadWrite)
+	TMap<AActor*, float> TargetsCritChances;
+	
+	FUnitAbilityInfoStruct()
+	{
+		RangeValue = 0.0f;
+		MinDamage = 0.0f;
+		MaxDamage = 0.0f;
+		AllAvailableTargets = TArray<AActor*>();
+		TargetsHitChances = TMap<AActor*, float>();
+		TargetsCritChances = TMap<AActor*, float>();
+	}
+	
+	FUnitAbilityInfoStruct(
+		float _RangeValue,
+		float _MinDamageValue,
+		float _MaxDamageValue,
+		const TArray<AActor*>& _AllAvailableTargets,
+		const TMap<AActor*, float>& _TargetsHitChances,
+		const TMap<AActor*, float>& _TargetsCritChances
+		)
+	{
+		RangeValue = _RangeValue;
+		MinDamage = _MinDamageValue;
+		MaxDamage = _MaxDamageValue;
+		AllAvailableTargets = _AllAvailableTargets;
+		TargetsHitChances = _TargetsHitChances;
+		TargetsCritChances = _TargetsCritChances;
+	}
+};
+
 UCLASS()
 class FAKEXCOM_API UUnitAbility : public UGameplayAbility
 {
@@ -75,19 +126,27 @@ public :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (EditCondition = "bHasCritChance"), Category = "Ability Properties")
 	float CritChance = 0.0f;
 	
-	void OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef);
-	
-	void OnTargetSelected(int TargetIndex);
+	void OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, int IdUnit);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetTargets();
+	void SetTargets(int IdUnit);
 	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetAbilityPropertiesOnAssigned();
+	void SetAbilityPropertiesOnAssigned(int IdUnit);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetAbilityPropertiesBaseOnTargetSelected(AActor* TargetActor);
+	void SetDynamicRangeValue(int IdUnit);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
+	void SetDynamicDamageValue(int IdUnit);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
+	void SetHitChance(AActor* Target);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
+	void SetCritChance(AActor* Target);
 	
 	UPROPERTY(BlueprintReadWrite, category = "Data")
-	TArray<AActor*> AllAvailableTarget;
+	TMap<int, FUnitAbilityInfoStruct> UnitAbilityInfos;
+
+	void OnUnitSelected(int IdUnit);
 };
