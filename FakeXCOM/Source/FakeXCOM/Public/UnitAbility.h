@@ -134,19 +134,51 @@ public :
 	void SetAbilityPropertiesOnAssigned(int IdUnit);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetDynamicRangeValue(int IdUnit);
+	void SetDynamicRangeValueEvent(AUnit* Unit);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetDynamicDamageValue(int IdUnit);
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void SetDynamicRangeValue(int IdUnit, float NewRangeValue);
 
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	float GetDynamicRangeValue(int IdUnit);
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetHitChance(AActor* Target);
+	void SetDynamicDamageValueEvent(AUnit* Unit);
 
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void SetDynamicDamageValue(int IdUnit, float NewMinDamageValue, float NewMaxDamageValue);
+
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	float GetDynamicMinDamageValue(int IdUnit);
+
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	float GetDynamicMaxDamageValue(int IdUnit);
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetCritChance(AActor* Target);
+	void SetHitChanceEvent(AUnit* Unit, AActor* Target);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void SetHitChance(int IdUnit, AActor* Target, float NewHitChanceValue);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
+	void SetCritChanceEvent(AUnit* Unit, AActor* Target);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void SetCritChance(int IdUnit, AActor* Target, float NewCritChanceValue);
+
+	UFUNCTION(BlueprintPure, Category="Utility Functions")
+	float GetRangeToTarget(AUnit* Unit, AActor* Target);
+
+	UFUNCTION(BlueprintPure, Category="Utility Functions")
+	float GetTargetHitChance(int IdUnit, AActor* Target);
+
+	UFUNCTION(BlueprintPure, Category="Utility Functions")
+	float GetTargetCritChance(int IdUnit, AActor* Target);
 	
 	UPROPERTY(BlueprintReadWrite, category = "Data")
 	TMap<int, FUnitAbilityInfoStruct> UnitAbilityInfos;
 
 	void OnUnitSelected(int IdUnit);
+
+	
 };

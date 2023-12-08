@@ -22,6 +22,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayAttributeData MaxHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayAttributeData Defence;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayAttributeData Aim;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayAttributeData Actions;
@@ -44,6 +50,18 @@ public:
 	float GetMaxHealth() const;
 	void SetMaxHealth(float NewVal) const;
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(MaxHealth);
+	
+	// Defence
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UUnitAttributeSet, Defence);
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(Defence);
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(Defence);
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(Defence);
+
+	// Aim
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UUnitAttributeSet, Aim);
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(Aim);
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(Aim);
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(Aim);
 	
 	//Actions Attribute
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UUnitAttributeSet, Actions);

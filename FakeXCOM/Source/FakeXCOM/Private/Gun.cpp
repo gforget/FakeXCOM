@@ -28,9 +28,3 @@ void AGun::BeginPlay()
 	}
 }
 
-// Called every frame
-void AGun::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-

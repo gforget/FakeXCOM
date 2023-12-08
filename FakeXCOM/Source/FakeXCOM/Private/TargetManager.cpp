@@ -29,7 +29,7 @@ void UTargetManager::SelectNextTarget()
 	if (SelectedUnitIndex == -1) return;
 
 	SelectedUnitIndex++;
-	if (SelectedUnitIndex > AllCurrentAvailableTarget.Num())
+	if (SelectedUnitIndex >= AllCurrentAvailableTarget.Num())
 	{
 		SelectedUnitIndex = 0;
 	}
@@ -100,10 +100,10 @@ TArray<AActor*> UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbi
 			ReturnedTargets = GetTargetsUsingMeleeRange(SeekingUnit, UnitAbility->ValidTargetFaction);
 			break;
 		case Range:
-			ReturnedTargets = GetTargetsInRange(SeekingUnit, UnitAbility->ValidTargetFaction, UnitAbility->RangeValue);
+			ReturnedTargets = GetTargetsInRange(SeekingUnit, UnitAbility->ValidTargetFaction, UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit));
 			break;
 		case RangeLineOfSight:
-			ReturnedTargets = GetTargetsInRangeUsingLineOfSight(SeekingUnit, UnitAbility->ValidTargetFaction, UnitAbility->RangeValue);
+			ReturnedTargets = GetTargetsInRangeUsingLineOfSight(SeekingUnit, UnitAbility->ValidTargetFaction, UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit));
 			break;
 		default: ;
 	}

@@ -54,7 +54,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
 	void SelectTarget(int TargetIndex);
 	
-	UFUNCTION(BlueprintCallable, Category = "Main Functions")
+	UFUNCTION(BlueprintPure, Category = "Main Functions")
 	AActor* GetTargetFromIndex(int TargetIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")

@@ -16,6 +16,10 @@ class FAKEXCOM_API UGunAttributeSet : public UAttributeSet
 	GENERATED_BODY()
 	
 protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayAttributeData Range;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayAttributeData Ammo;
 
@@ -29,6 +33,13 @@ protected:
 	FGameplayAttributeData MaxDamage;
 
 public:
+
+	//Range
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UGunAttributeSet, Range);
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(Range);
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(Range);
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(Range)
+	
 	//Ammo Attribute
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UGunAttributeSet, Ammo);
 	float GetAmmo() const;

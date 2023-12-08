@@ -25,6 +25,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void UnbindEvents();
 	
-	UPROPERTY()
-	AActor* TargetActor;
+	UPROPERTY(BlueprintReadWrite)
+	int TargetActorIndex;
 };

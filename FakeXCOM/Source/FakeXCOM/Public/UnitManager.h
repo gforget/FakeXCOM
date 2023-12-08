@@ -71,7 +71,10 @@ public :
 	void SelectPreviousUnit();
 	
 	AUnit* SelectUnit(int UnitId, bool bGoToUnit = true);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	AUnit* GetUnitFromId(int UnitId);
+	
 	AUnit* GetCurrentlySelectedUnit();
 	
 	void Initialize(ATBTacticalGameMode* TBTacticalGameModePtr);
