@@ -11,6 +11,36 @@ void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef,
 	SetAbilityPropertiesOnAssigned(IdUnit);
 }
 
+void UUnitAbility::SetIsDisabled(AUnit* Unit, bool Val)
+{
+	UnitAbilityInfos[Unit->IdUnit].bIsDisabled = Val;
+}
+
+bool UUnitAbility::GetIsDisabled(AUnit* Unit)
+{
+	return UnitAbilityInfos[Unit->IdUnit].bIsDisabled;
+}
+
+void UUnitAbility::SetIsHidden(AUnit* Unit, bool Val)
+{
+	UnitAbilityInfos[Unit->IdUnit].bIsHidden = Val;
+}
+
+bool UUnitAbility::GetIsHidden(AUnit* Unit)
+{
+	return UnitAbilityInfos[Unit->IdUnit].bIsHidden;
+}
+
+void UUnitAbility::SetAbilityEnabledEvent_Implementation(AUnit* Unit)
+{
+	UnitAbilityInfos[Unit->IdUnit].bIsDisabled = false;
+}
+
+void UUnitAbility::SetAbilityHiddenEvent_Implementation(AUnit* Unit)
+{
+	UnitAbilityInfos[Unit->IdUnit].bIsHidden = false;
+}
+
 void UUnitAbility::SetAbilityPropertiesOnAssigned(int IdUnit)
 {
 	SetDynamicRangeValueEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
@@ -79,6 +109,9 @@ void UUnitAbility::SetTargets_Implementation(int IdUnit)
 			UnitAbilityInfos[IdUnit].TargetsHitChances.Add(TargetActor, HitChance);
 			UnitAbilityInfos[IdUnit].TargetsCritChances.Add(TargetActor, CritChance);
 		}
+		
+		SetAbilityEnabledEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
+		SetAbilityHiddenEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
 	}
 }
 
@@ -102,8 +135,14 @@ void UUnitAbility::SetCritChance(int IdUnit, AActor* Target, float NewCritChance
 
 float UUnitAbility::GetRangeToTarget(AUnit* Unit, AActor* Target)
 {
-	const FVector DeltaToTarget = Target->GetActorLocation() - (Unit->GetActorLocation() + Unit->SightStartingAnchor);
-	return DeltaToTarget.Size();
+	//TODO: in future, might have interactible destructible object
+	if (const AUnit* UnitTarget = Cast<AUnit>(Target))
+	{
+		const FVector DeltaToTarget = (UnitTarget->GetActorLocation() + UnitTarget->SightStartingAnchor) - (Unit->GetActorLocation() + Unit->SightStartingAnchor);
+		return DeltaToTarget.Size();		
+	}
+	
+	return 0.0f;
 }
 
 float UUnitAbility::GetTargetHitChance(int IdUnit, AActor* Target)

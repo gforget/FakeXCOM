@@ -24,6 +24,12 @@ USTRUCT(BlueprintType)
 struct NO_API FUnitAbilityInfoStruct
 {
 	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsDisabled;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsHidden;
 	
 	UPROPERTY(BlueprintReadWrite)
 	float RangeValue;
@@ -91,6 +97,9 @@ public :
 	FString AbilityDescription;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	FString AbilityDisabledText;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	bool bIsAOE = false;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
@@ -128,6 +137,24 @@ public :
 	
 	void OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, int IdUnit);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enabling Ability Event")
+	void SetAbilityEnabledEvent(AUnit* Unit);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void SetIsDisabled(AUnit* Unit, bool Val);
+
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	bool GetIsDisabled(AUnit* Unit);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enabling Ability Event")
+	void SetAbilityHiddenEvent(AUnit* Unit);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void SetIsHidden(AUnit* Unit, bool Val);
+
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	bool GetIsHidden(AUnit* Unit);
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
 	void SetTargets(int IdUnit);
 	

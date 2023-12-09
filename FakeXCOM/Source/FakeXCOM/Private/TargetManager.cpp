@@ -89,8 +89,6 @@ TArray<AActor*> UTargetManager::GetAllAvailableTargetsBaseOnAbilityProperties(UU
 
 TArray<AActor*> UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility)
 {
-	//UnitAbility->GetOwningActorFromActorInfo() cannot get actor that way unless the ability execute
-	
 	AUnit* SeekingUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
 	TArray<AActor*> ReturnedTargets;
 	
@@ -138,7 +136,7 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 		
 		FVector Start = SeekingUnit->GetActorLocation() + SeekingUnit->SightStartingAnchor;
 		
-		 FVector DeltaToPotentialTarget = (PotentialTarget->GetActorLocation() - Start);
+		 FVector DeltaToPotentialTarget = ((PotentialTarget->GetActorLocation() + PotentialTarget->SightStartingAnchor) - Start);
 		 DeltaToPotentialTarget.Normalize();
 		 FVector End = Start + DeltaToPotentialTarget*LineOfSightRange;
 
@@ -152,7 +150,6 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 				if (ReturnedUnit->IdUnit == PotentialTarget->IdUnit)
 				{
 					ReturnedTargets.Add(Cast<AActor>(PotentialTarget));
-					//AllCurrentAvailableTarget.Add();
 				}
 			}
 		}
