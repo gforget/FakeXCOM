@@ -66,6 +66,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
 	FVector SightStartingAnchor;
+
+	UPROPERTY()
+	TArray<FVector> SightSurroundAnchor;
+
+	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
+	float DistanceSurroundAnchor = 25.0f;
 	
 	UPROPERTY()
 	const UUnitAttributeSet* UnitAttributeSet;

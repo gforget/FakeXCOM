@@ -55,7 +55,12 @@ void AUnit::BeginPlay()
 	{
 		DebugScreen("No Gun Set to this soldier", FColor::Red);
 	}
-	
+
+	SightSurroundAnchor.Add(SightStartingAnchor);
+	SightSurroundAnchor.Add(FVector(SightStartingAnchor.X + DistanceSurroundAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
+	SightSurroundAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundAnchor, SightStartingAnchor.Z));
+	SightSurroundAnchor.Add(FVector(SightStartingAnchor.X - DistanceSurroundAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
+	SightSurroundAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundAnchor, SightStartingAnchor.Z));
 }
 
 UUnitAbility* AUnit::GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const
@@ -112,6 +117,11 @@ void AUnit::GenerateEditorAnchorPositionVisualisation() const
 
 			// SightStartingPosition Anchor
 			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor, 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X + DistanceSurroundAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X - DistanceSurroundAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
 		}
 	}
 #endif

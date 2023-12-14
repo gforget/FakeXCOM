@@ -129,28 +129,40 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	for (int i=0; i<AllValidUnitId.Num(); i++)
 	{
 		AUnit* PotentialTarget = TBTacticalGameMode->UnitManager->GetUnitFromId(AllValidUnitId[i]);
-		
-		FHitResult HitResult;
-		FCollisionQueryParams CollisionParams;
-		CollisionParams.AddIgnoredActor(SeekingUnit);
-		
-		FVector Start = SeekingUnit->GetActorLocation() + SeekingUnit->SightStartingAnchor;
-		
-		 FVector DeltaToPotentialTarget = ((PotentialTarget->GetActorLocation() + PotentialTarget->SightStartingAnchor) - Start);
-		 DeltaToPotentialTarget.Normalize();
-		 FVector End = Start + DeltaToPotentialTarget*LineOfSightRange;
-
-		//GetWorld in UObject has to be from another object that is active in the scene
-		DrawDebugLine(TBTacticalGameMode->GetWorld(), Start, End, FColor::Green, false, 10.0f, 0, 1);	
-		bool bHit = TBTacticalGameMode->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
-		if (bHit)
+		for (int j=0; j<PotentialTarget->SightSurroundAnchor.Num(); j++)
 		{
-			if (AUnit* ReturnedUnit = Cast<AUnit>(HitResult.GetActor()))
+			//To validate if you have line of sight, the potential target has surround anchor so if the target hide behind an obstacle measuring one cube
+			//you should still be able to see it from the side. Since those anchor do not have collider, we verify if the linecast has pass through
+			//the target by measuring the line of sight compare to the actual distance to the target.
+			
+			FHitResult HitResult;
+			FCollisionQueryParams CollisionParams;
+			CollisionParams.AddIgnoredActor(SeekingUnit);
+			CollisionParams.AddIgnoredActor(PotentialTarget);
+			
+			FVector Start = SeekingUnit->GetActorLocation() + SeekingUnit->SightStartingAnchor;
+
+			FVector DeltaToPotentialTarget = ((PotentialTarget->GetActorLocation() + PotentialTarget->SightSurroundAnchor[j]) - Start);
+			
+			FVector DeltaToPotentialTargetNormalized = ((PotentialTarget->GetActorLocation() + PotentialTarget->SightSurroundAnchor[j]) - Start);
+			DeltaToPotentialTargetNormalized.Normalize();
+			FVector End = Start + DeltaToPotentialTargetNormalized*LineOfSightRange;
+			
+			const bool bDebugTrace = false;
+			if (bDebugTrace)
 			{
-				if (ReturnedUnit->IdUnit == PotentialTarget->IdUnit)
-				{
-					ReturnedTargets.Add(Cast<AActor>(PotentialTarget));
-				}
+				DrawDebugLine(TBTacticalGameMode->GetWorld(), Start, End, FColor::Green, false, 10.0f, 0, 1);	
+			}
+			
+			//GetWorld in UObject has to be called from another object that is active in the scene
+			bool bHit = TBTacticalGameMode->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
+			FVector DeltaToHit = HitResult.Location - Start;
+			
+			if ((bHit && DeltaToPotentialTarget.Size() <= DeltaToHit.Size()) || // hit something, but verify if it passed through the target
+				(!bHit && DeltaToPotentialTarget.Size() <= End.Size())) // didn't hit anything, but verify if the line of sight was long enough to reach the target
+			{
+				ReturnedTargets.Add(Cast<AActor>(PotentialTarget));
+				break;
 			}
 		}
 	}
