@@ -38,6 +38,16 @@ protected:
 	virtual void Destroyed() override;
 	
 public:
+	
+	UPROPERTY(EditDefaultsOnly, Category="Cover")
+	float LowCoverDefenceBonus = 20.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Cover")
+	float FullCoverDefenceBonus = 40.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Cover")
+	float LowGroundDisadvantage = 20.0f;
+	
 	UPROPERTY(BlueprintAssignable)
 	FUnitRanOutOfActionsDelegate OnUnitRanOutOfActionsEvent;
 	
@@ -109,6 +119,12 @@ public:
 	void Initialize();
 
 	void CallRanOutOfActions();
+
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	float GetTargetCoverDefenceBonus(AUnit* Target);
+
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	float GetHeightAdvantageBonus(AUnit* Target);
 	
 private:
 	void GenerateEditorAnchorPositionVisualisation() const;

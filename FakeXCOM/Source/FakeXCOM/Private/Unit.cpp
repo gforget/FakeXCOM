@@ -187,3 +187,36 @@ void AUnit::CallRanOutOfActions()
 	OnUnitRanOutOfActionsEvent.Broadcast(this);
 }
 
+float AUnit::GetTargetCoverDefenceBonus(AUnit* Target)
+{
+	const TArray<FCoverInfo> AllCoverInfo = Target->TileMovementComponent->LocatedNodePath->AllCoverInfos;
+
+	for (int i=0; i<AllCoverInfo.Num(); i++)
+	{
+		FVector2D CoverPosition = FVector2D(AllCoverInfo[i].IconPosition.X, AllCoverInfo[i].IconPosition.Y);
+		FVector2D TargetPosition = FVector2D(Target->GetActorLocation().X, Target->GetActorLocation().Y);
+		
+		FVector2D DeltaTargetToCoverNormalized = CoverPosition - TargetPosition;
+		DeltaTargetToCoverNormalized.Normalize();
+
+		FVector2D DeltaUnitToTargetNormalized = TargetPosition - FVector2D(GetActorLocation().X, GetActorLocation().Y);
+		DeltaUnitToTargetNormalized.Normalize();
+
+		const float DotProduct = FVector2D::DotProduct(DeltaTargetToCoverNormalized, DeltaUnitToTargetNormalized);
+		if (DotProduct < 0.0f)
+		{
+			return AllCoverInfo[i].FullCover ? Target->FullCoverDefenceBonus: Target->LowCoverDefenceBonus; 
+		}
+	}
+
+	return 0.0f;
+}
+
+float AUnit::GetHeightAdvantageBonus(AUnit* Target)
+{
+	float TargetZPosition = Target->GetActorLocation().Z;
+	float UnitZPosition = GetActorLocation().Z;
+	
+	return UnitZPosition - TargetZPosition > 100.0f ? Target->LowGroundDisadvantage : 0.0f;
+}
+
