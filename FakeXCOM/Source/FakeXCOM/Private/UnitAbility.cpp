@@ -2,6 +2,8 @@
 
 
 #include "UnitAbility.h"
+
+#include "DebugHeader.h"
 #include "TBTacticalGameMode.h"
 
 void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, int IdUnit)
@@ -92,6 +94,15 @@ void UUnitAbility::OnUnitSelected(int IdUnit)
 		SetHitChanceEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
 		SetCritChanceEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
 	}
+
+	//Sort the target by hit chance
+	FUnitAbilityInfoStruct& UnitAbilityInfoRef = UnitAbilityInfos[IdUnit];
+	UnitAbilityInfoRef.AllAvailableTargets.Sort([&UnitAbilityInfoRef](const AActor& A, const AActor& B)
+	{
+		const float HitChanceA = UnitAbilityInfoRef.TargetsHitChances.FindRef(&A);
+		const float HitChanceB = UnitAbilityInfoRef.TargetsHitChances.FindRef(&B);
+		return HitChanceA > HitChanceB;
+	});
 }
 
 void UUnitAbility::SetTargets_Implementation(int IdUnit)

@@ -32,6 +32,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FGameplayAttributeData MaxDamage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayAttributeData CritChance;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayAttributeData CritMultiplier;
+	
 public:
 
 	//Range
@@ -62,5 +68,16 @@ public:
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(MaxDamage);
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(MaxDamage);
 
+	//Crit Attributes
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UGunAttributeSet, CritChance);
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(CritChance);
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(CritChance);
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(CritChance);
+
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UGunAttributeSet, CritMultiplier);
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(CritMultiplier);
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(CritMultiplier);
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(CritMultiplier);
+	
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 };

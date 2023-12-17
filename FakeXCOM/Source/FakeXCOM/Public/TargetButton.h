@@ -27,4 +27,7 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite)
 	int TargetActorIndex;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool SelectDefaultAbility = false;
 };
