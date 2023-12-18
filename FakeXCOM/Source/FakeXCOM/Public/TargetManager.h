@@ -41,7 +41,7 @@ public:
 	ATBTacticalGameMode* TBTacticalGameMode;
 	
 	UPROPERTY()
-	int SelectedUnitIndex = -1;
+	int SelectedTargetIndex = -1;
 	
 	UPROPERTY(BlueprintReadWrite, category = "Data")
 	TArray<AActor*> AllCurrentAvailableTarget;
@@ -53,6 +53,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
 	void SelectTarget(int TargetIndex);
+
+	UFUNCTION(BlueprintPure, Category = "Main Functions")
+	AActor* GetCurrentlySelectedTarget();
 	
 	UFUNCTION(BlueprintPure, Category = "Main Functions")
 	AActor* GetTargetFromIndex(int TargetIndex);

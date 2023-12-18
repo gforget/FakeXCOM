@@ -84,10 +84,10 @@ class FAKEXCOM_API UUnitAbility : public UGameplayAbility
 
 public :
 
-	UPROPERTY(BlueprintReadOnly, Category="Default")
+	UPROPERTY(BlueprintReadWrite, Category="Default Variables")
 	ATBTacticalGameMode* TBTacticalGameMode;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Default Variables")
 	UTexture2D* ButtonImage;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
@@ -96,7 +96,7 @@ public :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	FString AbilityDescription;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ability Properties")
 	FString AbilityDisabledText;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
@@ -201,11 +201,30 @@ public :
 
 	UFUNCTION(BlueprintPure, Category="Utility Functions")
 	float GetTargetCritChance(int IdUnit, AActor* Target);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void CostAllActions(int IdUnit);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void CostActions(int IdUnit, float CostValue);
+	
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void ApplyDamage(AActor* Target, float DamageValue);
+
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	bool RollDiceForHit(int IdUnitTryingToHit, AActor* Target);
+
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	bool RollDiceForCrit(int IdUnitTryingToHit, AActor* Target);
+	
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	ATBTacticalGameMode* GetTBTacticalGameMode();
 	
 	UPROPERTY(BlueprintReadWrite, category = "Data")
 	TMap<int, FUnitAbilityInfoStruct> UnitAbilityInfos;
 
 	void OnUnitSelected(int IdUnit);
-
 	
 };
+
+

@@ -35,6 +35,11 @@ void ULevelUI::Initialization()
 	}
 }
 
+void ULevelUI::SubscribeToUnitEvent(AUnit* Unit)
+{
+	Unit->OnUnitHealthChangeEvent.AddDynamic(this, &ULevelUI::OnUnitHealthChange);
+}
+
 void ULevelUI::OnTargetSelected(int TargetIndex)
 {
 	OnBPTargetSelectedEvent.Broadcast(TargetIndex);
@@ -48,6 +53,11 @@ void ULevelUI::OnUnitSelected(AUnit* Unit)
 void ULevelUI::OnUnitSpawned(AUnit* Unit)
 {
 	OnBPUnitSpawnEvent.Broadcast(Unit);
+}
+
+void ULevelUI::OnUnitHealthChange(AUnit* Unit)
+{
+	OnBPUnitHealthChangeEvent.Broadcast(Unit);
 }
 
 void ULevelUI::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue)

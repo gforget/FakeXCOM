@@ -18,6 +18,7 @@ class UUnitAttributeSet;
 class UUnitAbility;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitRanOutOfActionsDelegate, AUnit*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitHealthChangeDelegate, AUnit*, Unit);
 
 UCLASS()
 class FAKEXCOM_API AUnit : public AActor, public IAbilitySystemInterface
@@ -50,6 +51,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FUnitRanOutOfActionsDelegate OnUnitRanOutOfActionsEvent;
+	
+	UPROPERTY(BlueprintAssignable)
+	FUnitHealthChangeDelegate OnUnitHealthChangeEvent;
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -119,7 +123,8 @@ public:
 	void Initialize();
 
 	void CallRanOutOfActions();
-
+	void CallHealthChanged();
+	
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	float GetTargetCoverDefenceBonus(AUnit* Target);
 

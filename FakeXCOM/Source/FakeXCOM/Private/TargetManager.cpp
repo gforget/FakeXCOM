@@ -5,7 +5,6 @@
 #include "TBTacticalGameMode.h"
 #include "TBTacticalMainController.h"
 #include "UnitAbility.h"
-#include "UnitAbilityManager.h"
 
 void UTargetManager::Initialize(ATBTacticalGameMode* TBTacticalGameModeRef)
 {
@@ -16,38 +15,43 @@ void UTargetManager::SelectTarget(int TargetIndex)
 {
 	if (TargetIndex >= 0 && TargetIndex < AllCurrentAvailableTarget.Num())
 	{
-		SelectedUnitIndex = TargetIndex;
-		AActor* UnitTarget = AllCurrentAvailableTarget[SelectedUnitIndex];
+		SelectedTargetIndex = TargetIndex;
+		AActor* UnitTarget = AllCurrentAvailableTarget[SelectedTargetIndex];
 		TBTacticalGameMode->MainController->GoToActor(UnitTarget);
 		
-		OnTargetSelectedEvent.Broadcast(SelectedUnitIndex);
+		OnTargetSelectedEvent.Broadcast(SelectedTargetIndex);
 	}
+}
+
+AActor* UTargetManager::GetCurrentlySelectedTarget()
+{
+	return AllCurrentAvailableTarget[SelectedTargetIndex];
 }
 
 void UTargetManager::SelectNextTarget()
 {
-	if (SelectedUnitIndex == -1) return;
+	if (SelectedTargetIndex == -1) return;
 
-	SelectedUnitIndex++;
-	if (SelectedUnitIndex >= AllCurrentAvailableTarget.Num())
+	SelectedTargetIndex++;
+	if (SelectedTargetIndex >= AllCurrentAvailableTarget.Num())
 	{
-		SelectedUnitIndex = 0;
+		SelectedTargetIndex = 0;
 	}
 
-	SelectTarget(SelectedUnitIndex);
+	SelectTarget(SelectedTargetIndex);
 }
 
 void UTargetManager::SelectPreviousTarget()
 {
-	if (SelectedUnitIndex == -1) return;
+	if (SelectedTargetIndex == -1) return;
 
-	SelectedUnitIndex--;
-	if (SelectedUnitIndex < 0)
+	SelectedTargetIndex--;
+	if (SelectedTargetIndex < 0)
 	{
-		SelectedUnitIndex = AllCurrentAvailableTarget.Num()-1;
+		SelectedTargetIndex = AllCurrentAvailableTarget.Num()-1;
 	}
 
-	SelectTarget(SelectedUnitIndex);
+	SelectTarget(SelectedTargetIndex);
 }
 
 AActor* UTargetManager::GetTargetFromIndex(int TargetIndex)

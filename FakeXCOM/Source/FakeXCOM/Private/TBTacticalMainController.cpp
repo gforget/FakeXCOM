@@ -6,7 +6,6 @@
 #include "MouseSceneSelectionComponent.h"
 #include "TargetManager.h"
 #include "UnitAbilityManager.h"
-#include "UnitAttributeSet.h"
 #include "UnitManager.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"

@@ -166,6 +166,7 @@ void AUnit::Initialize()
 
 	//Adding Reference to this soldier
 	TBTacticalGameMode->UnitManager->AddUnitToManager(IdUnit, this);
+	TBTacticalGameMode->LevelUI->SubscribeToUnitEvent(this);
 	
 	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (IsValid(ASC))
@@ -185,6 +186,11 @@ void AUnit::Initialize()
 void AUnit::CallRanOutOfActions()
 {
 	OnUnitRanOutOfActionsEvent.Broadcast(this);
+}
+
+void AUnit::CallHealthChanged()
+{
+	OnUnitHealthChangeEvent.Broadcast(this);
 }
 
 float AUnit::GetTargetCoverDefenceBonus(AUnit* Target)

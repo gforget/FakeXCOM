@@ -5,6 +5,7 @@
 
 #include "DebugHeader.h"
 #include "TBTacticalGameMode.h"
+#include "UnitAttributeSet.h"
 
 void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, int IdUnit)
 {
@@ -166,6 +167,52 @@ float UUnitAbility::GetTargetCritChance(int IdUnit, AActor* Target)
 	return UnitAbilityInfos[IdUnit].TargetsCritChances[Target];
 }
 
+void UUnitAbility::CostAllActions(int IdUnit)
+{
+	if (const AUnit* Unit = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit))
+	{
+		Unit->UnitAttributeSet->SetActions(0.0f);
+	}
+}
+
+void UUnitAbility::CostActions(int IdUnit, float CostValue)
+{
+	if (const AUnit* Unit = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit))
+	{
+		const UUnitAttributeSet* TargetUnitAttributeSet = Unit->UnitAttributeSet;
+		const float NewActionsValue = TargetUnitAttributeSet->GetActions() - CostValue;
+		TargetUnitAttributeSet->SetHealth(NewActionsValue);
+	}
+}
+
+void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue)
+{
+	if (const AUnit* UnitTarget = Cast<AUnit>(Target))
+	{
+		const UUnitAttributeSet* TargetUnitAttributeSet = UnitTarget->UnitAttributeSet;
+		const float NewHealth = TargetUnitAttributeSet->GetHealth() - DamageValue;
+		TargetUnitAttributeSet->SetHealth(NewHealth);
+	}
+}
+
+bool UUnitAbility::RollDiceForHit(int IdUnitTryingToHit, AActor* Target)
+{
+	const float CurrentHitChance = UnitAbilityInfos[IdUnitTryingToHit].TargetsHitChances[Target];
+	const float DiceRoll = FMath::RandRange(0.0f, 100.0f);
+	return CurrentHitChance >= DiceRoll;
+}
+
+bool UUnitAbility::RollDiceForCrit(int IdUnitTryingToHit, AActor* Target)
+{
+	const float CurrentCritChance = UnitAbilityInfos[IdUnitTryingToHit].TargetsCritChances[Target];
+	const float DiceRoll = FMath::RandRange(0.0f, 100.0f);
+	return CurrentCritChance >= DiceRoll;
+}
+
+ATBTacticalGameMode* UUnitAbility::GetTBTacticalGameMode()
+{
+	return GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+}
 
 
 

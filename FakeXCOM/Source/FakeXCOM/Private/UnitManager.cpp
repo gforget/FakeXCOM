@@ -189,6 +189,11 @@ void UUnitManager::EndOfAbility()
 	}
 	else
 	{
+		if (TBTacticalGameMode->UnitAbilityManager->GetAbilitySelectionMode())
+		{
+			TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
+		}
+		
 		if (GetCurrentlySelectedUnit()->UnitAttributeSet->GetActions() > 0)
 		{
 			SelectUnit(GetCurrentlySelectedUnit()->IdUnit, false);

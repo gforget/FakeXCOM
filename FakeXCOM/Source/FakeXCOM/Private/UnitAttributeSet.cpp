@@ -17,6 +17,7 @@ void UUnitAttributeSet::SetHealth(float NewVal) const
 	if (ensure(ASC))
 	{
 		ASC->SetNumericAttributeBase(GetHealthAttribute(), NewVal);
+		Cast<AUnit>(GetOwningActor())->CallHealthChanged();
 	}
 }
 
