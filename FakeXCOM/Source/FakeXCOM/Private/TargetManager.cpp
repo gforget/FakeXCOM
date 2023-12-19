@@ -126,7 +126,8 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	TArray<EFaction> AllValidFaction;
 	for (int i=0; i<ValidFactionsRelation.Num(); i++)
 	{
-		if (UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EFaction"), true))
+		UClass* OuterClass = UFactionManager::StaticClass();
+		if (UEnum* EnumPtr = FindObject<UEnum>(OuterClass, TEXT("EFaction"), true))
 		{
 			for (int32 EnumIndex = 0; EnumIndex < EnumPtr->NumEnums(); EnumIndex++)
 			{

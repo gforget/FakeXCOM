@@ -7,6 +7,7 @@
 #include "LevelUI.generated.h"
 
 class ATBTacticalGameMode;
+class UTargetButton;
 class UCanvasPanel;
 class UOverlay;
 class UCanvasPanelSlot;
