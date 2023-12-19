@@ -68,19 +68,19 @@ private:
 	
 	TArray<AActor*> GetTargetsInRange(
 		AUnit* SeekingUnit,
-		TArray<TEnumAsByte<EFaction>> ValidFactions,
+		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
 		float Range
 		);
 	
 	TArray<AActor*> GetTargetsInRangeUsingLineOfSight(
 		AUnit* SeekingUnit,
-		TArray<TEnumAsByte<EFaction>> ValidFactions,
+		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
 		float LineOfSightRange
 		);
 	
 	TArray<AActor*>  GetTargetsUsingMeleeRange(
 		AUnit* SeekingUnit,
-		TArray<TEnumAsByte<EFaction>> ValidFactions
+		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation
 	); 	
 };
 

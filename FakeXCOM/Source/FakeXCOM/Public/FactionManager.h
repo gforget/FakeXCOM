@@ -9,10 +9,19 @@
 UENUM(BlueprintType)
 enum EFaction
 {
-	Player,
+	XCOM,
+	Alien,
+	Resistance,
+	Civilian
+};
+
+UENUM(BlueprintType)
+enum EFactionRelation
+{
 	Ally,
 	Enemy,
-	Neutral
+	Neutral,
+	OwnFaction
 };
 
 UENUM(BlueprintType)
@@ -31,6 +40,9 @@ public:
 	// Sets default values for this component's properties
 	UFactionManager();
 
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	EFactionRelation GetFactionRelation(EFaction FactionA, EFaction FactionB);
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

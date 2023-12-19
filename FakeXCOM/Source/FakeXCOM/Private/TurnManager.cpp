@@ -10,8 +10,8 @@
 UTurnManager::UTurnManager()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	FactionTurnOrder.Add(EFaction::Player);
-	FactionTurnOrder.Add(EFaction::Enemy);
+	FactionTurnOrder.Add(EFaction::XCOM);
+	FactionTurnOrder.Add(EFaction::Alien);
 }
 
 

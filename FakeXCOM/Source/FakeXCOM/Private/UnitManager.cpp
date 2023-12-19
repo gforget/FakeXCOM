@@ -140,6 +140,11 @@ void UUnitManager::Initialize(ATBTacticalGameMode* TBTacticalGameModePtr)
 TArray<int> UUnitManager::GetAllUnitsIdFromFactions(EFaction Faction)
 {
 	TArray<int> AllUnitsIdFromFaction;
+	if (!AllUnitFactionReferenceMap.Contains(Faction))
+	{
+		AllUnitFactionReferenceMap.Add(Faction, FUnitFactionStruct());
+	}
+	
 	for (int i=0; i<AllUnitFactionReferenceMap[Faction].UnitInFaction.Num(); i++)
 	{
 		AllUnitsIdFromFaction.Add(AllUnitFactionReferenceMap[Faction].UnitInFaction[i]);

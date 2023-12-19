@@ -85,7 +85,7 @@ void ATBTacticalGameMode::BeginPlay()
 							
 							UnitPtr->IdUnit = CurrentIdUnit;
 							
-							if (UnitPtr->Faction == EFaction::Player)
+							if (UnitPtr->Faction == EFaction::XCOM)
 							{
 								if (FirstUnitToSelectId == -1)
 								{
@@ -93,7 +93,7 @@ void ATBTacticalGameMode::BeginPlay()
 								}
 								UnitPtr->UnitName = TEXT("Soldier " + FString::FromInt(CurrentIdUnit));
 							}
-							else if (UnitPtr->Faction == EFaction::Enemy)
+							else if (UnitPtr->Faction == EFaction::Alien)
 							{
 								UnitPtr->UnitName = TEXT("Alien Soldier " + FString::FromInt(CurrentIdUnit));
 							}

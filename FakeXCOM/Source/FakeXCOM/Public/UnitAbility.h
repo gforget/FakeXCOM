@@ -109,7 +109,7 @@ public :
 	TEnumAsByte<ETargetType> TargetType;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
-	TArray<TEnumAsByte<EFaction>> ValidTargetFaction;
+	TArray<TEnumAsByte<EFactionRelation>> ValidTargetFactionRelation;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	float RangeValue;

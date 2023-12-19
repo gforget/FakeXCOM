@@ -99,13 +99,13 @@ TArray<AActor*> UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbi
 	switch(UnitAbility->AbilityRange)
 	{
 		case Melee:
-			ReturnedTargets = GetTargetsUsingMeleeRange(SeekingUnit, UnitAbility->ValidTargetFaction);
+			ReturnedTargets = GetTargetsUsingMeleeRange(SeekingUnit, UnitAbility->ValidTargetFactionRelation);
 			break;
 		case Range:
-			ReturnedTargets = GetTargetsInRange(SeekingUnit, UnitAbility->ValidTargetFaction, UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit));
+			ReturnedTargets = GetTargetsInRange(SeekingUnit, UnitAbility->ValidTargetFactionRelation, UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit));
 			break;
 		case RangeLineOfSight:
-			ReturnedTargets = GetTargetsInRangeUsingLineOfSight(SeekingUnit, UnitAbility->ValidTargetFaction, UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit));
+			ReturnedTargets = GetTargetsInRangeUsingLineOfSight(SeekingUnit, UnitAbility->ValidTargetFactionRelation, UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit));
 			break;
 		default: ;
 	}
@@ -116,19 +116,35 @@ TArray<AActor*> UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbi
 
 TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	AUnit* SeekingUnit,
-	TArray<TEnumAsByte<EFaction>> ValidFactions,
+	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
 	float LineOfSightRange
 	)
 {
 	TArray<AActor*> ReturnedTargets;
 	
 	//Get all Unit from the valid factions
-	TArray<int> AllValidUnitId;
-	for (int i=0; i<ValidFactions.Num(); i++)
+	TArray<EFaction> AllValidFaction;
+	for (int i=0; i<ValidFactionsRelation.Num(); i++)
 	{
-		AllValidUnitId.Append(TBTacticalGameMode->UnitManager->GetAllUnitsIdFromFactions(ValidFactions[i]));
+		if (UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EFaction"), true))
+		{
+			for (int32 EnumIndex = 0; EnumIndex < EnumPtr->NumEnums(); EnumIndex++)
+			{
+				EFaction CurrentFactionValue = static_cast<EFaction>(EnumPtr->GetValueByIndex(EnumIndex));
+				if (TBTacticalGameMode->FactionManagerComponent->GetFactionRelation(SeekingUnit->Faction, CurrentFactionValue) == ValidFactionsRelation[i])
+				{
+					AllValidFaction.Add(CurrentFactionValue);
+				}
+			}
+		}
 	}
-
+	
+	TArray<int> AllValidUnitId;
+	for (int i=0; i<AllValidFaction.Num(); i++)
+	{
+		AllValidUnitId.Append(TBTacticalGameMode->UnitManager->GetAllUnitsIdFromFactions(AllValidFaction[i]));
+	}
+	
 	//Validate Line of sight of each potential target
 	for (int i=0; i<AllValidUnitId.Num(); i++)
 	{
@@ -148,22 +164,29 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 
 			FVector DeltaToPotentialTarget = ((PotentialTarget->GetActorLocation() + PotentialTarget->SightSurroundAnchor[j]) - Start);
 			
-			FVector DeltaToPotentialTargetNormalized = ((PotentialTarget->GetActorLocation() + PotentialTarget->SightSurroundAnchor[j]) - Start);
+			FVector DeltaToPotentialTargetNormalized = DeltaToPotentialTarget;
 			DeltaToPotentialTargetNormalized.Normalize();
-			FVector End = Start + DeltaToPotentialTargetNormalized*LineOfSightRange;
 			
-			const bool bDebugTrace = false;
-			if (bDebugTrace)
-			{
-				DrawDebugLine(TBTacticalGameMode->GetWorld(), Start, End, FColor::Green, false, 10.0f, 0, 1);	
-			}
+			FVector End = Start + DeltaToPotentialTargetNormalized*LineOfSightRange;
 			
 			//GetWorld in UObject has to be called from another object that is active in the scene
 			bool bHit = TBTacticalGameMode->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
-			FVector DeltaToHit = HitResult.Location - Start;
+			const bool bDebugTrace = false;
+			if (bDebugTrace)
+			{
+				FVector End2 = End;
+				FColor LineColor = FColor::Green;
+				if (bHit)
+				{
+					End2 = HitResult.Location;
+					LineColor = FColor::Red;
+				}
+				DrawDebugLine(TBTacticalGameMode->GetWorld(), Start, End2, LineColor, false, 10.0f, 0, 1);	
+			}
 			
+			FVector DeltaToHit = HitResult.Location - Start;
 			if ((bHit && DeltaToPotentialTarget.Size() <= DeltaToHit.Size()) || // hit something, but verify if it passed through the target
-				(!bHit && DeltaToPotentialTarget.Size() <= End.Size())) // didn't hit anything, but verify if the line of sight was long enough to reach the target
+			(!bHit && DeltaToPotentialTarget.Size() <= LineOfSightRange)) // didn't hit anything, but verify if the line of sight was long enough to reach the target
 			{
 				ReturnedTargets.Add(Cast<AActor>(PotentialTarget));
 				break;
@@ -178,7 +201,7 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 
 TArray<AActor*> UTargetManager::GetTargetsInRange(
 	AUnit* SeekingUnit,
-	TArray<TEnumAsByte<EFaction>> ValidFactions,
+	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
 	float Range)
 {
 	TArray<AActor*> ReturnedTargets;
@@ -187,7 +210,7 @@ TArray<AActor*> UTargetManager::GetTargetsInRange(
 
 TArray<AActor*> UTargetManager::GetTargetsUsingMeleeRange(
 	AUnit* SeekingUnit,
-	TArray<TEnumAsByte<EFaction>> ValidFactions
+	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation
 	)
 {
 	TArray<AActor*> ReturnedTargets;

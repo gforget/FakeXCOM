@@ -76,7 +76,7 @@ public:
 	TArray<UUnitAbility*> OwnedAbilities;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Unit Properties")
-	TEnumAsByte<EFaction> Faction = EFaction::Player;
+	TEnumAsByte<EFaction> Faction = EFaction::XCOM;
 
 	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
 	FVector SightStartingAnchor;
