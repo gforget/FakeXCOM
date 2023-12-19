@@ -77,6 +77,8 @@ struct NO_API FUnitAbilityInfoStruct
 	}
 };
 
+class AGun;
+
 UCLASS()
 class FAKEXCOM_API UUnitAbility : public UGameplayAbility
 {
@@ -207,6 +209,9 @@ public :
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void CostActions(int IdUnit, float CostValue);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void CostAmmo(AGun* Gun, float CostValue);
 	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void ApplyDamage(AActor* Target, float DamageValue);

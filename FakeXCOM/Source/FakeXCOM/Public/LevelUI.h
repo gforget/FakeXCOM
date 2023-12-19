@@ -16,6 +16,7 @@ class UUnitAbility;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSpawnEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSelectedEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitHealthChangeEvent, AUnit*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPGunAmmoChangeEvent, AGun*, Gun);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPTargetSelectedEvent, int, TargetIndex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPAbilitySelectionModeChangeEvent, bool, AbilitySelectionModeValue);
 
@@ -52,6 +53,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Main Events")
 	FBPUnitHealthChangeEvent OnBPUnitHealthChangeEvent;
 
+	UPROPERTY(BlueprintAssignable, Category = "Main Events")
+	FBPGunAmmoChangeEvent OnBPGunAmmoChangeEvent;
+	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
 	void AddHealthBar(UOverlay* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas);
 
@@ -86,6 +90,9 @@ private:
 	UFUNCTION()
 	void OnUnitHealthChange(AUnit* Unit);
 
+	UFUNCTION()
+	void OnGunAmmoChange(AGun* Gun);
+	
 	UFUNCTION()
 	void OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue);
 };

@@ -9,6 +9,8 @@
 
 class UGunAttributeSet;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGunAmmoChangeDelegate, AGun*, Gun);
+
 UCLASS()
 class FAKEXCOM_API AGun : public AActor, public IAbilitySystemInterface
 {
@@ -27,6 +29,11 @@ public:
 	UPROPERTY()
 	const UGunAttributeSet* GunAttributeSet;
 
+	UPROPERTY(BlueprintAssignable)
+	FGunAmmoChangeDelegate OnGunAmmoChangeEvent;
+	
+	void CallAmmoChanged();
+	
 protected:
 	virtual void BeginPlay() override;
 	

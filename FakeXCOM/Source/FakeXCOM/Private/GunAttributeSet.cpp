@@ -3,6 +3,8 @@
 
 #include "GunAttributeSet.h"
 
+#include "Gun.h"
+
 float UGunAttributeSet::GetAmmo() const
 {
 	return FMath::Max(Ammo.GetCurrentValue(), 0.0f);
@@ -15,6 +17,7 @@ void UGunAttributeSet::SetAmmo(float NewVal) const
 	if (ensure(ASC))
 	{
 		ASC->SetNumericAttributeBase(GetAmmoAttribute(), NewVal);
+		Cast<AGun>(GetOwningActor())->CallAmmoChanged();
 	}
 }
 

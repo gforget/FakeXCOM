@@ -17,6 +17,11 @@ UAbilitySystemComponent* AGun::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+void AGun::CallAmmoChanged()
+{
+	OnGunAmmoChangeEvent.Broadcast(this);
+}
+
 // Called when the game starts or when spawned
 void AGun::BeginPlay()
 {

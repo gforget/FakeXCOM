@@ -4,6 +4,8 @@
 #include "UnitAbility.h"
 
 #include "DebugHeader.h"
+#include "Gun.h"
+#include "GunAttributeSet.h"
 #include "TBTacticalGameMode.h"
 #include "UnitAttributeSet.h"
 
@@ -183,6 +185,13 @@ void UUnitAbility::CostActions(int IdUnit, float CostValue)
 		const float NewActionsValue = TargetUnitAttributeSet->GetActions() - CostValue;
 		TargetUnitAttributeSet->SetHealth(NewActionsValue);
 	}
+}
+
+void UUnitAbility::CostAmmo(AGun* Gun, float CostValue)
+{
+	const UGunAttributeSet* OwnedGunAttributeSet = Gun->GunAttributeSet;
+	const float NewAmmosValue = OwnedGunAttributeSet->GetAmmo() - CostValue;
+	OwnedGunAttributeSet->SetAmmo(NewAmmosValue);
 }
 
 void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue)
