@@ -27,6 +27,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UPROPERTY(BlueprintReadOnly, Category="Main Function")
+	float TimerClock = 0.016666f; //60 fps
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -65,26 +68,41 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Properties")
 	TArray<float> HeightCameraValue;
+
+	UPROPERTY(BlueprintReadOnly, Category ="Camera Properties")
+	int CurrentHeightCameraValueIndex = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category ="Camera Properties")
+	bool bForceCameraLock = false;
 	
 	void SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent);
 	void FollowActor(AActor* TargetActor);
+	
+	UFUNCTION(BlueprintCallable, Category = "Camera Functions")
 	void GoToActor(AActor* TargetActor);
-
-	UFUNCTION(BlueprintCallable, Category = "Level UI Functions")
+	
+	UFUNCTION(BlueprintCallable, Category = "Camera Functions")
 	void PressTurnCameraRight();
 	
-	UFUNCTION(BlueprintCallable, Category = "Level UI Functions")
+	UFUNCTION(BlueprintCallable, Category = "CameraFunctions")
 	void PressTurnCameraLeft();
-
-	UFUNCTION(BlueprintCallable, Category = "Level UI Functions")
+	
+	UFUNCTION(BlueprintCallable, Category = "CameraFunctions")
+	void RotateCameraToSpecificYaw(float yaw);
+	
+	UFUNCTION(BlueprintCallable, Category = "Camera Functions")
 	void PressSelectPreviousSoldier();
 
-	UFUNCTION(BlueprintCallable, Category = "Level UI Functions")
+	UFUNCTION(BlueprintCallable, Category = "CameraFunctions")
 	void PressSelectNextSoldier();
+
+	UFUNCTION(BlueprintCallable, Category = "Camera Functions")
+	void ForceCameraLock(bool value);
+	
+	UFUNCTION(BlueprintCallable, Category = "Camera Functions")
+	void MoveCameraHeight(int CameraHeightIndex);
 	
 private:
-	UPROPERTY()
-	float TimerClock = 0.016666f; //60 fps
 	
 	UPROPERTY()
 	UWorld* World;
@@ -131,18 +149,22 @@ private:
 	//Follow Actor Variables
 	UPROPERTY()
 	AActor* CameraTargetActor = nullptr;
+
+	UPROPERTY()
+	FVector CameraTargetPosition;
 	
 	bool IsCameraControlLock();
 	void UnFollowActor();
 	
 	void PerformFollowActor(float DeltaTime);
-
+	
 	UFUNCTION()
 	void OnUnitStartMovingEvent(AActor* MovingActor);
 
 	UFUNCTION()
 	void OnUnitStopMovingEvent(AActor* MovingActor);
 
+	//To position function
 	UPROPERTY()
 	FTimerHandle GoToActorTimerHandle;
 
@@ -153,8 +175,6 @@ private:
 	FTimerHandle CameraHeightTimerHandle;
 	
 	void CameraHeightTimerFunction();
-	
-	int CurrentHeightCameraValueIndex = 0;
 	
 	//Input function
 	void PressUp();
@@ -177,6 +197,6 @@ private:
 	//Player Move Camera Function
 	void MouseScroll();
 	void MoveCamera(float DeltaTime);
-	
 };
+
 

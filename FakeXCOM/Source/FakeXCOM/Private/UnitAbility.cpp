@@ -8,6 +8,7 @@
 #include "GunAttributeSet.h"
 #include "TBTacticalGameMode.h"
 #include "UnitAttributeSet.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, int IdUnit)
 {
@@ -106,6 +107,18 @@ void UUnitAbility::OnUnitSelected(int IdUnit)
 		const float HitChanceB = UnitAbilityInfoRef.TargetsHitChances.FindRef(&B);
 		return HitChanceA > HitChanceB;
 	});
+}
+
+void UUnitAbility::RotateTowardTarget(AUnit* Unit, AActor* Target)
+{
+	FVector UnitLocation = Unit->GetActorLocation();
+	UnitLocation.Z = 0.0f;
+
+	FVector TargetLocation = Target->GetActorLocation();
+	TargetLocation.Z = 0.0f;
+
+	const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(UnitLocation, TargetLocation);
+	Unit->SetActorRotation(LookAtRotation, ETeleportType::TeleportPhysics);
 }
 
 void UUnitAbility::SetTargets_Implementation(int IdUnit)

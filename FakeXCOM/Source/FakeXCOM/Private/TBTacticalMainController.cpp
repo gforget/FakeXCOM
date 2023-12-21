@@ -105,7 +105,7 @@ void ATBTacticalMainController::UnFollowActor()
 
 bool ATBTacticalMainController::IsCameraControlLock()
 {
-	return CameraTargetActor != nullptr;
+	return CameraTargetActor != nullptr || bForceCameraLock;
 }
 
 void ATBTacticalMainController::PerformFollowActor(float DeltaTime)
@@ -160,54 +160,63 @@ void ATBTacticalMainController::GoToActorTimerFunction()
 
 void ATBTacticalMainController::PressUp()
 {
+	if (bForceCameraLock) return;
 	bMoveUp = true;
 	bPressUp = true;
 }
 
 void ATBTacticalMainController::ReleaseUp()
 {
+	if (bForceCameraLock) return;
 	bMoveUp = false;
 	bPressUp = false;
 }
 
 void ATBTacticalMainController::PressDown()
 {
+	if (bForceCameraLock) return;
 	bMoveDown = true;
 	bPressDown = true;
 }
 
 void ATBTacticalMainController::ReleaseDown()
 {
+	if (bForceCameraLock) return;
 	bMoveDown = false;
 	bPressDown = false;
 }
 
 void ATBTacticalMainController::PressRight()
 {
+	if (bForceCameraLock) return;
 	bMoveRight = true;
 	bPressRight = true;
 }
 
 void ATBTacticalMainController::ReleaseRight()
 {
+	if (bForceCameraLock) return;
 	bMoveRight = false;
 	bPressRight = false;
 }
 
 void ATBTacticalMainController::PressLeft()
 {
+	if (bForceCameraLock) return;
 	bMoveLeft = true;
 	bPressLeft = true;
 }
 
 void ATBTacticalMainController::ReleaseLeft()
 {
+	if (bForceCameraLock) return;
 	bMoveLeft = false;
 	bPressLeft = false;
 }
 
 void ATBTacticalMainController::PressTurnCameraRight()
 {
+	if (bForceCameraLock) return;
 	CameraRotation -= FRotator(0.0f, 90.0f, 0.0f);
 	GetWorld()->GetTimerManager().SetTimer(
 	  RotateTimerHandle,
@@ -219,7 +228,19 @@ void ATBTacticalMainController::PressTurnCameraRight()
 
 void ATBTacticalMainController::PressTurnCameraLeft()
 {
+	if (bForceCameraLock) return;
 	CameraRotation += FRotator(0.0f, 90.0f, 0.0f);
+	GetWorld()->GetTimerManager().SetTimer(
+	  RotateTimerHandle,
+	  this,
+	  &ATBTacticalMainController::RotateCameraTimerFunction,
+	  TimerClock, 
+	  true);
+}
+
+void ATBTacticalMainController::RotateCameraToSpecificYaw(float yaw)
+{
+	CameraRotation = FRotator(CameraRotation.Pitch, yaw, CameraRotation.Roll);
 	GetWorld()->GetTimerManager().SetTimer(
 	  RotateTimerHandle,
 	  this,
@@ -263,52 +284,28 @@ void ATBTacticalMainController::PressSelectNextSoldier()
 	}
 }
 
+void ATBTacticalMainController::ForceCameraLock(bool value)
+{
+	bForceCameraLock = value;
+}
+
 void ATBTacticalMainController::PressCameraUp()
 {
-	if(HeightCameraValue.Num() == 0)
-	{
-		DebugScreen("HeightCameraValues not set", FColor::Red);
-		return;	
-	}
-	
+	if (bForceCameraLock) return;
 	if (CurrentHeightCameraValueIndex - 1 >= 0)
 	{
 		CurrentHeightCameraValueIndex--;
-		
-		GetWorld()->GetTimerManager().SetTimer(
-		  CameraHeightTimerHandle,
-		  this,
-		  &ATBTacticalMainController::CameraHeightTimerFunction,
-		  TimerClock, 
-		  true);
+		MoveCameraHeight(CurrentHeightCameraValueIndex);
 	}
 }
 
 void ATBTacticalMainController::PressCameraDown()
 {
-	if(HeightCameraValue.Num() == 0)
-	{
-		DebugScreen("HeightCameraValues not set", FColor::Red);
-		return;	
-	}
-	
+	if (bForceCameraLock) return;
 	if (CurrentHeightCameraValueIndex + 1 < HeightCameraValue.Num())
 	{
 		CurrentHeightCameraValueIndex++;
-		GetWorld()->GetTimerManager().SetTimer(
-		  CameraHeightTimerHandle,
-		  this,
-		  &ATBTacticalMainController::CameraHeightTimerFunction,
-		  TimerClock, 
-		  true);
-	}
-}
-
-void ATBTacticalMainController::PressRightClick()
-{
-	if (TBTacticalGameMode->UnitAbilityManager->GetAbilitySelectionMode())
-	{
-		TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
+		MoveCameraHeight(CurrentHeightCameraValueIndex);
 	}
 }
 
@@ -321,6 +318,31 @@ void ATBTacticalMainController::CameraHeightTimerFunction()
 		SpringArmComponent->TargetArmLength <= HeightCameraValue[CurrentHeightCameraValueIndex]+0.1f)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(CameraHeightTimerHandle);
+	}
+}
+
+ void ATBTacticalMainController::MoveCameraHeight(int CameraHeightIndex)
+{
+	if(HeightCameraValue.Num() == 0)
+	{
+		DebugScreen("HeightCameraValues not set", FColor::Red);
+		return;	
+	}
+	
+	CurrentHeightCameraValueIndex = CameraHeightIndex;
+	GetWorld()->GetTimerManager().SetTimer(
+	  CameraHeightTimerHandle,
+	  this,
+	  &ATBTacticalMainController::CameraHeightTimerFunction,
+	  TimerClock, 
+	  true);
+}
+
+void ATBTacticalMainController::PressRightClick()
+{
+	if (TBTacticalGameMode->UnitAbilityManager->GetAbilitySelectionMode())
+	{
+		TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
 	}
 }
 

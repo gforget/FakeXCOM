@@ -229,7 +229,9 @@ public :
 	TMap<int, FUnitAbilityInfoStruct> UnitAbilityInfos;
 
 	void OnUnitSelected(int IdUnit);
-	
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void RotateTowardTarget(AUnit* Unit, AActor* Target);
 };
 
 

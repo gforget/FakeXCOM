@@ -150,7 +150,7 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	for (int i=0; i<AllValidUnitId.Num(); i++)
 	{
 		AUnit* PotentialTarget = TBTacticalGameMode->UnitManager->GetUnitFromId(AllValidUnitId[i]);
-		for (int j=0; j<PotentialTarget->SightSurroundAnchor.Num(); j++)
+		for (int j=0; j<PotentialTarget->SightSurroundDefendingAnchor.Num(); j++)
 		{
 			//To validate if you have line of sight, the potential target has surround anchor so if the target hide behind an obstacle measuring one cube
 			//you should still be able to see it from the side. Since those anchor do not have collider, we verify if the linecast has pass through
@@ -161,9 +161,9 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 			CollisionParams.AddIgnoredActor(SeekingUnit);
 			CollisionParams.AddIgnoredActor(PotentialTarget);
 			
-			FVector Start = SeekingUnit->GetActorLocation() + SeekingUnit->SightStartingAnchor;
-
-			FVector DeltaToPotentialTarget = ((PotentialTarget->GetActorLocation() + PotentialTarget->SightSurroundAnchor[j]) - Start);
+			//FVector Start = SeekingUnit->GetActorLocation() + SeekingUnit->SightStartingAnchor;
+			FVector Start = SeekingUnit->GetActorLocation() + SeekingUnit->SightSurroundTargetingAnchor[j];
+			FVector DeltaToPotentialTarget = ((PotentialTarget->GetActorLocation() + PotentialTarget->SightSurroundDefendingAnchor[j]) - Start);
 			
 			FVector DeltaToPotentialTargetNormalized = DeltaToPotentialTarget;
 			DeltaToPotentialTargetNormalized.Normalize();

@@ -56,11 +56,17 @@ void AUnit::BeginPlay()
 		DebugScreen("No Gun Set to this soldier", FColor::Red);
 	}
 
-	SightSurroundAnchor.Add(SightStartingAnchor);
-	SightSurroundAnchor.Add(FVector(SightStartingAnchor.X + DistanceSurroundAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
-	SightSurroundAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundAnchor, SightStartingAnchor.Z));
-	SightSurroundAnchor.Add(FVector(SightStartingAnchor.X - DistanceSurroundAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
-	SightSurroundAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundAnchor, SightStartingAnchor.Z));
+	SightSurroundDefendingAnchor.Add(SightStartingAnchor);
+	SightSurroundDefendingAnchor.Add(FVector(SightStartingAnchor.X + DistanceSurroundDefendingAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
+	SightSurroundDefendingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundDefendingAnchor, SightStartingAnchor.Z));
+	SightSurroundDefendingAnchor.Add(FVector(SightStartingAnchor.X - DistanceSurroundDefendingAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
+	SightSurroundDefendingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundDefendingAnchor, SightStartingAnchor.Z));
+
+	SightSurroundTargetingAnchor.Add(SightStartingAnchor);
+	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X + DistanceSurroundTargetingAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
+	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundTargetingAnchor, SightStartingAnchor.Z));
+	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X - DistanceSurroundTargetingAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
+	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundTargetingAnchor, SightStartingAnchor.Z));
 }
 
 UUnitAbility* AUnit::GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const
@@ -118,10 +124,15 @@ void AUnit::GenerateEditorAnchorPositionVisualisation() const
 			// SightStartingPosition Anchor
 			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor, 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
 
-			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X + DistanceSurroundAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
-			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
-			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X - DistanceSurroundAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
-			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X + DistanceSurroundTargetingAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundTargetingAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X - DistanceSurroundTargetingAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundTargetingAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X + DistanceSurroundDefendingAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundDefendingAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X - DistanceSurroundDefendingAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundDefendingAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
 		}
 	}
 #endif
