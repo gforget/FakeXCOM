@@ -3,7 +3,6 @@
 
 #include "UnitAbility.h"
 
-#include "DebugHeader.h"
 #include "Gun.h"
 #include "GunAttributeSet.h"
 #include "TBTacticalGameMode.h"
@@ -207,13 +206,22 @@ void UUnitAbility::CostAmmo(AGun* Gun, float CostValue)
 	OwnedGunAttributeSet->SetAmmo(NewAmmosValue);
 }
 
-void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue)
+void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue, const bool IsCrit)
 {
-	if (const AUnit* UnitTarget = Cast<AUnit>(Target))
+	if (AUnit* UnitTarget = Cast<AUnit>(Target))
 	{
 		const UUnitAttributeSet* TargetUnitAttributeSet = UnitTarget->UnitAttributeSet;
 		const float NewHealth = TargetUnitAttributeSet->GetHealth() - DamageValue;
 		TargetUnitAttributeSet->SetHealth(NewHealth);
+
+		if (IsCrit)
+		{
+			GetTBTacticalGameMode()->LevelUI->CallStatusEvent(UnitTarget, EStatusType::CriticalDamage, DamageValue);
+		}
+		else
+		{
+			GetTBTacticalGameMode()->LevelUI->CallStatusEvent(UnitTarget, EStatusType::Damage, DamageValue);
+		}
 	}
 }
 

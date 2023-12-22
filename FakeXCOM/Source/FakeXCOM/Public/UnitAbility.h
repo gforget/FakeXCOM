@@ -214,7 +214,7 @@ public :
 	void CostAmmo(AGun* Gun, float CostValue);
 	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void ApplyDamage(AActor* Target, float DamageValue);
+	void ApplyDamage(AActor* Target, float DamageValue, bool IsCrit = false);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	bool RollDiceForHit(int IdUnitTryingToHit, AActor* Target);

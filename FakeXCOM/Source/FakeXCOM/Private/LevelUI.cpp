@@ -42,6 +42,11 @@ void ULevelUI::SubscribeToUnitEvent(AUnit* Unit)
 	Unit->Gun->OnGunAmmoChangeEvent.AddDynamic(this, &ULevelUI::OnGunAmmoChange);
 }
 
+void ULevelUI::BPCallStatusEvent(AUnit* TargetUnit, EStatusType StatusType, float Number)
+{
+	CallStatusEvent(TargetUnit, StatusType, Number);
+}
+
 void ULevelUI::OnTargetSelected(int TargetIndex)
 {
 	OnBPTargetSelectedEvent.Broadcast(TargetIndex);
@@ -70,6 +75,10 @@ void ULevelUI::OnGunAmmoChange(AGun* Gun)
 void ULevelUI::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue)
 {
 	OnBPAbilitySelectionModeChangeEvent.Broadcast(AbilitySelectionModeValue);
+}
+
+void ULevelUI::CallStatusEvent_Implementation(AUnit* TargetUnit, EStatusType StatusType, float Number)
+{
 }
 
 void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

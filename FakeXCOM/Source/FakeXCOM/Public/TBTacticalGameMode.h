@@ -54,6 +54,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Global Object")
 	ATBTacticalMainController* MainController;
 
+	UPROPERTY(BlueprintReadOnly, Category="Global Object")
+	ULevelUI* LevelUI;
+	
 	UPROPERTY()
 	bool bInitialized = false;
 	
@@ -65,9 +68,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Level Properties")
 	TSubclassOf<ULevelUI> LevelUIClass;
-
-	UPROPERTY()
-	ULevelUI* LevelUI;
 
 private:
 	UPROPERTY()

@@ -13,6 +13,17 @@ class UOverlay;
 class UCanvasPanelSlot;
 class UUnitAbility;
 
+UENUM(BlueprintType)
+enum EStatusType
+{
+	Damage,
+	CriticalDamage,
+	Miss,
+	OverWatch,
+	Reloading,
+	HunkerDown
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSpawnEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSelectedEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitHealthChangeEvent, AUnit*, Unit);
@@ -76,6 +87,12 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "HealtBar Properties")
 	float UnfocusAlpha = 0.5f;
+
+	UFUNCTION(BlueprintCallable, Category = "Main Events")
+	void BPCallStatusEvent(AUnit* TargetUnit, EStatusType StatusType, float Number = -1.0f);
+	
+	UFUNCTION(BlueprintNativeEvent, Category = "Main Events")
+	void CallStatusEvent(AUnit* TargetUnit, EStatusType StatusType, float Number);
 	
 private:
 	UFUNCTION()
