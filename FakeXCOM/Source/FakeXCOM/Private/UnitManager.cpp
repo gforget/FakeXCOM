@@ -31,9 +31,9 @@ void UUnitManager::SelectNextUnit()
 		}
 
 		UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
-		const AUnit* SelectedUnit = AllUnitReference[UnitID];
+		AUnit* SelectedUnit = AllUnitReference[UnitID];
 		
-		if (SelectedUnit->UnitAttributeSet->GetActions() != 0)
+		if (SelectedUnit->UnitAttributeSet->GetActions() != 0 && !SelectedUnit->GetIsDead())
 		{
 			haveSelectedAUnit = true;
 			break;
@@ -61,9 +61,9 @@ void UUnitManager::SelectPreviousUnit()
 		}
 
 		UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
-		const AUnit* SelectedUnit = AllUnitReference[UnitID];
+		AUnit* SelectedUnit = AllUnitReference[UnitID];
 		
-		if (SelectedUnit->UnitAttributeSet->GetActions() != 0)
+		if (SelectedUnit->UnitAttributeSet->GetActions() != 0 && !SelectedUnit->GetIsDead())
 		{
 			haveSelectedAUnit = true;
 			break;
@@ -82,6 +82,11 @@ AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 	
 	AUnit* SelectedUnit = AllUnitReference[UnitId];
 	const EFaction SelectedFaction = TBTacticalGameMode->TurnManagerComponent->GetSelectedFaction();
+
+	if (SelectedUnit->GetIsDead())
+	{
+		return nullptr;
+	}
 	
 	if (SelectedUnit->Faction != SelectedFaction)
 	{
@@ -175,7 +180,13 @@ void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
 	for(int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{
 		const int UnitId = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[i];
-		const AUnit* UnitPtr = AllUnitReference[UnitId];
+
+		AUnit* UnitPtr = AllUnitReference[UnitId];
+
+		if (UnitPtr->GetIsDead())
+		{
+			continue;	
+		}
 		
 		if (UnitPtr->UnitAttributeSet->GetActions() > 0)
 		{
@@ -224,7 +235,11 @@ void UUnitManager::ResetAllActionsOfFaction(EFaction Faction)
 	bAllUnitOutOfAction = false;
 	for (int i=0; i<AllUnitFactionReferenceMap[Faction].UnitInFaction.Num(); i++)
 	{
-		const AUnit* UnitPtr = AllUnitReference[AllUnitFactionReferenceMap[Faction].UnitInFaction[i]];
+		AUnit* UnitPtr = AllUnitReference[AllUnitFactionReferenceMap[Faction].UnitInFaction[i]];
+		if (UnitPtr->GetIsDead())
+		{
+			continue;	
+		}
 		UnitPtr->UnitAttributeSet->SetActions(UnitPtr->UnitAttributeSet->GetMaxActions());
 	}
 }

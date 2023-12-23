@@ -16,13 +16,20 @@ class AUnit;
 class UUnitAbility;
 
 UENUM(BlueprintType)
-
 enum ETargetType
 {
 	Self,
 	SingleTarget,
 	FreeGroundPosition,
 	SpecificGroundPosition
+};
+
+UENUM(BlueprintType)
+enum EDeadTargetFilter
+{
+	NoDeadTarget,
+	OnlyDeadTarget,
+	AllTarget
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetSelectedEvent, int, TargetIndex);
@@ -69,18 +76,21 @@ private:
 	TArray<AActor*> GetTargetsInRange(
 		AUnit* SeekingUnit,
 		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-		float Range
+		float Range,
+		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
 		);
 	
 	TArray<AActor*> GetTargetsInRangeUsingLineOfSight(
 		AUnit* SeekingUnit,
 		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-		float LineOfSightRange
+		float LineOfSightRange,
+		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
 		);
 	
 	TArray<AActor*>  GetTargetsUsingMeleeRange(
 		AUnit* SeekingUnit,
-		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation
+		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
+		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
 	); 	
 };
 

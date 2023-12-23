@@ -18,6 +18,11 @@ void UUnitAttributeSet::SetHealth(float NewVal) const
 	{
 		ASC->SetNumericAttributeBase(GetHealthAttribute(), NewVal);
 		Cast<AUnit>(GetOwningActor())->CallHealthChanged();
+
+		if (GetHealth() == 0.0f)
+		{
+			Cast<AUnit>(GetOwningActor())->SetIsDead(true);
+		}
 	}
 }
 

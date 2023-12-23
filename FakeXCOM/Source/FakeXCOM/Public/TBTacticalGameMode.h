@@ -55,7 +55,7 @@ public:
 	ATBTacticalMainController* MainController;
 
 	UPROPERTY(BlueprintReadOnly, Category="Global Object")
-	ULevelUI* LevelUI;
+	ULevelUI* LevelUIRef;
 	
 	UPROPERTY()
 	bool bInitialized = false;

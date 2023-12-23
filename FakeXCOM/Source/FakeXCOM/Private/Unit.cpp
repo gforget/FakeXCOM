@@ -177,7 +177,7 @@ void AUnit::Initialize()
 
 	//Adding Reference to this soldier
 	TBTacticalGameMode->UnitManager->AddUnitToManager(IdUnit, this);
-	TBTacticalGameMode->LevelUI->SubscribeToUnitEvent(this);
+	TBTacticalGameMode->LevelUIRef->SubscribeToUnitEvent(this);
 	
 	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (IsValid(ASC))
@@ -235,5 +235,19 @@ float AUnit::GetHeightAdvantageBonus(AUnit* Target)
 	float UnitZPosition = GetActorLocation().Z;
 	
 	return UnitZPosition - TargetZPosition > 100.0f ? Target->LowGroundDisadvantage : 0.0f;
+}
+
+void AUnit::SetIsDead(bool Val)
+{
+	bIsDead = Val;
+	if (bIsDead)
+	{
+		OnUnitIsDeadEvent.Broadcast(this);
+	}
+}
+
+bool AUnit::GetIsDead()
+{
+	return bIsDead;
 }
 

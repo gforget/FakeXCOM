@@ -30,8 +30,8 @@ void ATBTacticalGameMode::BeginPlay()
 	//Setup LevelUI
 	if (LevelUIClass)
 	{
-		LevelUI = CreateWidget<ULevelUI>(GetWorld(), LevelUIClass);
-		LevelUI->AddToViewport();
+		LevelUIRef = CreateWidget<ULevelUI>(GetWorld(), LevelUIClass);
+		LevelUIRef->AddToViewport();
 	}
 	
 	//Setup UObject
@@ -49,7 +49,7 @@ void ATBTacticalGameMode::BeginPlay()
 	UnitManager->Initialize(this);
 	TargetManager->Initialize(this);
 	UI3DManagerComponent->Initialize();
-	LevelUI->Initialization();
+	LevelUIRef->Initialization();
 	
 	//For some reason, assigning pointer generated here on other object result on them being deleted or not recognise later
 	TArray<AActor*> AllActors;

@@ -19,6 +19,7 @@ class UUnitAbility;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitRanOutOfActionsDelegate, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitHealthChangeDelegate, AUnit*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitIsDeadDelegate, AUnit*, Unit);
 
 UCLASS()
 class FAKEXCOM_API AUnit : public AActor, public IAbilitySystemInterface
@@ -54,6 +55,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FUnitHealthChangeDelegate OnUnitHealthChangeEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FUnitIsDeadDelegate OnUnitIsDeadEvent;
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -136,8 +140,18 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	float GetHeightAdvantageBonus(AUnit* Target);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void SetIsDead(bool Val);
+	
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	bool GetIsDead();
 	
 private:
+
+	UPROPERTY()
+	bool bIsDead = false;
+	
 	void GenerateEditorAnchorPositionVisualisation() const;
 	
 	UUnitAbility* GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const;

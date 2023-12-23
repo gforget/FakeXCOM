@@ -86,7 +86,7 @@ public :
 	void ResetAllActionsOfFaction(EFaction Faction);
 	
 private:
-
+	
 	UPROPERTY()
 	TMap<TEnumAsByte<EFaction>, FUnitFactionStruct> AllUnitFactionReferenceMap;
 	
@@ -101,6 +101,6 @@ private:
 	
 	UFUNCTION()
 	void OnUnitRanOutOfActions(AUnit* Unit);
-
+	
 	void MovementActionCost(const UNodePath* Destination);
 };

@@ -6,7 +6,9 @@
 #include "Animation/AnimInstance.h"
 #include "SoldierAnimInstance.generated.h"
 
+class AUnit;
 class UTileMovementComponent;
+
 /**
  * 
  */
@@ -18,8 +20,11 @@ class FAKEXCOM_API USoldierAnimInstance : public UAnimInstance
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
-	bool IsMoving;
+	bool bIsMoving;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	bool bIsDead;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	float Speed;
 	
@@ -29,5 +34,9 @@ public:
 	virtual void NativeBeginPlay() override;
 
 private:
+	UPROPERTY()
+	AUnit* OwningUnit;
+
+	UPROPERTY()
 	UTileMovementComponent* TileMovementComponentPtr;
 };

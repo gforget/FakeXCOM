@@ -111,6 +111,9 @@ public :
 	TEnumAsByte<ETargetType> TargetType;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter = NoDeadTarget;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	TArray<TEnumAsByte<EFactionRelation>> ValidTargetFactionRelation;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")

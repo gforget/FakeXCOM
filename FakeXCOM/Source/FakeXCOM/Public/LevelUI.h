@@ -93,6 +93,9 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, Category = "Main Events")
 	void CallStatusEvent(AUnit* TargetUnit, EStatusType StatusType, float Number);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Main Events")
+	void OnUnitIsDeadEvent(AUnit* DeadUnit);
 	
 private:
 	UFUNCTION()
@@ -105,6 +108,9 @@ private:
 	void OnUnitSpawned(AUnit* Unit);
 
 	UFUNCTION()
+	void OnUnitIsDead(AUnit* Unit);
+	
+	UFUNCTION()
 	void OnUnitHealthChange(AUnit* Unit);
 
 	UFUNCTION()
@@ -113,5 +119,3 @@ private:
 	UFUNCTION()
 	void OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue);
 };
-
-

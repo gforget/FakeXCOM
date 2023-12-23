@@ -216,11 +216,11 @@ void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue, const bool IsC
 
 		if (IsCrit)
 		{
-			GetTBTacticalGameMode()->LevelUI->CallStatusEvent(UnitTarget, EStatusType::CriticalDamage, DamageValue);
+			GetTBTacticalGameMode()->LevelUIRef->CallStatusEvent(UnitTarget, EStatusType::CriticalDamage, DamageValue);
 		}
 		else
 		{
-			GetTBTacticalGameMode()->LevelUI->CallStatusEvent(UnitTarget, EStatusType::Damage, DamageValue);
+			GetTBTacticalGameMode()->LevelUIRef->CallStatusEvent(UnitTarget, EStatusType::Damage, DamageValue);
 		}
 	}
 }

@@ -99,13 +99,21 @@ TArray<AActor*> UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbi
 	switch(UnitAbility->AbilityRange)
 	{
 		case Melee:
-			ReturnedTargets = GetTargetsUsingMeleeRange(SeekingUnit, UnitAbility->ValidTargetFactionRelation);
+			ReturnedTargets = GetTargetsUsingMeleeRange(SeekingUnit,
+				UnitAbility->ValidTargetFactionRelation,
+				UnitAbility->DeadTargetFilter);
 			break;
 		case Range:
-			ReturnedTargets = GetTargetsInRange(SeekingUnit, UnitAbility->ValidTargetFactionRelation, UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit));
+			ReturnedTargets = GetTargetsInRange(SeekingUnit,
+				UnitAbility->ValidTargetFactionRelation,
+				UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit),
+				UnitAbility->DeadTargetFilter);
 			break;
 		case RangeLineOfSight:
-			ReturnedTargets = GetTargetsInRangeUsingLineOfSight(SeekingUnit, UnitAbility->ValidTargetFactionRelation, UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit));
+			ReturnedTargets = GetTargetsInRangeUsingLineOfSight(SeekingUnit,
+				UnitAbility->ValidTargetFactionRelation,
+				UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit),
+				UnitAbility->DeadTargetFilter);
 			break;
 		default: ;
 	}
@@ -117,7 +125,8 @@ TArray<AActor*> UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbi
 TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	AUnit* SeekingUnit,
 	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-	float LineOfSightRange
+	float LineOfSightRange,
+	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
 	)
 {
 	TArray<AActor*> ReturnedTargets;
@@ -150,6 +159,25 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	for (int i=0; i<AllValidUnitId.Num(); i++)
 	{
 		AUnit* PotentialTarget = TBTacticalGameMode->UnitManager->GetUnitFromId(AllValidUnitId[i]);
+
+		switch(DeadTargetFilter)
+		{
+			case EDeadTargetFilter::NoDeadTarget:
+				if (PotentialTarget->GetIsDead())
+				{
+					continue;
+				} 
+			break;
+
+			case EDeadTargetFilter::OnlyDeadTarget:
+				if (!PotentialTarget->GetIsDead())
+				{
+					continue;
+				}
+			break;
+			default: ;
+		}
+		
 		for (int j=0; j<PotentialTarget->SightSurroundDefendingAnchor.Num(); j++)
 		{
 			//To validate if you have line of sight, the potential target has surround anchor so if the target hide behind an obstacle measuring one cube
@@ -203,7 +231,8 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 TArray<AActor*> UTargetManager::GetTargetsInRange(
 	AUnit* SeekingUnit,
 	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-	float Range)
+	float Range,
+	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter)
 {
 	TArray<AActor*> ReturnedTargets;
 	return ReturnedTargets;
@@ -211,7 +240,8 @@ TArray<AActor*> UTargetManager::GetTargetsInRange(
 
 TArray<AActor*> UTargetManager::GetTargetsUsingMeleeRange(
 	AUnit* SeekingUnit,
-	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation
+	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
+	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
 	)
 {
 	TArray<AActor*> ReturnedTargets;

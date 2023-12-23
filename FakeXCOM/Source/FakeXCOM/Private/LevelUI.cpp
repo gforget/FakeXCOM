@@ -40,6 +40,7 @@ void ULevelUI::SubscribeToUnitEvent(AUnit* Unit)
 {
 	Unit->OnUnitHealthChangeEvent.AddDynamic(this, &ULevelUI::OnUnitHealthChange);
 	Unit->Gun->OnGunAmmoChangeEvent.AddDynamic(this, &ULevelUI::OnGunAmmoChange);
+	Unit->OnUnitIsDeadEvent.AddDynamic(this, &ULevelUI::OnUnitIsDead);
 }
 
 void ULevelUI::BPCallStatusEvent(AUnit* TargetUnit, EStatusType StatusType, float Number)
@@ -62,6 +63,11 @@ void ULevelUI::OnUnitSpawned(AUnit* Unit)
 	OnBPUnitSpawnEvent.Broadcast(Unit);
 }
 
+void ULevelUI::OnUnitIsDead(AUnit* DeadUnit)
+{
+	OnUnitIsDeadEvent(DeadUnit);
+}
+
 void ULevelUI::OnUnitHealthChange(AUnit* Unit)
 {
 	OnBPUnitHealthChangeEvent.Broadcast(Unit);
@@ -78,6 +84,10 @@ void ULevelUI::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue)
 }
 
 void ULevelUI::CallStatusEvent_Implementation(AUnit* TargetUnit, EStatusType StatusType, float Number)
+{
+}
+
+void ULevelUI::OnUnitIsDeadEvent_Implementation(AUnit* DeadUnit)
 {
 }
 
