@@ -8,6 +8,7 @@
 #include "TileMovementComponent.generated.h"
 
 class UNodePath;
+class AUnit;
 class ATBTacticalGameMode;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitStartMovingDelegate, AActor*, ActorMoving);
@@ -77,4 +78,7 @@ private:
 
 	UPROPERTY()
 	float DeltaMem = -1.0f;
+
+	UFUNCTION()
+	void OnUnitIsDead(AUnit* DeadUnit);
 };

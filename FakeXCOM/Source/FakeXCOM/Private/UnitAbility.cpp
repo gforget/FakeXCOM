@@ -195,7 +195,7 @@ void UUnitAbility::CostActions(int IdUnit, float CostValue)
 	{
 		const UUnitAttributeSet* TargetUnitAttributeSet = Unit->UnitAttributeSet;
 		const float NewActionsValue = TargetUnitAttributeSet->GetActions() - CostValue;
-		TargetUnitAttributeSet->SetHealth(NewActionsValue);
+		TargetUnitAttributeSet->SetActions(NewActionsValue);
 	}
 }
 
@@ -203,6 +203,13 @@ void UUnitAbility::CostAmmo(AGun* Gun, float CostValue)
 {
 	const UGunAttributeSet* OwnedGunAttributeSet = Gun->GunAttributeSet;
 	const float NewAmmosValue = OwnedGunAttributeSet->GetAmmo() - CostValue;
+	OwnedGunAttributeSet->SetAmmo(NewAmmosValue);
+}
+
+void UUnitAbility::RechargeAllAmmo(AGun* Gun)
+{
+	const UGunAttributeSet* OwnedGunAttributeSet = Gun->GunAttributeSet;
+	const float NewAmmosValue = OwnedGunAttributeSet->GetMaxAmmo();
 	OwnedGunAttributeSet->SetAmmo(NewAmmosValue);
 }
 

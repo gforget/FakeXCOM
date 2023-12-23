@@ -28,6 +28,11 @@ void UTileMovementComponent::BeginPlay()
 		TBTacticalGameMode->MainController->SubscribeOnUnitMovingEvents(this);
 	}
 
+	if (AUnit* OwningUnit = Cast<AUnit>(GetOwner()))
+	{
+		OwningUnit->OnUnitIsDeadEvent.AddDynamic(this, &UTileMovementComponent::OnUnitIsDead);
+	}
+	
 	SetComponentTickEnabled(false);
 }
 
@@ -113,5 +118,12 @@ void UTileMovementComponent::FollowPath(const GenericStack<UNodePath*>& NewPath,
 	SetComponentTickEnabled(true);
 }
 
+void UTileMovementComponent::OnUnitIsDead(AUnit* DeadUnit)
+{
+	Path.Clear();
+	bStopMoving = true;
+	LocatedNodePath->bIsBlocked = false;
+	LocatedNodePath = nullptr;
+}
 
 

@@ -215,6 +215,9 @@ public :
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void CostAmmo(AGun* Gun, float CostValue);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void RechargeAllAmmo(AGun* Gun);
 	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void ApplyDamage(AActor* Target, float DamageValue, bool IsCrit = false);
