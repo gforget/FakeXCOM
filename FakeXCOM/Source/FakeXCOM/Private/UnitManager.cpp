@@ -16,8 +16,6 @@
 
 void UUnitManager::SelectNextUnit()
 {
-	//TODO: Manage dead soldier
-	
 	bool haveSelectedAUnit = false;
 	int UnitID = -1;
 	
@@ -226,7 +224,22 @@ void UUnitManager::SelectFirstUnitOfFaction(EFaction Faction)
 	if (AllUnitFactionReferenceMap[Faction].UnitInFaction.Num() > 0)
 	{
 		SelectedUnitIndex = 0;
-		SelectUnit(GetCurrentlySelectedUnit()->IdUnit);
+		
+		bool AllUnitInFactionAreDead = false;
+		while (!AllUnitInFactionAreDead && GetCurrentlySelectedUnit()->GetIsDead())
+		{
+			SelectedUnitIndex++;
+			if (SelectedUnitIndex >= AllUnitFactionReferenceMap[Faction].UnitInFaction.Num())
+			{
+				AllUnitInFactionAreDead = true;
+				SelectedUnitIndex = -1;
+			}
+		}
+		
+		if (!AllUnitInFactionAreDead)
+		{
+			SelectUnit(GetCurrentlySelectedUnit()->IdUnit);
+		}
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "TurnManager.h"
 #include "FactionManager.h"
 #include "TBTacticalGameMode.h"
+#include "UnitAbilityManager.h"
 
 
 // Sets default values for this component's properties
@@ -29,6 +30,11 @@ EFaction UTurnManager::GetSelectedFaction()
 
 void UTurnManager::EndTurn()
 {
+	if (TBTacticalGameMode->UnitAbilityManager->GetAbilitySelectionMode())
+	{
+		TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
+	}
+	
 	SelectedFactionIndex++;
 	if (SelectedFactionIndex >= FactionTurnOrder.Num())
 	{

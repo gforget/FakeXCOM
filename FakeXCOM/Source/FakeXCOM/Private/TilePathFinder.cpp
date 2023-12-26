@@ -45,6 +45,12 @@ void UTilePathFinder::OnUnitStopMovingEvent(AActor* MovingActor)
 
 GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode)
 {
+	GenericStack<UNodePath*> PathStack;
+	if (!InitialNode || !DestinationNode)
+	{
+		DebugScreen("Node parameters send to pathfinding are empty", FColor::Red);
+		return PathStack;
+	}
 	
 	GenericPriorityQueue<UNodePath*, float> frontier;
 	frontier.Enqueue(InitialNode, 0.0f);
@@ -88,7 +94,6 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Initia
 	}
 	
 	//Generate the path
-	GenericStack<UNodePath*> PathStack;
 	if (bPathFound)
 	{
 		UNodePath* current = DestinationNode;

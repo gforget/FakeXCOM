@@ -242,6 +242,7 @@ void AUnit::SetIsDead(bool Val)
 	bIsDead = Val;
 	if (bIsDead)
 	{
+		CapsuleComponent->DestroyComponent(false);
 		OnUnitIsDeadEvent.Broadcast(this);
 	}
 }
