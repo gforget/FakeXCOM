@@ -2,6 +2,8 @@
 
 
 #include "UnitManager.h"
+
+#include "AIBrainComponent.h"
 #include "DebugHeader.h"
 #include "MouseSceneSelectionComponent.h"
 #include "NodePath.h"
@@ -254,6 +256,24 @@ void UUnitManager::ResetAllActionsOfFaction(EFaction Faction)
 			continue;	
 		}
 		UnitPtr->UnitAttributeSet->SetActions(UnitPtr->UnitAttributeSet->GetMaxActions());
+	}
+}
+
+void UUnitManager::ActivateAIControl(EFaction Faction)
+{
+	for (int i=0; i<AllUnitReference.Num(); i++)
+	{
+		const AUnit* UnitPtr = AllUnitReference[i];
+		UnitPtr->AIBrainComponent->SetBrainActivation(false);
+	}
+	
+	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[Faction] == EAssignedController::AIController)
+	{
+		for (int i=0; i<AllUnitFactionReferenceMap[Faction].UnitInFaction.Num(); i++)
+		{
+			const AUnit* UnitPtr = AllUnitReference[AllUnitFactionReferenceMap[Faction].UnitInFaction[i]];
+			UnitPtr->AIBrainComponent->SetBrainActivation(true);
+		}	
 	}
 }
 

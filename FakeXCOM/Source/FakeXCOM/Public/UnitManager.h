@@ -81,9 +81,10 @@ public :
 
 	UFUNCTION(BlueprintCallable)
 	void EndOfAbility();
-
+	
 	void SelectFirstUnitOfFaction(EFaction Faction);
 	void ResetAllActionsOfFaction(EFaction Faction);
+	void ActivateAIControl(EFaction Faction);
 	
 private:
 	

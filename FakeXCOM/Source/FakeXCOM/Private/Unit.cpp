@@ -2,6 +2,7 @@
 
 #include "Unit.h"
 #include "AbilitySystemComponent.h"
+#include "AIBrainComponent.h"
 #include "Gun.h"
 #include "LevelBlock.h"
 #include "NodePath.h"
@@ -37,6 +38,8 @@ AUnit::AUnit()
 	TileMovementComponent = CreateDefaultSubobject<UTileMovementComponent>(TEXT("Tile Movement Component"));
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Ability System Component"));
+
+	AIBrainComponent = CreateDefaultSubobject<UAIBrainComponent>(TEXT("AI Brain Component"));
 }
 
 // Called when the game starts or when spawned

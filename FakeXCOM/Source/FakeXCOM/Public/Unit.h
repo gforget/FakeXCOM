@@ -13,6 +13,7 @@ class UTileMovementComponent;
 class AGun;
 class ATBTacticalGameMode;
 class UArrowComponent;
+class UAIBrainComponent;
 class UCapsuleComponent;
 class UUnitAttributeSet;
 class UUnitAbility;
@@ -112,6 +113,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UTileMovementComponent* TileMovementComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UAIBrainComponent* AIBrainComponent;
+	
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
 	TSubclassOf<AGun> GunClass;
 
