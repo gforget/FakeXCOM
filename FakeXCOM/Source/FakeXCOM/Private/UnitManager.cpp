@@ -3,7 +3,6 @@
 
 #include "UnitManager.h"
 
-#include "AIBrainComponent.h"
 #include "DebugHeader.h"
 #include "MouseSceneSelectionComponent.h"
 #include "NodePath.h"
@@ -259,57 +258,15 @@ void UUnitManager::ResetAllActionsOfFaction(EFaction Faction)
 	}
 }
 
-void UUnitManager::ActivateAIControl(EFaction Faction)
-{
-	for (int i=0; i<AllUnitReference.Num(); i++)
-	{
-		const AUnit* UnitPtr = AllUnitReference[i];
-		UnitPtr->AIBrainComponent->SetBrainActivation(false);
-	}
-	
-	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[Faction] == EAssignedController::AIController)
-	{
-		for (int i=0; i<AllUnitFactionReferenceMap[Faction].UnitInFaction.Num(); i++)
-		{
-			const AUnit* UnitPtr = AllUnitReference[AllUnitFactionReferenceMap[Faction].UnitInFaction[i]];
-			UnitPtr->AIBrainComponent->SetBrainActivation(true);
-		}	
-	}
-}
-
 void UUnitManager::OnRightClickSelectActor(AActor* Actor, FVector HitLocation)
 {
 	if (GetCurrentlySelectedUnit())
 	{
-		if (!TBTacticalGameMode->TilePathFinder->bCanMoveUnit)
-		{
-			return;
-		}
-		
 		if (ALevelBlock* SelectedLevelBlock = Cast<ALevelBlock>(Actor))
 		{
 			if (UNodePath* ChosenNodePath = SelectedLevelBlock->GetClosestNodePathFromLocation(HitLocation))
 			{
-				if (!ChosenNodePath->bIsBlocked)
-				{
-					const AUnit* Unit = GetCurrentlySelectedUnit();
-					const int BaseDistance = Unit->UnitAttributeSet->GetMaxMoveDistancePerAction();
-					const int AllowedDistance = BaseDistance*Unit->UnitAttributeSet->GetActions();
-					
-					GenericStack<UNodePath*> Path = TBTacticalGameMode->TilePathFinder->GetPathToDestination(
-						Unit->TileMovementComponent->LocatedNodePath,
-						ChosenNodePath);
-					
-					if (Path.Num() > 0
-						&& ChosenNodePath->NbSteps != -1
-						&& ChosenNodePath->NbSteps <= AllowedDistance
-						&& Unit->UnitAttributeSet->GetActions() > 0)
-					{
-						OnUnitOrderedToMoveEvent.Broadcast(GetCurrentlySelectedUnit());
-						MovementActionCost(ChosenNodePath);
-						TBTacticalGameMode->TilePathFinder->MoveUnit(GetCurrentlySelectedUnit(), Path);
-					}
-				}
+				GetCurrentlySelectedUnit()->MoveToNodePath(ChosenNodePath);
 			}
 		}
 	}
@@ -328,14 +285,6 @@ void UUnitManager::OnLeftClickSelectActor(AActor* Actor, FVector HitLocation)
 		SelectUnit(SelectedUnitPtr->IdUnit);
 	}
 }
-
-void UUnitManager::MovementActionCost(const UNodePath* Destination)
-{
-	const int BaseDistance = GetCurrentlySelectedUnit()->UnitAttributeSet->GetMaxMoveDistancePerAction();
-	const int ActionCost = Destination->NbSteps > BaseDistance ? 2 : 1;
-	GetCurrentlySelectedUnit()->UnitAttributeSet->SetActions(GetCurrentlySelectedUnit()->UnitAttributeSet->GetActions()-ActionCost);
-}
-
 
 
 

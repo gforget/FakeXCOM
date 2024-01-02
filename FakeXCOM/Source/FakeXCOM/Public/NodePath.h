@@ -53,10 +53,10 @@ public:
 	UPROPERTY()
 	ATBTacticalGameMode*  TBTacticalGameMode;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = "NodePath Properties")
 	TArray<UNodePath*> AllNeighboursConnectionInfo; //use 0-3 vertical position, 4-7 diagonal setup, can have null reference
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = "NodePath Properties")
 	TArray<UNodePath*> AllConnectedNeighbours; //Only contain connected neighbour
 
 	UPROPERTY()
@@ -74,7 +74,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
 	int NbSteps = -1;
 	
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NodePath Properties")
 	bool bIsBlocked = false;
 	
 	// weight cost

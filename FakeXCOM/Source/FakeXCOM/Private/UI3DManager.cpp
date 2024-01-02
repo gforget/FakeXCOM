@@ -32,10 +32,14 @@ void UUI3DManager::Initialize()
 	if (TBTacticalGameMode)
 	{
 		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &UUI3DManager::OnUnitSelected);
-		TBTacticalGameMode->UnitManager->OnUnitOrderedToMoveEvent.AddDynamic(this, &UUI3DManager::OnUnitOrderedToMove);
 		TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnMouseOverActorEvent.AddDynamic(this, &UUI3DManager::OnMouseOverActor);
 		TBTacticalGameMode->UnitAbilityManager->OnAbilitySelectionModeChangeEvent.AddDynamic(this, &UUI3DManager::OnAbilitySelectionModeChangeEvent);
 	}
+}
+
+void UUI3DManager::SubscribeToUnitEvent(AUnit* Unit)
+{
+	Unit->OnUnitOrderedToMoveEvent.AddDynamic(this, &UUI3DManager::OnUnitOrderedToMove);
 }
 
 void UUI3DManager::OnUnitSelected(AUnit* Unit)

@@ -9,8 +9,14 @@
 /**
  * 
  */
+class ATBTacticalGameMode;
+
 UCLASS()
 class FAKEXCOM_API UAIAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
+	
+public:
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	ATBTacticalGameMode* GetTBTacticalGameMode();
 };

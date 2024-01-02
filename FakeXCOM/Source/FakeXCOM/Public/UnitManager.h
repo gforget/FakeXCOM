@@ -35,7 +35,6 @@ struct NO_API FUnitFactionStruct
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSpawnedEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSelectedEvent, AUnit*, Unit);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitOrderedToMoveEvent, AUnit*, Unit);
 
 UCLASS()
 class FAKEXCOM_API UUnitManager : public UObject
@@ -53,9 +52,6 @@ public :
 	
 	UPROPERTY(BlueprintAssignable)
 	FUnitSelectedEvent OnUnitSelectedEvent;
-
-	UPROPERTY(BlueprintAssignable)
-	FUnitOrderedToMoveEvent OnUnitOrderedToMoveEvent;
 
 	UPROPERTY()
 	TMap<int, AUnit*> AllUnitReference;
@@ -84,7 +80,6 @@ public :
 	
 	void SelectFirstUnitOfFaction(EFaction Faction);
 	void ResetAllActionsOfFaction(EFaction Faction);
-	void ActivateAIControl(EFaction Faction);
 	
 private:
 	
@@ -102,6 +97,4 @@ private:
 	
 	UFUNCTION()
 	void OnUnitRanOutOfActions(AUnit* Unit);
-	
-	void MovementActionCost(const UNodePath* Destination);
 };

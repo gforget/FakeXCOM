@@ -9,6 +9,8 @@
 #include "UnitAttributeSet.h"
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
+#include "TilePathFinder.h"
+#include "UI3DManager.h"
 #include "UnitAbility.h"
 #include "UnitManager.h"
 #include "Components/ArrowComponent.h"
@@ -86,7 +88,6 @@ UUnitAbility* AUnit::GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHand
 	}
 	return nullptr;
 }
-
 void AUnit::PostActorCreated()
 {
 	Super::PostActorCreated();
@@ -178,9 +179,10 @@ void AUnit::Initialize()
 		}
 	}
 
-	//Adding Reference to this soldier
+	//Adding Reference to this unit
 	TBTacticalGameMode->UnitManager->AddUnitToManager(IdUnit, this);
 	TBTacticalGameMode->LevelUIRef->SubscribeToUnitEvent(this);
+	TBTacticalGameMode->UI3DManagerComponent->SubscribeToUnitEvent(this);
 	
 	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (IsValid(ASC))
@@ -253,5 +255,36 @@ void AUnit::SetIsDead(bool Val)
 bool AUnit::GetIsDead()
 {
 	return bIsDead;
+}
+
+void AUnit::MoveToNodePath(UNodePath* TargetNodePath)
+{
+	if (!TargetNodePath->bIsBlocked && TBTacticalGameMode->TilePathFinder->bCanMoveUnit)
+	{
+		const int BaseDistance = UnitAttributeSet->GetMaxMoveDistancePerAction();
+		const int AllowedDistance = BaseDistance*UnitAttributeSet->GetActions();
+					
+		GenericStack<UNodePath*> Path = TBTacticalGameMode->TilePathFinder->GetPathToDestination(
+			TileMovementComponent->LocatedNodePath,
+			TargetNodePath);
+					
+		if (Path.Num() > 0
+			&& TargetNodePath->NbSteps != -1
+			&& TargetNodePath->NbSteps <= AllowedDistance
+			&& UnitAttributeSet->GetActions() > 0)
+		{
+			OnUnitOrderedToMoveEvent.Broadcast(this);
+			MovementActionCost(TargetNodePath);
+			
+			TBTacticalGameMode->TilePathFinder->MoveUnit(this, Path);
+		}
+	}
+}
+
+void AUnit::MovementActionCost(const UNodePath* Destination)
+{
+	const int BaseDistance = UnitAttributeSet->GetMaxMoveDistancePerAction();
+	const int ActionCost = Destination->NbSteps > BaseDistance ? 2 : 1;
+	UnitAttributeSet->SetActions(UnitAttributeSet->GetActions()-ActionCost);
 }
 

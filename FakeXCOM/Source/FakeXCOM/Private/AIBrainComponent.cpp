@@ -2,36 +2,60 @@
 
 
 #include "AIBrainComponent.h"
+
+#include "AbilitySystemComponent.h"
+#include "AIAbility.h"
+#include "TBTacticalGameMode.h"
 #include "UtilityMatrixDataTable.h"
 
 // Sets default values for this component's properties
 UAIBrainComponent::UAIBrainComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 // Called when the game starts
 void UAIBrainComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetBrainActivation(false);
+	AtbTacticalGameMode = GetOwner()->GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	if (AtbTacticalGameMode)
+	{
+		AtbTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &UAIBrainComponent::OnUnitSelected);
+		OwningUnit = Cast<AUnit>(GetOwner());
+
+		//Assign all AIAbilities in the UM
+		TArray<FUtilityMatrixDT*> AllUMRows;
+		UtilityMatrix->GetAllRows(TEXT("UAIBrainComponent::BeginPlay"), AllUMRows);
+		for (int i=0; i<AllUMRows.Num(); i++)
+		{
+			OwningUnit->AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AllUMRows[i]->ActionAbility, 0, -1));
+		}
+	}
 }
 
-// Called every frame
-void UAIBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UAIBrainComponent::OnUnitSelected(AUnit* Unit)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (OwningUnit->IdUnit == Unit->IdUnit)
+	{
+		if (AtbTacticalGameMode->FactionManagerComponent->FactionsController[Unit->Faction] == AIController)
+		{
+			//Delay taking the decision so it avoid certain problem with the synchronization of event.
+			//Also make it more human like
+			
+			GetWorld()->GetTimerManager().SetTimer(
+			DecideActionTimerHandle,
+			this,
+			&UAIBrainComponent::DecideActionTimerFunction,
+			DelayBetweenDecision
+			);
+		}
+	}
 }
 
-void UAIBrainComponent::SetBrainActivation(bool value)
+void UAIBrainComponent::DecideActionTimerFunction()
 {
-	bAIBrainActivated = value;
-	SetComponentTickEnabled(value);
-}
-
-bool UAIBrainComponent::GetBrainActivation()
-{
-	return bAIBrainActivated;
+	OwningUnit->AbilitySystemComponent->TryActivateAbilityByClass(DecideBestAction());
 }
 
 TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
@@ -53,7 +77,6 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 		}
 	}
 	
-	bFinishedDeciding = true;
 	return AllUMRows[nextBestActionIndex]->ActionAbility; 
 }
 
@@ -84,6 +107,8 @@ float UAIBrainComponent::ScoreAction(TArray<UConsideration*> Considerations)
 	
 	return score;
 }
+
+
 
 
 

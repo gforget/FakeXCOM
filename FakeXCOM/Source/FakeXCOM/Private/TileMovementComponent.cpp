@@ -6,7 +6,6 @@
 #include "TBTacticalGameMode.h"
 #include "TBTacticalMainController.h"
 #include "TilePathFinder.h"
-#include "UnitAttributeSet.h"
 #include "UnitManager.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -40,6 +39,7 @@ void UTileMovementComponent::BeginPlay()
 void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
 	if (bStopMoving)
 	{
 		CurrentVelocity = 0.0f;

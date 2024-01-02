@@ -6,9 +6,12 @@
 #include "Components/ActorComponent.h"
 #include "AIBrainComponent.generated.h"
 
+class ATBTacticalGameMode;
+class AUnit;
 class UConsideration;
 class UAIAbility;
 class UUtilityMatrixDataTable;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class FAKEXCOM_API UAIBrainComponent : public UActorComponent
 {
@@ -21,27 +24,30 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-public :
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	void SetBrainActivation (bool value);
-	bool GetBrainActivation();
 	
 public:
-	
-	UPROPERTY()
-	bool bFinishedDeciding = false;
+	UPROPERTY(EditDefaultsOnly)
+	float DelayBetweenDecision = 0.1f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Utility Matrix", meta = (RowType = "FUtilityMatrixDT"))
 	UDataTable* UtilityMatrix;
 
+	UPROPERTY()
+	FTimerHandle DecideActionTimerHandle;
+	void DecideActionTimerFunction();
+	
 	TSubclassOf<UAIAbility> DecideBestAction();
+	
 	float ScoreAction(TArray<UConsideration*> Considerations);
 
+	UFUNCTION()
+	void OnUnitSelected(AUnit* Unit);
+	
 private:
 	
 	UPROPERTY()
-	bool bAIBrainActivated = false;
+	ATBTacticalGameMode* AtbTacticalGameMode;
+
+	UPROPERTY()
+	AUnit* OwningUnit;
 };

@@ -41,7 +41,7 @@ public:
 	UPROPERTY()
 	float CurrentVelocity = 0.0f;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Category = "NodePath Reference")
 	UNodePath* LocatedNodePath;
 
 	UPROPERTY()
@@ -60,7 +60,7 @@ public:
 	FUnitStopMovingDelegate OnUnitStopMovingEvent;
 	
 	void FollowPath(const GenericStack<UNodePath*>& NewPath, bool CallEndOfAbility);
-
+	
 private:
 	GenericStack<UNodePath*> Path;
 

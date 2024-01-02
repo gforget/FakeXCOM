@@ -2,3 +2,9 @@
 
 
 #include "AIAbility.h"
+#include "TBTacticalGameMode.h"
+
+ATBTacticalGameMode* UAIAbility::GetTBTacticalGameMode()
+{
+	return GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+}

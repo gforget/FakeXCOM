@@ -42,7 +42,6 @@ void UTurnManager::EndTurn()
 	}
 	
 	TBTacticalGameMode->UnitManager->ResetAllActionsOfFaction(GetSelectedFaction());
-	TBTacticalGameMode->UnitManager->ActivateAIControl(GetSelectedFaction());
 	TBTacticalGameMode->UnitManager->SelectFirstUnitOfFaction(GetSelectedFaction());
 }
 

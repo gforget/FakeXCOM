@@ -151,7 +151,12 @@ void ATBTacticalMainController::GoToActor(AActor* TargetActor)
 
 void ATBTacticalMainController::GoToActorTimerFunction()
 {
-	if (GetActorLocation().Equals(CameraTargetActor->GetActorLocation(), 5.0f))
+	if (!CameraTargetActor)
+	{
+		DebugScreen("Camera Target Actor not set", FColor::Red);
+	}
+	
+	if (CameraTargetActor && GetActorLocation().Equals(CameraTargetActor->GetActorLocation(), 5.0f))
 	{
 		UnFollowActor();
 		GetWorld()->GetTimerManager().ClearTimer(GoToActorTimerHandle);

@@ -52,6 +52,7 @@ public:
 	TSubclassOf<AActor> LongDistanceLimitIconClass;
 
 	void Initialize();
+	void SubscribeToUnitEvent(AUnit* Unit);
 	void ClearCover3DIcons();
 	void AddCover3DIcon(FVector Location, FRotator Rotation, bool bFullCover);
 	void ConnectCover3DIconsToUnit(int IdUnit);
