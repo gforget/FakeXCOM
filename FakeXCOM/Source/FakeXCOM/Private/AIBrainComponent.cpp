@@ -40,8 +40,8 @@ void UAIBrainComponent::OnUnitSelected(AUnit* Unit)
 	{
 		if (AtbTacticalGameMode->FactionManagerComponent->FactionsController[Unit->Faction] == AIController)
 		{
-			//Delay taking the decision so it avoid certain problem with the synchronization of event.
-			//Also make it more human like
+			//Delay taking the decision so it avoid certain problem with
+			//the synchronization of event of the turn system.
 			
 			GetWorld()->GetTimerManager().SetTimer(
 			DecideActionTimerHandle,
