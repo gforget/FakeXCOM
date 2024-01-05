@@ -53,8 +53,11 @@ public :
 	UPROPERTY(BlueprintAssignable)
 	FUnitSelectedEvent OnUnitSelectedEvent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TMap<int, AUnit*> AllUnitReference;
+
+	UPROPERTY(BlueprintReadOnly)
+	TMap<TEnumAsByte<EFaction>, FUnitFactionStruct> AllUnitFactionReferenceMap;
 	
 	UPROPERTY()
 	int SelectedUnitIndex = -1;
@@ -82,9 +85,6 @@ public :
 	void ResetAllActionsOfFaction(EFaction Faction);
 	
 private:
-	
-	UPROPERTY()
-	TMap<TEnumAsByte<EFaction>, FUnitFactionStruct> AllUnitFactionReferenceMap;
 	
 	UPROPERTY()
 	bool bAllUnitOutOfAction = false;

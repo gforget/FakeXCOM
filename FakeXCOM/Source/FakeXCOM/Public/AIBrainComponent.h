@@ -26,6 +26,16 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:
+	
+	UPROPERTY(BlueprintReadOnly)
+	UNodePath* TargetNodePath;
+
+	UPROPERTY(BlueprintReadOnly)
+	AActor* TargetActor;
+	
+	TArray<UNodePath*> AllBaseDistanceNode;
+	TArray<UNodePath*> AllLongDistanceNode;
+	
 	UPROPERTY(EditDefaultsOnly)
 	float DelayBetweenDecision = 0.1f;
 	
@@ -39,11 +49,14 @@ public:
 	TSubclassOf<UAIAbility> DecideBestAction();
 	
 	float ScoreAction(TArray<UConsideration*> Considerations);
+	
+	UNodePath* PickNodePath(FUtilityMatrixDT* UMRow);
+	float ScoreNodePath(TArray<UConsideration*> Considerations);
+	
+private:
 
 	UFUNCTION()
 	void OnUnitSelected(AUnit* Unit);
-	
-private:
 	
 	UPROPERTY()
 	ATBTacticalGameMode* AtbTacticalGameMode;

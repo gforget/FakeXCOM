@@ -5,12 +5,16 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Consideration.generated.h"
-
 /**
  * 
  */
+class ATBTacticalGameMode;
 UCLASS()
 class FAKEXCOM_API UConsideration : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintNativeEvent, Category = "Main Functions")
+	float ScoreConsideration(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode);
 };

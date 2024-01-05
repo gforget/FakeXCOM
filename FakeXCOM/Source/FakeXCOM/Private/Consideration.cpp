@@ -2,3 +2,8 @@
 
 
 #include "Consideration.h"
+
+float UConsideration::ScoreConsideration_Implementation(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode)
+{
+	return 1.0f;
+}

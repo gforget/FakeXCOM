@@ -2,6 +2,8 @@
 
 
 #include "TilePathFinder.h"
+
+#include "AIBrainComponent.h"
 #include "GenericStack.h"
 #include "GenericPriorityQueue.h"
 #include "NodePath.h"
@@ -183,6 +185,10 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 			break;
 		}
 	}
+	
+	//Copy nodepath reference for AI
+	Unit->AIBrainComponent->AllBaseDistanceNode = AllBaseDistanceNode;
+	Unit->AIBrainComponent->AllLongDistanceNode = AllLongDistanceNode;
 	
 	// clear memory to avoid memory leak
 	frontier.Clear(); 

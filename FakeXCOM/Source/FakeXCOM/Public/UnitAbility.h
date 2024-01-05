@@ -51,6 +51,8 @@ struct NO_API FUnitAbilityInfoStruct
 	
 	FUnitAbilityInfoStruct()
 	{
+		bIsDisabled = false;
+		bIsHidden = false;
 		RangeValue = 0.0f;
 		MinDamage = 0.0f;
 		MaxDamage = 0.0f;
@@ -60,6 +62,8 @@ struct NO_API FUnitAbilityInfoStruct
 	}
 	
 	FUnitAbilityInfoStruct(
+		bool _bIsDisabled,
+		bool _bIsHidden,
 		float _RangeValue,
 		float _MinDamageValue,
 		float _MaxDamageValue,
@@ -68,6 +72,8 @@ struct NO_API FUnitAbilityInfoStruct
 		const TMap<AActor*, float>& _TargetsCritChances
 		)
 	{
+		bIsDisabled = _bIsDisabled;
+		bIsHidden = _bIsHidden;
 		RangeValue = _RangeValue;
 		MinDamage = _MinDamageValue;
 		MaxDamage = _MaxDamageValue;
