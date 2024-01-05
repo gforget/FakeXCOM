@@ -96,7 +96,6 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 
 float UAIBrainComponent::ScoreAction(TArray<UConsideration*> Considerations)
 {
-	AUnit* OwningUnit = Cast<AUnit>(GetOwner());
 	float score = 1.0f;
 	
 	for (int i = 0; i < Considerations.Num(); i++) 
@@ -104,11 +103,11 @@ float UAIBrainComponent::ScoreAction(TArray<UConsideration*> Considerations)
 		const float considerationScore = Considerations[i]->ScoreConsideration(OwningUnit, OwningUnit->TBTacticalGameMode);
 		score *= considerationScore;
 		
-		if (score == 0) 
-		{
-			action.score = 0;
-			return action.score; //no point computing further
-		}
+		// if (score == 0) 
+		// {
+		// 	action.score = 0;
+		// 	return action.score; //no point computing further
+		// }
 	}
 	
 	// averaging scheme of overall score

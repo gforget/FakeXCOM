@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "UtilityMatrixDataTable.h"
 #include "AIBrainComponent.generated.h"
 
 class ATBTacticalGameMode;
 class AUnit;
+class UNodePath;
 class UConsideration;
 class UAIAbility;
 class UUtilityMatrixDataTable;
