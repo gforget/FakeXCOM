@@ -69,6 +69,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
 	TArray<AActor*> GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility* UnitAbility);
+
+	UFUNCTION(BlueprintCallable, Category = "Main Functions")
+	bool ConfirmLineOfSightOnUnit(
+		AUnit* SeekingUnit,
+		AUnit* TargetUnit,
+		FVector SeekingUnitPosition,
+		FVector TargetUnitPosition,
+		float LineOfSightRange);
 	
 private:
 	TArray<AActor*> GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility);
@@ -91,6 +99,7 @@ private:
 		AUnit* SeekingUnit,
 		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
 		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
-	); 	
+	);
+	
 };
 

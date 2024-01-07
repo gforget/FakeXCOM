@@ -60,6 +60,9 @@ public:
 	FUnitStopMovingDelegate OnUnitStopMovingEvent;
 	
 	void FollowPath(const GenericStack<UNodePath*>& NewPath, bool CallEndOfAbility);
+
+	UPROPERTY()
+	AUnit* OwningUnit;
 	
 private:
 	GenericStack<UNodePath*> Path;

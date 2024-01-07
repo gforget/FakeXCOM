@@ -209,14 +209,14 @@ void AUnit::CallHealthChanged()
 	OnUnitHealthChangeEvent.Broadcast(this);
 }
 
-float AUnit::GetTargetCoverDefenceBonus(AUnit* Target)
+float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* TargetNode)
 {
-	const TArray<FCoverInfo> AllCoverInfo = Target->TileMovementComponent->LocatedNodePath->AllCoverInfos;
+	const TArray<FCoverInfo> AllCoverInfo = TargetNode->AllCoverInfos;
 
 	for (int i=0; i<AllCoverInfo.Num(); i++)
 	{
 		FVector2D CoverPosition = FVector2D(AllCoverInfo[i].IconPosition.X, AllCoverInfo[i].IconPosition.Y);
-		FVector2D TargetPosition = FVector2D(Target->GetActorLocation().X, Target->GetActorLocation().Y);
+		FVector2D TargetPosition = FVector2D(TargetNode->GetComponentLocation().X, TargetNode->GetComponentLocation().Y);
 		
 		FVector2D DeltaTargetToCoverNormalized = CoverPosition - TargetPosition;
 		DeltaTargetToCoverNormalized.Normalize();
@@ -227,7 +227,7 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* Target)
 		const float DotProduct = FVector2D::DotProduct(DeltaTargetToCoverNormalized, DeltaUnitToTargetNormalized);
 		if (DotProduct < 0.0f)
 		{
-			return AllCoverInfo[i].FullCover ? Target->FullCoverDefenceBonus: Target->LowCoverDefenceBonus; 
+			return AllCoverInfo[i].FullCover ? TargetUnit->FullCoverDefenceBonus: TargetUnit->LowCoverDefenceBonus; 
 		}
 	}
 

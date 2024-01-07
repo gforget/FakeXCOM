@@ -134,7 +134,7 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 	
 	for (int i=0; i<AllValidNode.Num(); i++)
 	{
-		if (const float NewScore = ScoreNodePath(UMRow->TargetConsiderations) > score)
+		if (const float NewScore = ScoreNodePath(UMRow->TargetConsiderations, AllValidNode[i]) > score)
 		{
 			chosenNodeIndex = i;
 			score = NewScore;
@@ -144,15 +144,19 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 	return AllValidNode[chosenNodeIndex];
 }
 
-float UAIBrainComponent::ScoreNodePath(TArray<UConsideration*> Considerations)
+float UAIBrainComponent::ScoreNodePath(TArray<UConsideration*> Considerations, UNodePath* TargetNode)
 {
-	const float score = 1.0f;
+	float score = 1.0f;
 	for (int i = 0; i < Considerations.Num(); i++) 
 	{
 		//TODO: make  ScoreConsideration for node path
 		
-		// float considerationScore = action.considerations[i].ScoreConsideration(npc);
-		// score *= considerationScore;
+		const float considerationScore = Considerations[i]->ScoreConsiderationNode(
+			OwningUnit,
+			OwningUnit->TBTacticalGameMode,
+			TargetNode);
+		score *= considerationScore;
+		
 		// if (score == 0) 
 		// {
 		// 	action.score = 0;

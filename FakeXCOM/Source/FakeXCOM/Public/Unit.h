@@ -43,13 +43,13 @@ protected:
 	
 public:
 	
-	UPROPERTY(EditDefaultsOnly, Category="Cover")
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Cover")
 	float LowCoverDefenceBonus = 20.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category="Cover")
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Cover")
 	float FullCoverDefenceBonus = 40.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category="Cover")
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Cover")
 	float LowGroundDisadvantage = 20.0f;
 	
 	UPROPERTY(BlueprintAssignable)
@@ -87,6 +87,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Unit Properties")
 	TEnumAsByte<EFaction> Faction = EFaction::XCOM;
 
+	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
+	float ZGroundOffset = 88.0f;
+	
 	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
 	FVector SightStartingAnchor;
 
@@ -144,7 +147,7 @@ public:
 	void CallHealthChanged();
 	
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	float GetTargetCoverDefenceBonus(AUnit* Target);
+	float GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* TargetNode);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	float GetHeightAdvantageBonus(AUnit* Target);

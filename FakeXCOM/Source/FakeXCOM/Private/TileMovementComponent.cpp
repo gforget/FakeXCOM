@@ -19,6 +19,7 @@ UTileMovementComponent::UTileMovementComponent()
 void UTileMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	OwningUnit = Cast<AUnit>(GetOwner());
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
 	if (TBTacticalGameMode)
@@ -27,7 +28,7 @@ void UTileMovementComponent::BeginPlay()
 		TBTacticalGameMode->MainController->SubscribeOnUnitMovingEvents(this);
 	}
 
-	if (AUnit* OwningUnit = Cast<AUnit>(GetOwner()))
+	if (OwningUnit)
 	{
 		OwningUnit->OnUnitIsDeadEvent.AddDynamic(this, &UTileMovementComponent::OnUnitIsDead);
 	}
@@ -64,7 +65,7 @@ void UTileMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 			LocatedNodePath->bIsBlocked = true;
 		} 
 		
-		Destination = NodePathPtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f);
+		Destination = NodePathPtr->GetComponentLocation() + FVector(0.0f,0.0f ,OwningUnit->ZGroundOffset);
 		MovementDirection = Destination - GetOwner()->GetActorLocation();
 		MovementDirection.Normalize();
 		bChangeDestination = false;
