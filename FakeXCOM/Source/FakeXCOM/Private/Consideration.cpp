@@ -122,6 +122,7 @@ TArray<AUnit*> UConsideration::GetAllEnemyUnits(AUnit* OwningUnit, ATBTacticalGa
 	TArray<AUnit*> AllEnemyUnits;
 	UFactionManager* FactionManagerRef = TBTacticalGameMode->FactionManagerComponent;
 	const TMap<int, AUnit*> AllUnitMapRef = TBTacticalGameMode->UnitManager->AllUnitReference;
+	
 	for (const auto& Pair : AllUnitMapRef)
 	{
 		AUnit* OtherUnit = Pair.Value;

@@ -53,7 +53,10 @@ public:
 	float ScoreAction(TArray<UConsideration*> Considerations);
 	
 	UNodePath* PickNodePath(FUtilityMatrixDT* UMRow);
-	float ScoreNodePath(TArray<UConsideration*> Considerations, UNodePath* TargetNode);
+	float ScoreNodePath(TArray<UConsideration*> Considerations, UNodePath* Node);
+
+	AActor* PickTargetActor(FUtilityMatrixDT* UMRow);
+	float ScoreTargetActor(TArray<UConsideration*> Considerations, AActor* Actor);
 	
 private:
 

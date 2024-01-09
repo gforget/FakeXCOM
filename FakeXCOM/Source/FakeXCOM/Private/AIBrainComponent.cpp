@@ -7,6 +7,7 @@
 #include "AIAbility.h"
 #include "Consideration.h"
 #include "TBTacticalGameMode.h"
+#include "UnitAbility.h"
 #include "UtilityMatrixDataTable.h"
 
 // Sets default values for this component's properties
@@ -80,7 +81,7 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 		//Check if you need a target actor first
 		if (AllUMRows[i]->TargetType == EAIAbilityTargetType::Actor)
 		{
-			//TODO create function to select an actor target
+			TargetActor = PickTargetActor(AllUMRows[i]);
 		}
 
 		//score the action next
@@ -103,22 +104,19 @@ float UAIBrainComponent::ScoreAction(TArray<UConsideration*> Considerations)
 		const float considerationScore = Considerations[i]->ScoreConsideration(OwningUnit, OwningUnit->TBTacticalGameMode);
 		score *= considerationScore;
 		
-		// if (score == 0) 
-		// {
-		// 	action.score = 0;
-		// 	return action.score; //no point computing further
-		// }
+		if (score == 0) 
+		{
+			return score; //no point computing further
+		}
 	}
 	
 	// averaging scheme of overall score
 	// in other word : create a more usefull value due to fact that score is aggregated by multiplying decimal, which make the value lower and lower
 
-	// float originalScore = score;
-	// float modFactor = 1 - (1 / action.considerations.Length);
-	// float makeupValue = (1 - originalScore) * modFactor;
-	// action.score = originalScore + (makeupValue * originalScore);
-	//
-	// return action.score;
+	float originalScore = score;
+	float modFactor = 1 - (1 / Considerations.Num());
+	float makeupValue = (1 - originalScore) * modFactor;
+	score = originalScore + (makeupValue * originalScore);
 	
 	return score;
 }
@@ -144,35 +142,78 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 	return AllValidNode[chosenNodeIndex];
 }
 
-float UAIBrainComponent::ScoreNodePath(TArray<UConsideration*> Considerations, UNodePath* TargetNode)
+float UAIBrainComponent::ScoreNodePath(TArray<UConsideration*> Considerations, UNodePath* Node)
 {
 	float score = 1.0f;
 	for (int i = 0; i < Considerations.Num(); i++) 
 	{
-		//TODO: make  ScoreConsideration for node path
-		
 		const float considerationScore = Considerations[i]->ScoreConsiderationNode(
 			OwningUnit,
 			OwningUnit->TBTacticalGameMode,
-			TargetNode);
+			Node);
 		score *= considerationScore;
 		
-		// if (score == 0) 
-		// {
-		// 	action.score = 0;
-		// 	return action.score; //no point computing further
-		// }
+		if (score == 0) 
+		{
+			return score; //no point computing further
+		}
 	}
 	
 	// averaging scheme of overall score
 	// in other word : create a more usefull value due to fact that score is aggregated by multiplying decimal, which make the value lower and lower
 
-	// float originalScore = score;
-	// float modFactor = 1 - (1 / action.considerations.Length);
-	// float makeupValue = (1 - originalScore) * modFactor;
-	// action.score = originalScore + (makeupValue * originalScore);
-	//
-	// return action.score;
+	float originalScore = score;
+	float modFactor = 1 - (1 / Considerations.Num());
+	float makeupValue = (1 - originalScore) * modFactor;
+	score = originalScore + (makeupValue * originalScore);
+	
+	return score;
+}
+
+AActor* UAIBrainComponent::PickTargetActor(FUtilityMatrixDT* UMRow)
+{
+	float score = 0.0f;
+	int  chosenNodeIndex = 0;
+
+	const FUnitAbilityInfoStruct UnitAbilityInfo = OwningUnit->OwnedAbilities[OwningUnit->DefaultAbilitiesIndexes[0]]->UnitAbilityInfos[OwningUnit->IdUnit];
+	TArray<AActor*> AllTarget = UnitAbilityInfo.AllAvailableTargets;
+	
+	for (int i=0; i<AllTarget.Num(); i++)
+	{
+		if (const float NewScore = ScoreTargetActor(UMRow->TargetConsiderations, AllTarget[i]) > score)
+		{
+			chosenNodeIndex = i;
+			score = NewScore;
+		}
+	}
+
+	return AllTarget[chosenNodeIndex];
+}
+
+float UAIBrainComponent::ScoreTargetActor(TArray<UConsideration*> Considerations, AActor* Actor)
+{
+	float score = 1.0f;
+	for (int i = 0; i < Considerations.Num(); i++) 
+	{
+		const float considerationScore = Considerations[i]->ScoreConsiderationActor(
+			OwningUnit,
+			OwningUnit->TBTacticalGameMode,
+			Actor);
+		score *= considerationScore;
+		
+		if (score == 0) 
+		{
+			return score; //no point computing further
+		}
+	}
+	
+	// averaging scheme of overall score
+	// in other word : create a more usefull value due to fact that score is aggregated by multiplying decimal, which make the value lower and lower
+
+	float originalScore = score;
+	float modFactor = 1 - (1 / Considerations.Num());
+	float makeupValue = (1 - originalScore) * modFactor;
+	score = originalScore + (makeupValue * originalScore);
 	
 	return score;
 }
