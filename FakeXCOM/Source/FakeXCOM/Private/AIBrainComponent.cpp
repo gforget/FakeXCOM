@@ -20,10 +20,10 @@ UAIBrainComponent::UAIBrainComponent()
 void UAIBrainComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	AtbTacticalGameMode = GetOwner()->GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
-	if (AtbTacticalGameMode)
+	TBTacticalGameMode = GetOwner()->GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	if (TBTacticalGameMode)
 	{
-		AtbTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &UAIBrainComponent::OnUnitSelected);
+		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &UAIBrainComponent::OnUnitSelected);
 		OwningUnit = Cast<AUnit>(GetOwner());
 
 		//Assign all AIAbilities in the UM
@@ -40,7 +40,7 @@ void UAIBrainComponent::OnUnitSelected(AUnit* Unit)
 {
 	if (OwningUnit->IdUnit == Unit->IdUnit)
 	{
-		if (AtbTacticalGameMode->FactionManagerComponent->FactionsController[Unit->Faction] == AIController)
+		if (TBTacticalGameMode->FactionManagerComponent->FactionsController[Unit->Faction] == AIController)
 		{
 			//Delay taking the decision so it avoid certain problem with
 			//the synchronization of event of the turn system.
@@ -81,11 +81,12 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 		//Check if you need a target actor first
 		if (AllUMRows[i]->TargetType == EAIAbilityTargetType::Actor)
 		{
-			TargetActor = PickTargetActor(AllUMRows[i]);
+			TargetActorIndex = PickTargetActor(AllUMRows[i]);
 		}
 
 		//score the action next
-		if (const float NewScore = ScoreAction(AllUMRows[i]->ActionConsiderations) > score)
+		const float NewScore = ScoreAction(AllUMRows[i]->ActionConsiderations);
+		if (NewScore > score)
 		{
 			nextBestActionIndex = i;
 			score = NewScore;
@@ -170,24 +171,22 @@ float UAIBrainComponent::ScoreNodePath(TArray<UConsideration*> Considerations, U
 	return score;
 }
 
-AActor* UAIBrainComponent::PickTargetActor(FUtilityMatrixDT* UMRow)
+int UAIBrainComponent::PickTargetActor(FUtilityMatrixDT* UMRow)
 {
 	float score = 0.0f;
-	int  chosenNodeIndex = 0;
-
-	const FUnitAbilityInfoStruct UnitAbilityInfo = OwningUnit->OwnedAbilities[OwningUnit->DefaultAbilitiesIndexes[0]]->UnitAbilityInfos[OwningUnit->IdUnit];
-	TArray<AActor*> AllTarget = UnitAbilityInfo.AllAvailableTargets;
+	int  chosenActorIndex = 0;
 	
+	TArray<AActor*> AllTarget = TBTacticalGameMode->TargetManager->AllCurrentAvailableTarget;
 	for (int i=0; i<AllTarget.Num(); i++)
 	{
 		if (const float NewScore = ScoreTargetActor(UMRow->TargetConsiderations, AllTarget[i]) > score)
 		{
-			chosenNodeIndex = i;
+			chosenActorIndex = i;
 			score = NewScore;
 		}
 	}
 
-	return AllTarget[chosenNodeIndex];
+	return chosenActorIndex;
 }
 
 float UAIBrainComponent::ScoreTargetActor(TArray<UConsideration*> Considerations, AActor* Actor)

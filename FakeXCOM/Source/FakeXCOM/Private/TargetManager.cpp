@@ -19,7 +19,7 @@ void UTargetManager::SelectTarget(int TargetIndex)
 		AActor* UnitTarget = AllCurrentAvailableTarget[SelectedTargetIndex];
 		TBTacticalGameMode->MainController->GoToActor(UnitTarget);
 		
-		OnTargetSelectedEvent.Broadcast(SelectedTargetIndex);
+		OnTargetSelectedEvent.Broadcast(SelectedTargetIndex, TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit());
 	}
 }
 

@@ -32,7 +32,7 @@ enum EDeadTargetFilter
 	AllTarget
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTargetSelectedEvent, int, TargetIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTargetSelectedEvent, int, TargetIndex, AUnit*, SelectingUnit);
 
 UCLASS()
 class FAKEXCOM_API UTargetManager : public UObject

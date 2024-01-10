@@ -33,7 +33,7 @@ public:
 	UNodePath* TargetNodePath;
 
 	UPROPERTY(BlueprintReadOnly)
-	AActor* TargetActor;
+	int TargetActorIndex;
 	
 	TArray<UNodePath*> AllBaseDistanceNode;
 	TArray<UNodePath*> AllLongDistanceNode;
@@ -55,7 +55,7 @@ public:
 	UNodePath* PickNodePath(FUtilityMatrixDT* UMRow);
 	float ScoreNodePath(TArray<UConsideration*> Considerations, UNodePath* Node);
 
-	AActor* PickTargetActor(FUtilityMatrixDT* UMRow);
+	int PickTargetActor(FUtilityMatrixDT* UMRow);
 	float ScoreTargetActor(TArray<UConsideration*> Considerations, AActor* Actor);
 	
 private:
@@ -64,7 +64,7 @@ private:
 	void OnUnitSelected(AUnit* Unit);
 	
 	UPROPERTY()
-	ATBTacticalGameMode* AtbTacticalGameMode;
+	ATBTacticalGameMode* TBTacticalGameMode;
 
 	UPROPERTY()
 	AUnit* OwningUnit;

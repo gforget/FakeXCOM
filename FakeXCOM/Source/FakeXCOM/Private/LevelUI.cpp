@@ -48,9 +48,12 @@ void ULevelUI::BPCallStatusEvent(AUnit* TargetUnit, EStatusType StatusType, floa
 	CallStatusEvent(TargetUnit, StatusType, Number);
 }
 
-void ULevelUI::OnTargetSelected(int TargetIndex)
+void ULevelUI::OnTargetSelected(int TargetIndex, AUnit* SelectingUnit)
 {
-	OnBPTargetSelectedEvent.Broadcast(TargetIndex);
+	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[SelectingUnit->Faction] == EAssignedController::PlayerController)
+	{
+		OnBPTargetSelectedEvent.Broadcast(TargetIndex);
+	}
 }
 
 void ULevelUI::OnUnitSelected(AUnit* Unit)

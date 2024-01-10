@@ -99,7 +99,7 @@ public:
 	
 private:
 	UFUNCTION()
-	void OnTargetSelected(int TargetIndex);
+	void OnTargetSelected(int TargetIndex, AUnit* SelectingUnit);
 	
 	UFUNCTION()
 	void OnUnitSelected(AUnit* Unit);

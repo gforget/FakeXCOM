@@ -72,6 +72,7 @@ void AUnit::BeginPlay()
 	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundTargetingAnchor, SightStartingAnchor.Z));
 	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X - DistanceSurroundTargetingAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
 	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundTargetingAnchor, SightStartingAnchor.Z));
+	
 }
 
 UUnitAbility* AUnit::GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const
@@ -225,7 +226,7 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* TargetNode
 		DeltaUnitToTargetNormalized.Normalize();
 
 		const float DotProduct = FVector2D::DotProduct(DeltaTargetToCoverNormalized, DeltaUnitToTargetNormalized);
-		if (DotProduct < 0.0f)
+		if (DotProduct < -0.2f)
 		{
 			return AllCoverInfo[i].FullCover ? TargetUnit->FullCoverDefenceBonus: TargetUnit->LowCoverDefenceBonus; 
 		}
