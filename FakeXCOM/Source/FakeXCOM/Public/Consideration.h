@@ -30,7 +30,7 @@ public:
 	float GetLowestPotentialDefence(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode);
 
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
-	int GetNumberOfEnemyInSight(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode);
+	TArray<AUnit*> GetAllEnemyUnitInSight(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode);
 
 private:
 	TArray<AUnit*> GetAllEnemyUnits(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode);

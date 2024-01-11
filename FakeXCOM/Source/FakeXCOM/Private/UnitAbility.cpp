@@ -5,6 +5,7 @@
 
 #include "Gun.h"
 #include "GunAttributeSet.h"
+#include "NodePath.h"
 #include "TBTacticalGameMode.h"
 #include "UnitAttributeSet.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -145,6 +146,11 @@ void UUnitAbility::SetHitChanceEvent_Implementation(AUnit* Unit, AActor* Target)
 {
 }
 
+float UUnitAbility::GetHitChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* TargetNodePath)
+{
+	return HitChance;
+}
+
 void UUnitAbility::SetHitChance(int IdUnit, AActor* Target, float NewHitChanceValue)
 {
 	UnitAbilityInfos[IdUnit].TargetsHitChances[Target] = NewHitChanceValue;
@@ -154,17 +160,22 @@ void UUnitAbility::SetCritChanceEvent_Implementation(AUnit* Unit, AActor* Target
 {
 }
 
+float UUnitAbility::GetCritChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* TargetNodePath)
+{
+	return CritChance;
+}
+
 void UUnitAbility::SetCritChance(int IdUnit, AActor* Target, float NewCritChanceValue)
 {
 	UnitAbilityInfos[IdUnit].TargetsCritChances[Target] = NewCritChanceValue;
 }
 
-float UUnitAbility::GetRangeToTarget(AUnit* Unit, AActor* Target)
+float UUnitAbility::GetRangeToTarget(AUnit* Unit, AActor* Target, UNodePath* TargetNodePath)
 {
 	//TODO: in future, might have interactible destructible object
-	if (const AUnit* UnitTarget = Cast<AUnit>(Target))
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
-		const FVector DeltaToTarget = (UnitTarget->GetActorLocation() + UnitTarget->SightStartingAnchor) - (Unit->GetActorLocation() + Unit->SightStartingAnchor);
+		const FVector DeltaToTarget = (TargetNodePath->GetComponentLocation() + FVector(0.0f, 0.0f, TargetUnit->ZGroundOffset) + TargetUnit->SightStartingAnchor) - (Unit->GetActorLocation() + Unit->SightStartingAnchor);
 		return DeltaToTarget.Size();		
 	}
 	

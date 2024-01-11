@@ -226,7 +226,7 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* TargetNode
 		DeltaUnitToTargetNormalized.Normalize();
 
 		const float DotProduct = FVector2D::DotProduct(DeltaTargetToCoverNormalized, DeltaUnitToTargetNormalized);
-		if (DotProduct < -0.2f)
+		if (DotProduct < -0.3f)
 		{
 			return AllCoverInfo[i].FullCover ? TargetUnit->FullCoverDefenceBonus: TargetUnit->LowCoverDefenceBonus; 
 		}

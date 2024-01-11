@@ -90,9 +90,11 @@ float UConsideration::GetLowestPotentialDefence(AUnit* OwningUnit, ATBTacticalGa
 	return LowestPotentialCoverDefence;
 }
 
-int UConsideration::GetNumberOfEnemyInSight(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode,
+TArray<AUnit*> UConsideration::GetAllEnemyUnitInSight(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode,
 	UNodePath* TargetNode)
 {
+	TArray<AUnit*> AllEnemyUnitInSight;
+	
 	// Get All Ennemy unit from enemy faction
 	TArray<AUnit*> AllEnemyUnit = GetAllEnemyUnits(OwningUnit, TBTacticalGameMode);
 	
@@ -110,11 +112,11 @@ int UConsideration::GetNumberOfEnemyInSight(AUnit* OwningUnit, ATBTacticalGameMo
 			LineOfSightRange
 			))
 		{
-			nbEnemyInSight++;
+			AllEnemyUnitInSight.Add(AllEnemyUnit[i]);
 		}		
 	}
 
-	return nbEnemyInSight;
+	return AllEnemyUnitInSight;
 }
 
 TArray<AUnit*> UConsideration::GetAllEnemyUnits(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode)

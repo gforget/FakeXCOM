@@ -195,17 +195,23 @@ public :
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
 	void SetHitChanceEvent(AUnit* Unit, AActor* Target);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
+	float GetHitChance(AUnit* Unit, AActor* Target, UNodePath* TargetNodePath);
+	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void SetHitChance(int IdUnit, AActor* Target, float NewHitChanceValue);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
 	void SetCritChanceEvent(AUnit* Unit, AActor* Target);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
+	float GetCritChance(AUnit* Unit, AActor* Target, UNodePath* TargetNodePath);
+	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void SetCritChance(int IdUnit, AActor* Target, float NewCritChanceValue);
 
 	UFUNCTION(BlueprintPure, Category="Utility Functions")
-	float GetRangeToTarget(AUnit* Unit, AActor* Target);
+	float GetRangeToTarget(AUnit* Unit, AActor* Target, UNodePath* TargetNodePath);
 
 	UFUNCTION(BlueprintPure, Category="Utility Functions")
 	float GetTargetHitChance(int IdUnit, AActor* Target);
