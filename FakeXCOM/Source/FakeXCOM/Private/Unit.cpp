@@ -210,7 +210,7 @@ void AUnit::CallHealthChanged()
 	OnUnitHealthChangeEvent.Broadcast(this);
 }
 
-float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* TargetNode)
+float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, UNodePath* TargetNode)
 {
 	const TArray<FCoverInfo> AllCoverInfo = TargetNode->AllCoverInfos;
 
@@ -222,7 +222,7 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* TargetNode
 		FVector2D DeltaTargetToCoverNormalized = CoverPosition - TargetPosition;
 		DeltaTargetToCoverNormalized.Normalize();
 
-		FVector2D DeltaUnitToTargetNormalized = TargetPosition - FVector2D(GetActorLocation().X, GetActorLocation().Y);
+		FVector2D DeltaUnitToTargetNormalized = TargetPosition - FVector2D(UnitNode->GetComponentLocation().X, UnitNode->GetComponentLocation().Y);
 		DeltaUnitToTargetNormalized.Normalize();
 
 		const float DotProduct = FVector2D::DotProduct(DeltaTargetToCoverNormalized, DeltaUnitToTargetNormalized);

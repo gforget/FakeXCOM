@@ -30,6 +30,9 @@ public:
 	FUtilityMatrixDT(){}
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
+	bool IsEnabled = true;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
 	TSubclassOf<UAIAbility> ActionAbility;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
@@ -40,6 +43,7 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI", meta = (EditCondition = "TargetType != EAIAbilityTargetType::None"))
 	TArray<UConsideration*> TargetConsiderations;
+	
 };
 
 

@@ -8,6 +8,7 @@
 #include "NodePath.h"
 #include "TargetManager.h"
 #include "TBTacticalGameMode.h"
+#include "TileMovementComponent.h"
 
 float UConsideration::ScoreConsideration_Implementation(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode)
 {
@@ -26,7 +27,7 @@ float UConsideration::ScoreConsiderationActor_Implementation(AUnit* OwningUnit, 
 }
 
 float UConsideration::GetLowestPotentialDefence(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode,
-	UNodePath* TargetNode)
+ UNodePath* TargetNode)
 {
 	
 	// If there is no cover on that node, then the cover defence is 0
@@ -43,6 +44,12 @@ float UConsideration::GetLowestPotentialDefence(AUnit* OwningUnit, ATBTacticalGa
 	
 	for (int i=0; i<AllEnemyUnit.Num(); i++)
 	{
+		//Check if the ennemy is dead first
+		if (AllEnemyUnit[i]->GetIsDead())
+		{
+			continue;
+		}
+		
 		//Check if you have line of sight the unit if position at that node
 		const float LineOfSightRange = AllEnemyUnit[i]->Gun->GunAttributeSet->GetRange();
 		if (TargetManagerRef->ConfirmLineOfSightOnUnit(
@@ -55,7 +62,7 @@ float UConsideration::GetLowestPotentialDefence(AUnit* OwningUnit, ATBTacticalGa
 			)
 		{
 			//Get the cover value the unit will get for every cover in that position
-			const float CurrentCoverDefense = AllEnemyUnit[i]->GetTargetCoverDefenceBonus(OwningUnit, TargetNode);
+			const float CurrentCoverDefense = AllEnemyUnit[i]->GetTargetCoverDefenceBonus(OwningUnit, AllEnemyUnit[i]->TileMovementComponent->LocatedNodePath,TargetNode);
 			if (LowestPotentialCoverDefence > CurrentCoverDefense || LowestPotentialCoverDefence == -1.0f)
 			{
 				LowestPotentialCoverDefence = CurrentCoverDefense;
@@ -100,9 +107,15 @@ TArray<AUnit*> UConsideration::GetAllEnemyUnitInSight(AUnit* OwningUnit, ATBTact
 	
 	UTargetManager* TargetManagerRef = TBTacticalGameMode->TargetManager;
 	const float LineOfSightRange = OwningUnit->Gun->GunAttributeSet->GetRange();
-	int nbEnemyInSight = 0;
+	
 	for (int i=0; i<AllEnemyUnit.Num(); i++)
 	{
+		//Check if the ennemy is dead first
+		if (AllEnemyUnit[i]->GetIsDead())
+		{
+			continue;
+		}
+		
 		//Check if you have line of sight the unit if position at that node
 		if (TargetManagerRef->ConfirmLineOfSightOnUnit(
 			OwningUnit,

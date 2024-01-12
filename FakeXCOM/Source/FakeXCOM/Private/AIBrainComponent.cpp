@@ -6,6 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "AIAbility.h"
 #include "Consideration.h"
+#include "DebugHeader.h"
+#include "NodePath.h"
 #include "TBTacticalGameMode.h"
 #include "UnitAbility.h"
 #include "UtilityMatrixDataTable.h"
@@ -65,13 +67,17 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 	// Get all rows if you need them all
 	TArray<FUtilityMatrixDT*> AllUMRows;
 	UtilityMatrix->GetAllRows(TEXT("UAIBrainComponent::DecideBestAction"), AllUMRows);
+	TArray<FName> AllRowsName = UtilityMatrix->GetRowNames();
 	
 	//Get the best action
 	float score = 0.0f;
 	int nextBestActionIndex = 0;
+	bool bDebugScore = true;
 	
 	for (int i=0; i<AllUMRows.Num(); i++)
 	{
+		if (!AllUMRows[i]->IsEnabled) continue;
+		
 		//Check if you need a chosen node path first
 		if (AllUMRows[i]->TargetType == EAIAbilityTargetType::NodePath)
 		{
@@ -85,12 +91,24 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 		}
 
 		//score the action next
-		const float NewScore = ScoreAction(AllUMRows[i]->ActionConsiderations);
+		float NewScore = ScoreAction(AllUMRows[i]->ActionConsiderations);
 		if (NewScore > score)
 		{
 			nextBestActionIndex = i;
 			score = NewScore;
 		}
+
+		if (bDebugScore)
+		{
+			FString ScoreString = FString::Printf(TEXT("%.3f"), NewScore);
+			FString CompleteDebugString =  AllRowsName[i].ToString() + " : " + ScoreString;
+			DebugScreen(CompleteDebugString, FColor::Cyan);
+		}
+	}
+	
+	if (bDebugScore)
+	{
+		DebugScreen("------------", FColor::Cyan);
 	}
 	
 	return AllUMRows[nextBestActionIndex]->ActionAbility; 
@@ -102,7 +120,7 @@ float UAIBrainComponent::ScoreAction(TArray<UConsideration*> Considerations)
 	
 	for (int i = 0; i < Considerations.Num(); i++) 
 	{
-		const float considerationScore = Considerations[i]->ScoreConsideration(OwningUnit, OwningUnit->TBTacticalGameMode);
+		float considerationScore = Considerations[i]->ScoreConsideration(OwningUnit, OwningUnit->TBTacticalGameMode);
 		score *= considerationScore;
 		
 		if (score == 0) 
@@ -133,13 +151,22 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 	
 	for (int i=0; i<AllValidNode.Num(); i++)
 	{
-		if (const float NewScore = ScoreNodePath(UMRow->TargetConsiderations, AllValidNode[i]) > score)
+		float NewScore = ScoreNodePath(UMRow->TargetConsiderations, AllValidNode[i]);
+		
+		//use r.DebugSafeZone.MaxDebugTextStringsPerActor 30000 to extend the number of character you can see
+		FString ScoreString = FString::Printf(TEXT("%.3f"), NewScore);
+		DrawDebugString(GetWorld(), AllValidNode[i]->GetComponentLocation(), ScoreString, 0,FColor::Red, DelayBetweenDecision, false, 1);
+		
+		if ( NewScore > score)
 		{
 			chosenNodeIndex = i;
 			score = NewScore;
 		}
 	}
 
+	FString ScoreString = FString::Printf(TEXT("%.3f"), score);
+	DrawDebugString(GetWorld(), AllValidNode[chosenNodeIndex]->GetComponentLocation(), ScoreString, 0,FColor::Purple, DelayBetweenDecision, false, 1);
+	
 	return AllValidNode[chosenNodeIndex];
 }
 
@@ -166,20 +193,22 @@ float UAIBrainComponent::ScoreNodePath(TArray<UConsideration*> Considerations, U
 	float originalScore = score;
 	float modFactor = 1 - (1 / Considerations.Num());
 	float makeupValue = (1 - originalScore) * modFactor;
-	score = originalScore + (makeupValue * originalScore);
-	
+	score = originalScore + (makeupValue * originalScore); 
+
+
 	return score;
 }
 
 int UAIBrainComponent::PickTargetActor(FUtilityMatrixDT* UMRow)
 {
 	float score = 0.0f;
-	int  chosenActorIndex = 0;
+	int  chosenActorIndex = -1;
 	
 	TArray<AActor*> AllTarget = TBTacticalGameMode->TargetManager->AllCurrentAvailableTarget;
 	for (int i=0; i<AllTarget.Num(); i++)
 	{
-		if (const float NewScore = ScoreTargetActor(UMRow->TargetConsiderations, AllTarget[i]) > score)
+		float NewScore = ScoreTargetActor(UMRow->TargetConsiderations, AllTarget[i]);
+		if (NewScore > score)
 		{
 			chosenActorIndex = i;
 			score = NewScore;

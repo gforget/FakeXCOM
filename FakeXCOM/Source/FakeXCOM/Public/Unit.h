@@ -147,7 +147,7 @@ public:
 	void CallHealthChanged();
 	
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	float GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* TargetNode);
+	float GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, UNodePath* TargetNode);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	float GetHeightAdvantageBonus(AUnit* Target);

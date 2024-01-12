@@ -146,7 +146,7 @@ void UUnitAbility::SetHitChanceEvent_Implementation(AUnit* Unit, AActor* Target)
 {
 }
 
-float UUnitAbility::GetHitChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* TargetNodePath)
+float UUnitAbility::GetHitChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
 {
 	return HitChance;
 }
@@ -160,7 +160,7 @@ void UUnitAbility::SetCritChanceEvent_Implementation(AUnit* Unit, AActor* Target
 {
 }
 
-float UUnitAbility::GetCritChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* TargetNodePath)
+float UUnitAbility::GetCritChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
 {
 	return CritChance;
 }
@@ -170,12 +170,14 @@ void UUnitAbility::SetCritChance(int IdUnit, AActor* Target, float NewCritChance
 	UnitAbilityInfos[IdUnit].TargetsCritChances[Target] = NewCritChanceValue;
 }
 
-float UUnitAbility::GetRangeToTarget(AUnit* Unit, AActor* Target, UNodePath* TargetNodePath)
+float UUnitAbility::GetRangeToTarget(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
 {
 	//TODO: in future, might have interactible destructible object
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
-		const FVector DeltaToTarget = (TargetNodePath->GetComponentLocation() + FVector(0.0f, 0.0f, TargetUnit->ZGroundOffset) + TargetUnit->SightStartingAnchor) - (Unit->GetActorLocation() + Unit->SightStartingAnchor);
+		const FVector DeltaToTarget =
+			(TargetNodePath->GetComponentLocation() + FVector(0.0f, 0.0f, TargetUnit->ZGroundOffset) + TargetUnit->SightStartingAnchor) -
+				(UnitNodePath->GetComponentLocation() + FVector(0.0f, 0.0f, Unit->ZGroundOffset) + Unit->SightStartingAnchor);
 		return DeltaToTarget.Size();		
 	}
 	
