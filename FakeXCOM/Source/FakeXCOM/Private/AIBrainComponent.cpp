@@ -72,7 +72,7 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 	//Get the best action
 	float score = 0.0f;
 	int nextBestActionIndex = 0;
-	bool bDebugScore = true;
+	bool bDebugScore = false;
 	
 	for (int i=0; i<AllUMRows.Num(); i++)
 	{
@@ -144,6 +144,7 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 {
 	float score = 0.0f;
 	int  chosenNodeIndex = 0;
+	bool bDebugNodeScore = false;
 	
 	TArray<UNodePath*> AllValidNode;
 	AllValidNode.Append(AllBaseDistanceNode);
@@ -154,8 +155,11 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 		float NewScore = ScoreNodePath(UMRow->TargetConsiderations, AllValidNode[i]);
 		
 		//use r.DebugSafeZone.MaxDebugTextStringsPerActor 30000 to extend the number of character you can see
-		FString ScoreString = FString::Printf(TEXT("%.3f"), NewScore);
-		DrawDebugString(GetWorld(), AllValidNode[i]->GetComponentLocation(), ScoreString, 0,FColor::Red, DelayBetweenDecision, false, 1);
+		if (bDebugNodeScore)
+		{
+			FString ScoreString = FString::Printf(TEXT("%.3f"), NewScore);
+			DrawDebugString(GetWorld(), AllValidNode[i]->GetComponentLocation(), ScoreString, 0,FColor::Red, DelayBetweenDecision, false, 1);
+		}
 		
 		if ( NewScore > score)
 		{
@@ -163,9 +167,12 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 			score = NewScore;
 		}
 	}
-
-	FString ScoreString = FString::Printf(TEXT("%.3f"), score);
-	DrawDebugString(GetWorld(), AllValidNode[chosenNodeIndex]->GetComponentLocation(), ScoreString, 0,FColor::Purple, DelayBetweenDecision, false, 1);
+	
+	if (bDebugNodeScore)
+	{
+		FString ScoreString = FString::Printf(TEXT("%.3f"), score);
+		DrawDebugString(GetWorld(), AllValidNode[chosenNodeIndex]->GetComponentLocation(), ScoreString, 0,FColor::Purple, DelayBetweenDecision, false, 1);
+	}
 	
 	return AllValidNode[chosenNodeIndex];
 }

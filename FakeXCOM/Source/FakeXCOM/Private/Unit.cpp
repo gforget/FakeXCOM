@@ -239,8 +239,17 @@ float AUnit::GetHeightAdvantageBonus(AUnit* Target)
 {
 	float TargetZPosition = Target->GetActorLocation().Z;
 	float UnitZPosition = GetActorLocation().Z;
+
+	float HeightAdvantageScore = 0.0f;
+	if (UnitZPosition - TargetZPosition >= 100.0f)
+	{
+		HeightAdvantageScore = Target->LowGroundDisadvantage;
+	} else if (UnitZPosition - TargetZPosition <= -100.0f)
+	{
+		HeightAdvantageScore = -Target->LowGroundDisadvantage;
+	}
 	
-	return UnitZPosition - TargetZPosition > 100.0f ? Target->LowGroundDisadvantage : 0.0f;
+	return HeightAdvantageScore;
 }
 
 void AUnit::SetIsDead(bool Val)
