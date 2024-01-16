@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TurnManager.h"
 #include "Blueprint/UserWidget.h"
 #include "LevelUI.generated.h"
 
@@ -24,13 +25,6 @@ enum EStatusType
 	HunkerDown
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSpawnEvent, AUnit*, Unit);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitSelectedEvent, AUnit*, Unit);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPUnitHealthChangeEvent, AUnit*, Unit);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPGunAmmoChangeEvent, AGun*, Gun);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPTargetSelectedEvent, int, TargetIndex);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBPAbilitySelectionModeChangeEvent, bool, AbilitySelectionModeValue);
-
 UCLASS()
 class FAKEXCOM_API ULevelUI : public UUserWidget
 {
@@ -49,23 +43,27 @@ public:
 	void Initialization();
 	void SubscribeToUnitEvent(AUnit* Unit);
 	
-	UPROPERTY(BlueprintAssignable, Category = "Main Events")
-	FBPUnitSpawnEvent OnBPUnitSpawnEvent;
-
-	UPROPERTY(BlueprintAssignable, Category = "Main Events")
-	FBPUnitSelectedEvent OnBPUnitSelectedEvent;
-
-	UPROPERTY(BlueprintAssignable, Category = "Main Events")
-	FBPTargetSelectedEvent OnBPTargetSelectedEvent;
 	
-	UPROPERTY(BlueprintAssignable, Category = "Main Events")
-	FBPAbilitySelectionModeChangeEvent OnBPAbilitySelectionModeChangeEvent;
-	
-	UPROPERTY(BlueprintAssignable, Category = "Main Events")
-	FBPUnitHealthChangeEvent OnBPUnitHealthChangeEvent;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
+	void OnBPUnitSpawnedEvent(AUnit* Unit);
 
-	UPROPERTY(BlueprintAssignable, Category = "Main Events")
-	FBPGunAmmoChangeEvent OnBPGunAmmoChangeEvent;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
+	void OnBPUnitSelectedEvent(AUnit* Unit);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
+	void OnBPTargetSelectedEvent(int TargetIndex);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
+	void OnBPAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
+	void OnBPUnitHealthChangeEvent(AUnit* Unit);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
+	void OnBPGunAmmoChangeEvent(AGun* Gun);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
+	void OnBPTurnStartedEvent(EFaction Faction);
 	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
 	void AddHealthBar(UOverlay* HealthBar, UCanvasPanelSlot* ReferencePanelSlot, UCanvasPanel* MainCanvas);
@@ -115,6 +113,9 @@ private:
 
 	UFUNCTION()
 	void OnGunAmmoChange(AGun* Gun);
+
+	UFUNCTION()
+	void OnTurnStartedEvent(EFaction CurrentFaction);
 	
 	UFUNCTION()
 	void OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue);

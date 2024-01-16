@@ -74,6 +74,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category ="Camera Properties")
 	bool bForceCameraLock = false;
+
+	UPROPERTY()
+	bool AICameraLock = false;
 	
 	void SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent);
 	void FollowActor(AActor* TargetActor);
@@ -164,6 +167,9 @@ private:
 	UFUNCTION()
 	void OnUnitStopMovingEvent(AActor* MovingActor);
 
+	UFUNCTION()
+	void OnTurnStartedEvent(EFaction CurrentSelectedFaction);
+	
 	//To position function
 	UPROPERTY()
 	FTimerHandle GoToActorTimerHandle;

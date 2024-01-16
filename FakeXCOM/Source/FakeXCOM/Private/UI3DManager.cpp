@@ -34,6 +34,7 @@ void UUI3DManager::Initialize()
 		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &UUI3DManager::OnUnitSelected);
 		TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnMouseOverActorEvent.AddDynamic(this, &UUI3DManager::OnMouseOverActor);
 		TBTacticalGameMode->UnitAbilityManager->OnAbilitySelectionModeChangeEvent.AddDynamic(this, &UUI3DManager::OnAbilitySelectionModeChangeEvent);
+		TBTacticalGameMode->TurnManagerComponent->OnTurnStartedEvent.AddDynamic(this, &UUI3DManager::OnTurnStartedEvent);
 	}
 }
 
@@ -57,7 +58,7 @@ void UUI3DManager::OnUnitOrderedToMove(AUnit* Unit)
 
 void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 {
-	if (!TBTacticalGameMode->TilePathFinder->bCanMoveUnit)
+	if (!TBTacticalGameMode->TilePathFinder->bCanMoveUnit || AIActive)
 	{
 		return;
 	}
@@ -128,6 +129,22 @@ void UUI3DManager::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeVa
 	}
 }
 
+void UUI3DManager::OnTurnStartedEvent(EFaction CurrentSelectedFaction)
+{
+	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[CurrentSelectedFaction] == EAssignedController::AIController)
+	{
+		ClearPath3DIcons();
+		ClearSelect3DIcon();
+		ClearCover3DIcons();
+		ClearDistanceLimitUI();
+		AIActive = true;
+	}
+	else
+	{
+		AIActive = false;
+	}
+}
+
 void UUI3DManager::CreateDistanceLimitUI(AUnit* Unit)
 {
 	if (TBTacticalGameMode && BaseDistanceLimitIconClass && LongDistanceLimitIconClass)
@@ -157,6 +174,7 @@ void UUI3DManager::CreateDistanceLimitUI(AUnit* Unit)
 
 void UUI3DManager::SpawnDistanceIcons(TArray<UNodePath*> AllNodes, int Distance, TSubclassOf<AActor> IconSubClass)
 {
+	if (AIActive) return;
 	for (int i=0; i<AllNodes.Num(); i++)
 	{
 		TArray<bool> CornerToSpawn;
@@ -238,6 +256,7 @@ void UUI3DManager::ClearCover3DIcons()
 
 void UUI3DManager::AddCover3DIcon(FVector Location, FRotator Rotation, bool bFullCover)
 {
+	if (AIActive) return;
 	if (Cover3DIconClass)
 	{
 		ACover3DIcon* Cover3DIcon = GetWorld()->SpawnActor<ACover3DIcon>(Cover3DIconClass,
@@ -288,6 +307,7 @@ void UUI3DManager::ClearSelect3DIcon()
 
 void UUI3DManager::AddSelect3DIcon(const FVector& Location, const FRotator& Rotation, bool bIsBaseDistance)
 {
+	if (AIActive) return;
 	if (Select3DIconClass)
 	{
 		Select3DIcon = GetWorld()->SpawnActor<ASelect3DIcon>(Select3DIconClass, Location, Rotation);

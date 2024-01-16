@@ -82,6 +82,8 @@ void ATBTacticalMainController::BeginPlay()
 
 		InputComponent->BindAction("RightClick", IE_Pressed, this, &ATBTacticalMainController::PressRightClick);
 	}
+	
+	TBTacticalGameMode->TurnManagerComponent->OnTurnStartedEvent.AddDynamic(this, &ATBTacticalMainController::OnTurnStartedEvent);
 }
 
 // Called every frame
@@ -105,7 +107,7 @@ void ATBTacticalMainController::UnFollowActor()
 
 bool ATBTacticalMainController::IsCameraControlLock()
 {
-	return CameraTargetActor != nullptr || bForceCameraLock;
+	return CameraTargetActor != nullptr || bForceCameraLock || AICameraLock;
 }
 
 void ATBTacticalMainController::PerformFollowActor(float DeltaTime)
@@ -137,6 +139,18 @@ void ATBTacticalMainController::OnUnitStopMovingEvent(AActor* MovingActor)
 	UnFollowActor();
 }
 
+void ATBTacticalMainController::OnTurnStartedEvent(EFaction CurrentSelectedFaction)
+{
+	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[CurrentSelectedFaction] == EAssignedController::AIController)
+	{
+		AICameraLock = true;
+	}
+	else
+	{
+		AICameraLock = false;
+	}
+}
+
 void ATBTacticalMainController::GoToActor(AActor* TargetActor)
 {
 	FollowActor(TargetActor);
@@ -165,63 +179,63 @@ void ATBTacticalMainController::GoToActorTimerFunction()
 
 void ATBTacticalMainController::PressUp()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	bMoveUp = true;
 	bPressUp = true;
 }
 
 void ATBTacticalMainController::ReleaseUp()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	bMoveUp = false;
 	bPressUp = false;
 }
 
 void ATBTacticalMainController::PressDown()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	bMoveDown = true;
 	bPressDown = true;
 }
 
 void ATBTacticalMainController::ReleaseDown()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	bMoveDown = false;
 	bPressDown = false;
 }
 
 void ATBTacticalMainController::PressRight()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	bMoveRight = true;
 	bPressRight = true;
 }
 
 void ATBTacticalMainController::ReleaseRight()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	bMoveRight = false;
 	bPressRight = false;
 }
 
 void ATBTacticalMainController::PressLeft()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	bMoveLeft = true;
 	bPressLeft = true;
 }
 
 void ATBTacticalMainController::ReleaseLeft()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	bMoveLeft = false;
 	bPressLeft = false;
 }
 
 void ATBTacticalMainController::PressTurnCameraRight()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	CameraRotation -= FRotator(0.0f, 90.0f, 0.0f);
 	GetWorld()->GetTimerManager().SetTimer(
 	  RotateTimerHandle,
@@ -233,7 +247,7 @@ void ATBTacticalMainController::PressTurnCameraRight()
 
 void ATBTacticalMainController::PressTurnCameraLeft()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	CameraRotation += FRotator(0.0f, 90.0f, 0.0f);
 	GetWorld()->GetTimerManager().SetTimer(
 	  RotateTimerHandle,
@@ -267,6 +281,7 @@ void ATBTacticalMainController::RotateCameraTimerFunction()
 
 void ATBTacticalMainController::PressSelectPreviousSoldier()
 {
+	if (bForceCameraLock || AICameraLock) return;
 	if (TBTacticalGameMode->UnitAbilityManager->GetAbilitySelectionMode())
 	{
 		TBTacticalGameMode->TargetManager->SelectPreviousTarget();
@@ -279,6 +294,7 @@ void ATBTacticalMainController::PressSelectPreviousSoldier()
 
 void ATBTacticalMainController::PressSelectNextSoldier()
 {
+	if (bForceCameraLock || AICameraLock) return;
 	if (TBTacticalGameMode->UnitAbilityManager->GetAbilitySelectionMode())
 	{
 		TBTacticalGameMode->TargetManager->SelectNextTarget();
@@ -296,7 +312,7 @@ void ATBTacticalMainController::ForceCameraLock(bool value)
 
 void ATBTacticalMainController::PressCameraUp()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	if (CurrentHeightCameraValueIndex - 1 >= 0)
 	{
 		CurrentHeightCameraValueIndex--;
@@ -306,7 +322,7 @@ void ATBTacticalMainController::PressCameraUp()
 
 void ATBTacticalMainController::PressCameraDown()
 {
-	if (bForceCameraLock) return;
+	if (bForceCameraLock || AICameraLock) return;
 	if (CurrentHeightCameraValueIndex + 1 < HeightCameraValue.Num())
 	{
 		CurrentHeightCameraValueIndex++;
@@ -345,6 +361,7 @@ void ATBTacticalMainController::CameraHeightTimerFunction()
 
 void ATBTacticalMainController::PressRightClick()
 {
+	if (AICameraLock) return;
 	if (TBTacticalGameMode->UnitAbilityManager->GetAbilitySelectionMode())
 	{
 		TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();

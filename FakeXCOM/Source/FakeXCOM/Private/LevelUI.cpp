@@ -7,6 +7,7 @@
 #include "Gun.h"
 #include "TargetManager.h"
 #include "TBTacticalGameMode.h"
+#include "TurnManager.h"
 #include "UnitAbilityManager.h"
 #include "UnitManager.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
@@ -32,6 +33,7 @@ void ULevelUI::Initialization()
 		TBTacticalGameMode->UnitManager->OnUnitSpawnedEvent.AddDynamic(this,  &ULevelUI::OnUnitSpawned);
 		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &ULevelUI::OnUnitSelected);
 		TBTacticalGameMode->TargetManager->OnTargetSelectedEvent.AddDynamic(this, &ULevelUI::OnTargetSelected);
+		TBTacticalGameMode->TurnManagerComponent->OnTurnStartedEvent.AddDynamic(this, &ULevelUI::OnTurnStartedEvent);
 		TBTacticalGameMode->UnitAbilityManager->OnAbilitySelectionModeChangeEvent.AddDynamic(this, &ULevelUI::OnAbilitySelectionModeChangeEvent);
 	}
 }
@@ -52,18 +54,29 @@ void ULevelUI::OnTargetSelected(int TargetIndex, AUnit* SelectingUnit)
 {
 	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[SelectingUnit->Faction] == EAssignedController::PlayerController)
 	{
-		OnBPTargetSelectedEvent.Broadcast(TargetIndex);
+		OnBPTargetSelectedEvent(TargetIndex);
 	}
+}
+void ULevelUI::OnBPTargetSelectedEvent_Implementation(int TargetIndex)
+{
 }
 
 void ULevelUI::OnUnitSelected(AUnit* Unit)
 {
-	OnBPUnitSelectedEvent.Broadcast(Unit);
+	OnBPUnitSelectedEvent(Unit);
+}
+
+void ULevelUI::OnBPUnitSelectedEvent_Implementation(AUnit* Unit)
+{
 }
 
 void ULevelUI::OnUnitSpawned(AUnit* Unit)
 {
-	OnBPUnitSpawnEvent.Broadcast(Unit);
+	OnBPUnitSpawnedEvent(Unit);
+}
+
+void ULevelUI::OnBPUnitSpawnedEvent_Implementation(AUnit* Unit)
+{
 }
 
 void ULevelUI::OnUnitIsDead(AUnit* DeadUnit)
@@ -73,17 +86,39 @@ void ULevelUI::OnUnitIsDead(AUnit* DeadUnit)
 
 void ULevelUI::OnUnitHealthChange(AUnit* Unit)
 {
-	OnBPUnitHealthChangeEvent.Broadcast(Unit);
+	OnBPUnitHealthChangeEvent(Unit);
+}
+
+void ULevelUI::OnBPUnitHealthChangeEvent_Implementation(AUnit* Unit)
+{
 }
 
 void ULevelUI::OnGunAmmoChange(AGun* Gun)
 {
-	OnBPGunAmmoChangeEvent.Broadcast(Gun);
+	OnBPGunAmmoChangeEvent(Gun);
+}
+
+void ULevelUI::OnBPGunAmmoChangeEvent_Implementation(AGun* Gun)
+{
+}
+
+void ULevelUI::OnTurnStartedEvent(EFaction CurrentFaction)
+{
+	OnBPTurnStartedEvent(CurrentFaction);
+}
+
+
+void ULevelUI::OnBPTurnStartedEvent_Implementation(EFaction Faction)
+{
 }
 
 void ULevelUI::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue)
 {
-	OnBPAbilitySelectionModeChangeEvent.Broadcast(AbilitySelectionModeValue);
+	OnBPAbilitySelectionModeChangeEvent(AbilitySelectionModeValue);
+}
+
+void ULevelUI::OnBPAbilitySelectionModeChangeEvent_Implementation(bool AbilitySelectionModeValue)
+{
 }
 
 void ULevelUI::CallStatusEvent_Implementation(AUnit* TargetUnit, EStatusType StatusType, float Number)

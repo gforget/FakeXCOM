@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TurnManager.h"
 #include "Components/ActorComponent.h"
 #include "UI3DManager.generated.h"
 
@@ -65,6 +66,9 @@ public:
 
 private:
 	UPROPERTY()
+	bool AIActive = false;
+	
+	UPROPERTY()
 	UNodePath* CurrentMouseOverNodePath;
 	
 	UPROPERTY()
@@ -96,9 +100,14 @@ private:
 
 	UFUNCTION()
 	void OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue);
+
+	UFUNCTION()
+	void OnTurnStartedEvent(EFaction CurrentSelectedFaction);
 	
 	void CreateDistanceLimitUI(AUnit* Unit);
 	void ClearDistanceLimitUI();
 	void SpawnDistanceIcons(TArray<UNodePath*> AllNodes, int Distance, TSubclassOf<AActor> IconSubClass);
 	bool TrySpawnDistanceIcon(const UNodePath* NodePath, int DistanceLimit, TArray<bool>& CornerToSpawn);
+
+
 };
