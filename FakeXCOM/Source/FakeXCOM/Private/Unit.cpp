@@ -214,6 +214,13 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, 
 {
 	const TArray<FCoverInfo> AllCoverInfo = TargetNode->AllCoverInfos;
 
+	const FVector2d DeltaUnitToTarget= FVector2D(TargetNode->GetComponentLocation().X, TargetNode->GetComponentLocation().Y) - FVector2D(UnitNode->GetComponentLocation().X, UnitNode->GetComponentLocation().Y);
+	const float DeltaDistance = DeltaUnitToTarget.Size();
+	if (DeltaDistance <= 284.0f)
+	{
+		return 0.0f;	
+	}
+	
 	for (int i=0; i<AllCoverInfo.Num(); i++)
 	{
 		FVector2D CoverPosition = FVector2D(AllCoverInfo[i].IconPosition.X, AllCoverInfo[i].IconPosition.Y);
