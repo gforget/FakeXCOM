@@ -53,7 +53,14 @@ void ATBTacticalGameMode::BeginPlay()
 	
 	//For some reason, assigning pointer generated here on other object result on them being deleted or not recognise later
 	TArray<AActor*> AllActors;
+
+#if WITH_EDITOR
 	const UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
+#else
+	const UWorld* WorldPtr = GetWorld();
+	
+#endif
+	
 	UGameplayStatics::GetAllActorsOfClass(WorldPtr,AActor::StaticClass(),AllActors);
 
 	int FirstUnitToSelectId = -1;

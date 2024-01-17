@@ -89,6 +89,8 @@ UUnitAbility* AUnit::GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHand
 	}
 	return nullptr;
 }
+
+#if WITH_EDITOR
 void AUnit::PostActorCreated()
 {
 	Super::PostActorCreated();
@@ -106,6 +108,7 @@ void AUnit::PostEditMove(bool bFinished)
 	Super::PostEditMove(bFinished);
 	GenerateEditorAnchorPositionVisualisation();
 }
+#endif
 
 void AUnit::Destroyed()
 {

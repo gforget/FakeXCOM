@@ -1,4 +1,5 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
+#if WITH_EDITOR
 
 #include "TilePathfinderManager.h"
 
@@ -171,8 +172,8 @@ void FTilePathfinderManagerModule::ShutdownModule()
 	
 }
 
-
-
 #undef LOCTEXT_NAMESPACE
 	
 IMPLEMENT_MODULE(FTilePathfinderManagerModule, TilePathfinderManager)
+
+#endif

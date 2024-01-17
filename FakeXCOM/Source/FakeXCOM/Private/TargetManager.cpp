@@ -133,16 +133,13 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	TArray<EFaction> AllValidFaction;
 	for (int i=0; i<ValidFactionsRelation.Num(); i++)
 	{
-		UClass* OuterClass = UFactionManager::StaticClass();
-		if (UEnum* EnumPtr = FindObject<UEnum>(OuterClass, TEXT("EFaction"), true))
+		const TArray<EFaction> AllFaction = TBTacticalGameMode->FactionManagerComponent->AllFaction;
+		for (int j=0; j<AllFaction.Num(); j++)
 		{
-			for (int32 EnumIndex = 0; EnumIndex < EnumPtr->NumEnums(); EnumIndex++)
+			EFaction CurrentFactionValue = AllFaction[j];
+			if (TBTacticalGameMode->FactionManagerComponent->GetFactionRelation(SeekingUnit->Faction, CurrentFactionValue) == ValidFactionsRelation[i])
 			{
-				EFaction CurrentFactionValue = static_cast<EFaction>(EnumPtr->GetValueByIndex(EnumIndex));
-				if (TBTacticalGameMode->FactionManagerComponent->GetFactionRelation(SeekingUnit->Faction, CurrentFactionValue) == ValidFactionsRelation[i])
-				{
-					AllValidFaction.Add(CurrentFactionValue);
-				}
+				AllValidFaction.Add(CurrentFactionValue);
 			}
 		}
 	}

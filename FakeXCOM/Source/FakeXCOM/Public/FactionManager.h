@@ -42,6 +42,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	EFactionRelation GetFactionRelation(EFaction FactionA, EFaction FactionB);
+
+	TArray<EFaction> AllFaction = {EFaction::XCOM, EFaction::Alien, EFaction::Resistance, EFaction::Civilian};
 	
 protected:
 	// Called when the game starts

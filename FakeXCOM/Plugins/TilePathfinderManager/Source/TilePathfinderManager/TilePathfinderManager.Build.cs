@@ -25,7 +25,7 @@ public class TilePathfinderManager : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", "LevelEditor", "UnrealEd"
+				"Core", "LevelEditor","UnrealEd"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

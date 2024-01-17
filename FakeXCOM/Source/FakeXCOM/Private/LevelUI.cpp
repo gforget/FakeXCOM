@@ -149,7 +149,6 @@ void ULevelUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 			//Prevent offsetting caused by the UMG system
 			ScreenLocation = ScreenLocation/ViewPortScale;
-			ScreenLocation *= GameUserSettings->GetResolutionScaleNormalized();
 
 			Cast<UCanvasPanelSlot>(HealthBarAssoc.Value->Slot)->SetPosition(ScreenLocation);
 

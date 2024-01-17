@@ -31,6 +31,7 @@ void ALevelBlock::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+#if WITH_EDITOR
 void ALevelBlock::PostActorCreated()
 {
 	Super::PostActorCreated();
@@ -51,6 +52,7 @@ void ALevelBlock::PostEditMove(bool bFinished)
 	Super::PostEditMove(bFinished);
 	GenerateNodePathPositionVisualisation();
 }
+#endif
 
 void ALevelBlock::Destroyed()
 {

@@ -58,7 +58,8 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 			OnMouseOverActorEvent.Broadcast(ReturnedActor, HitLocation);
 		}
 		
-		if (ReturnedActor->GetActorGuid() != CurrentMouseOverActor->GetActorGuid())
+		//if (ReturnedActor->GetActorGuid() != CurrentMouseOverActor->GetActorGuid()) //only work in editor, might want to find an altnernative
+		if (ReturnedActor->GetName() != CurrentMouseOverActor->GetName())
 		{
 			OnMouseOverActorEvent.Broadcast(ReturnedActor, HitLocation);
 		}	
