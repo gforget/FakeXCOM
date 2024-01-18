@@ -58,7 +58,6 @@ void ATBTacticalGameMode::BeginPlay()
 	const UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
 #else
 	const UWorld* WorldPtr = GetWorld();
-	
 #endif
 	
 	UGameplayStatics::GetAllActorsOfClass(WorldPtr,AActor::StaticClass(),AllActors);

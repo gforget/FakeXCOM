@@ -50,6 +50,19 @@ void ULevelUI::BPCallStatusEvent(AUnit* TargetUnit, EStatusType StatusType, floa
 	CallStatusEvent(TargetUnit, StatusType, Number);
 }
 
+void ULevelUI::CallStatusEvent_Implementation(AUnit* TargetUnit, EStatusType StatusType, float Number)
+{
+}
+
+void ULevelUI::BPCallCustomAlertStatusEvent(AUnit* TargetUnit, FColor Color, const FString& Text, float Number)
+{
+	CallCustomAlertStatusEvent(TargetUnit, Color, Text, Number);
+}
+
+void ULevelUI::CallCustomAlertStatusEvent_Implementation(AUnit* TargetUnit, FColor Color, const FString& Text, float Number)
+{
+}
+
 void ULevelUI::OnTargetSelected(int TargetIndex, AUnit* SelectingUnit)
 {
 	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[SelectingUnit->Faction] == EAssignedController::PlayerController)
@@ -121,9 +134,7 @@ void ULevelUI::OnBPAbilitySelectionModeChangeEvent_Implementation(bool AbilitySe
 {
 }
 
-void ULevelUI::CallStatusEvent_Implementation(AUnit* TargetUnit, EStatusType StatusType, float Number)
-{
-}
+
 
 void ULevelUI::OnUnitIsDeadEvent_Implementation(AUnit* DeadUnit)
 {

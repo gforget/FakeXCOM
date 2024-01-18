@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "TurnManager.h"
 #include "Blueprint/UserWidget.h"
+#include "Containers/UnrealString.h"
 #include "LevelUI.generated.h"
 
 class ATBTacticalGameMode;
@@ -92,6 +93,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Main Events")
 	void CallStatusEvent(AUnit* TargetUnit, EStatusType StatusType, float Number);
 
+	UFUNCTION(BlueprintCallable, Category = "Main Events")
+	void BPCallCustomAlertStatusEvent(AUnit* TargetUnit, FColor Color, const FString& Text, float Number = -1.0f);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Main Events")
+	void CallCustomAlertStatusEvent(AUnit* TargetUnit, FColor Color, const FString& Text, float Number);
+	
 	UFUNCTION(BlueprintNativeEvent, Category = "Main Events")
 	void OnUnitIsDeadEvent(AUnit* DeadUnit);
 	
