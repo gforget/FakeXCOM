@@ -216,6 +216,7 @@ bool UTargetManager::ConfirmLineOfSightOnUnit(
 		FVector End = Start + DeltaToPotentialTargetNormalized*LineOfSightRange;
 			
 		//GetWorld in UObject has to be called from another object that is active in the scene
+
 		bool bHit = TBTacticalGameMode->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
 		const bool bDebugTrace = false;
 		if (bDebugTrace)

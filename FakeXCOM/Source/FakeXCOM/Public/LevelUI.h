@@ -101,6 +101,12 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, Category = "Main Events")
 	void OnUnitIsDeadEvent(AUnit* DeadUnit);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
+	void SetControlInterfaceVisibility(bool Val);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
+	void ShowTargetImage(bool Val);
 	
 private:
 	UFUNCTION()
@@ -127,3 +133,5 @@ private:
 	UFUNCTION()
 	void OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue);
 };
+
+

@@ -63,6 +63,15 @@ void ULevelUI::CallCustomAlertStatusEvent_Implementation(AUnit* TargetUnit, FCol
 {
 }
 
+void ULevelUI::SetControlInterfaceVisibility_Implementation(bool Val)
+{
+	
+}
+
+void ULevelUI::ShowTargetImage_Implementation(bool Val)
+{
+}
+
 void ULevelUI::OnTargetSelected(int TargetIndex, AUnit* SelectingUnit)
 {
 	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[SelectingUnit->Faction] == EAssignedController::PlayerController)

@@ -163,6 +163,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void MoveToNodePath(UNodePath* TargetNodePath);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void DestroyCapsule();
 	
 private:
 

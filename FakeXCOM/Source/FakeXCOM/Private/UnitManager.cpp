@@ -92,6 +92,11 @@ AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 		//TODO: could select an enemy if the unit is on sight
 		return nullptr;
 	}
+
+	if (SelectedUnit->UnitAttributeSet->GetActions() == 0.0f)
+	{
+		TBTacticalGameMode->LevelUIRef->CallCustomAlertStatusEvent(SelectedUnit, FColor::Green, "NO ACTION LEFT", -1.0f);
+	}
 	
 	for (int i=0; i<AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction.Num(); i++)
 	{

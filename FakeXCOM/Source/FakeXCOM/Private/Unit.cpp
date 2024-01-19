@@ -217,12 +217,16 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, 
 {
 	const TArray<FCoverInfo> AllCoverInfo = TargetNode->AllCoverInfos;
 
+	//point blank range is always a crit
 	const FVector2d DeltaUnitToTarget= FVector2D(TargetNode->GetComponentLocation().X, TargetNode->GetComponentLocation().Y) - FVector2D(UnitNode->GetComponentLocation().X, UnitNode->GetComponentLocation().Y);
 	const float DeltaDistance = DeltaUnitToTarget.Size();
-	if (DeltaDistance <= 284.0f)
+	if (DeltaDistance <= 142.0f)
 	{
 		return 0.0f;	
 	}
+	
+	bool bCoverIsEffective = false;
+	FCoverInfo CoverInfoToUse;
 	
 	for (int i=0; i<AllCoverInfo.Num(); i++)
 	{
@@ -231,18 +235,38 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, 
 		
 		FVector2D DeltaTargetToCoverNormalized = CoverPosition - TargetPosition;
 		DeltaTargetToCoverNormalized.Normalize();
-
-		FVector2D DeltaUnitToTargetNormalized = TargetPosition - FVector2D(UnitNode->GetComponentLocation().X, UnitNode->GetComponentLocation().Y);
-		DeltaUnitToTargetNormalized.Normalize();
-
-		const float DotProduct = FVector2D::DotProduct(DeltaTargetToCoverNormalized, DeltaUnitToTargetNormalized);
-		if (DotProduct < -0.3f)
+		
+		// if one check fail, then cover not effective
+		bool bCurrentCoverTest = true;
+		for (int j=0; j<SightSurroundTargetingAnchor.Num(); j++)
 		{
-			return AllCoverInfo[i].FullCover ? TargetUnit->FullCoverDefenceBonus: TargetUnit->LowCoverDefenceBonus; 
+			FVector2D DeltaUnitToTargetNormalized = TargetPosition - (FVector2D(UnitNode->GetComponentLocation().X, UnitNode->GetComponentLocation().Y) + FVector2D(SightSurroundTargetingAnchor[j].X, SightSurroundTargetingAnchor[j].Y));
+			DeltaUnitToTargetNormalized.Normalize();
+			
+			const float DotProduct = FVector2D::DotProduct(DeltaTargetToCoverNormalized, DeltaUnitToTargetNormalized);
+			//if (DotProduct >= -0.25f)
+			if (DotProduct >= -0.15f)
+			{
+				bCurrentCoverTest = false;
+			}
+		}
+		
+		if (bCurrentCoverTest)
+		{
+			bCoverIsEffective = true;
+			CoverInfoToUse = AllCoverInfo[i];
+			break;
 		}
 	}
 
-	return 0.0f;
+	if (bCoverIsEffective)
+	{
+		return CoverInfoToUse.FullCover ? TargetUnit->FullCoverDefenceBonus: TargetUnit->LowCoverDefenceBonus; 
+	}
+	else
+	{
+		return 0.0f;
+	}
 }
 
 float AUnit::GetHeightAdvantageBonus(AUnit* Target)
@@ -267,7 +291,6 @@ void AUnit::SetIsDead(bool Val)
 	bIsDead = Val;
 	if (bIsDead)
 	{
-		CapsuleComponent->DestroyComponent(false);
 		OnUnitIsDeadEvent.Broadcast(this);
 	}
 }
@@ -299,6 +322,11 @@ void AUnit::MoveToNodePath(UNodePath* TargetNodePath)
 			TBTacticalGameMode->TilePathFinder->MoveUnit(this, Path);
 		}
 	}
+}
+
+void AUnit::DestroyCapsule()
+{
+	CapsuleComponent->DestroyComponent(false);
 }
 
 void AUnit::MovementActionCost(const UNodePath* Destination)

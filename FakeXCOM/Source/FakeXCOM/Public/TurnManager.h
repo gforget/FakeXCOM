@@ -31,6 +31,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Faction Properties")
 	TArray<TEnumAsByte<EFaction>> FactionTurnOrder;
 
+	UFUNCTION(BlueprintCallable, Category="TurnManager Function")
 	EFaction GetSelectedFaction();
 	
 	UFUNCTION(BlueprintCallable, Category="TurnManager Function")

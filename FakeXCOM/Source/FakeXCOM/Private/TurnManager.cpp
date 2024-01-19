@@ -41,9 +41,9 @@ void UTurnManager::EndTurn()
 		SelectedFactionIndex = 0;
 	}
 	
+	OnTurnStartedEvent.Broadcast(GetSelectedFaction());
 	TBTacticalGameMode->UnitManager->ResetAllActionsOfFaction(GetSelectedFaction());
 	TBTacticalGameMode->UnitManager->SelectFirstUnitOfFaction(GetSelectedFaction());
-
-	OnTurnStartedEvent.Broadcast(GetSelectedFaction());
+	
 }
 

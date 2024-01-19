@@ -4,7 +4,9 @@
 #include "ActivateAbilityButton.h"
 
 #include "AbilitySystemComponent.h"
+#include "TBTacticalGameMode.h"
 #include "Unit.h"
+#include "UnitAbilityManager.h"
 
 UActivateAbilityButton::UActivateAbilityButton()
 {
@@ -15,6 +17,7 @@ void UActivateAbilityButton::OnClick()
 {
 	if (UnitRef)
 	{
+		UnitRef->TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
 		UnitRef->AbilitySystemComponent->TryActivateAbility(AbilityHandle);
 	}
 }
