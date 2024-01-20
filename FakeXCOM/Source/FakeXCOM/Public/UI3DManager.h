@@ -57,7 +57,8 @@ public:
 	void ClearCover3DIcons();
 	void AddCover3DIcon(FVector Location, FRotator Rotation, bool bFullCover);
 	void ConnectCover3DIconsToUnit(int IdUnit);
-
+	void DisconnectCover3DIconsToUnit(int IdUnit);
+	
 	void ClearSelect3DIcon();
 	void AddSelect3DIcon(const FVector& Location, const FRotator& Rotation, bool bIsBaseDistance);
 	
@@ -94,6 +95,9 @@ private:
 	
 	UFUNCTION()
 	void OnUnitOrderedToMove(AUnit* Unit);
+
+	UFUNCTION()
+	void OnUnitIsDead(AUnit* Unit);
 	
 	UFUNCTION()
 	void OnMouseOverActor(AActor* Actor, FVector HitLocation);
@@ -108,6 +112,6 @@ private:
 	void ClearDistanceLimitUI();
 	void SpawnDistanceIcons(TArray<UNodePath*> AllNodes, int Distance, TSubclassOf<AActor> IconSubClass);
 	bool TrySpawnDistanceIcon(const UNodePath* NodePath, int DistanceLimit, TArray<bool>& CornerToSpawn);
-
-
+	
 };
+

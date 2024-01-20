@@ -41,6 +41,7 @@ void UUI3DManager::Initialize()
 void UUI3DManager::SubscribeToUnitEvent(AUnit* Unit)
 {
 	Unit->OnUnitOrderedToMoveEvent.AddDynamic(this, &UUI3DManager::OnUnitOrderedToMove);
+	Unit->OnUnitIsDeadEvent.AddDynamic(this, &UUI3DManager::OnUnitIsDead);
 }
 
 void UUI3DManager::OnUnitSelected(AUnit* Unit)
@@ -54,6 +55,11 @@ void UUI3DManager::OnUnitOrderedToMove(AUnit* Unit)
 	ClearPath3DIcons();
 	ClearDistanceLimitUI();
 	ConnectCover3DIconsToUnit(Unit->IdUnit);
+}
+
+void UUI3DManager::OnUnitIsDead(AUnit* Unit)
+{
+	DisconnectCover3DIconsToUnit(Unit->IdUnit);
 }
 
 void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
@@ -294,6 +300,21 @@ void UUI3DManager::ConnectCover3DIconsToUnit(int IdUnit)
 					
 	AllAssignCover3DIcon[IdUnit].Entries.Append(AllMouseOverCover3DIcon);
 	AllMouseOverCover3DIcon.Empty();
+}
+
+void UUI3DManager::DisconnectCover3DIconsToUnit(int IdUnit)
+{
+	if (AllAssignCover3DIcon.Contains(IdUnit))
+	{
+		if (AllAssignCover3DIcon[IdUnit].Entries.Num() > 0)
+		{
+			for (int i=0; i<AllAssignCover3DIcon[IdUnit].Entries.Num(); i++)
+			{
+				AllAssignCover3DIcon[IdUnit].Entries[i]->Destroy();
+			}
+			AllAssignCover3DIcon[IdUnit].Entries.Empty();
+		}
+	}
 }
 
 void UUI3DManager::ClearSelect3DIcon()
