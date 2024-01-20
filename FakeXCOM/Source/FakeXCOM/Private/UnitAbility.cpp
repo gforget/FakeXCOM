@@ -49,8 +49,24 @@ void UUnitAbility::SetAbilityHiddenEvent_Implementation(AUnit* Unit)
 
 void UUnitAbility::SetAbilityPropertiesOnAssigned(int IdUnit)
 {
-	SetDynamicRangeValueEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
-	SetDynamicDamageValueEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
+	if (bUseDynamicRange)
+	{
+		SetDynamicRangeValueEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
+	}
+	else
+	{
+		UnitAbilityInfos[IdUnit].RangeValue = RangeValue;
+	}
+	
+	if (bUseDynamicDamage)
+	{
+		SetDynamicDamageValueEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
+	}
+	else
+	{
+		UnitAbilityInfos[IdUnit].MinDamage = MinDamage;
+		UnitAbilityInfos[IdUnit].MaxDamage = MaxDamage;
+	}
 }
 
 void UUnitAbility::SetDynamicRangeValueEvent_Implementation(AUnit* Unit)
@@ -95,8 +111,23 @@ void UUnitAbility::OnUnitSelected(int IdUnit)
 	SetTargets(IdUnit);
 	for (int i=0; i<UnitAbilityInfos[IdUnit].AllAvailableTargets.Num(); i++)
 	{
-		SetHitChanceEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
-		SetCritChanceEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
+		if (bUseDynamicHitChance)
+		{
+			SetHitChanceEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
+		}
+		else
+		{
+			UnitAbilityInfos[IdUnit].TargetsHitChances[UnitAbilityInfos[IdUnit].AllAvailableTargets[i]] = HitChance;
+		}
+
+		if (bUseDynamicCritChance)
+		{
+			SetCritChanceEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
+		}
+		else
+		{
+			UnitAbilityInfos[IdUnit].TargetsCritChances[UnitAbilityInfos[IdUnit].AllAvailableTargets[i]] = CritChance;
+		}
 	}
 
 	//Sort the target by hit chance
@@ -144,6 +175,7 @@ void UUnitAbility::SetTargets_Implementation(int IdUnit)
 
 void UUnitAbility::SetHitChanceEvent_Implementation(AUnit* Unit, AActor* Target)
 {
+	UnitAbilityInfos[Unit->IdUnit].TargetsHitChances[Target] = HitChance;
 }
 
 float UUnitAbility::GetHitChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
@@ -158,6 +190,7 @@ void UUnitAbility::SetHitChance(int IdUnit, AActor* Target, float NewHitChanceVa
 
 void UUnitAbility::SetCritChanceEvent_Implementation(AUnit* Unit, AActor* Target)
 {
+	UnitAbilityInfos[Unit->IdUnit].TargetsCritChances[Target] = CritChance;
 }
 
 float UUnitAbility::GetCritChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)

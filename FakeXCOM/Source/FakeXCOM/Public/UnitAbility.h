@@ -123,27 +123,39 @@ public :
 	TArray<TEnumAsByte<EFactionRelation>> ValidTargetFactionRelation;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	bool bUseDynamicRange;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "!bUseDynamicRange"), Category = "Ability Properties")
 	float RangeValue;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	bool bHasDamage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	bool bUseDynamicDamage;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "bHasDamage"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "bHasDamage && !bUseDynamicDamage"), Category = "Ability Properties")
 	float MinDamage;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "bHasDamage"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "bHasDamage && !bUseDynamicDamage"), Category = "Ability Properties")
 	float MaxDamage;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	bool bHasHitChance;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (EditCondition = "bHasHitChance"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	bool bUseDynamicHitChance;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (EditCondition = "bHasHitChance && !bUseDynamicHitChance"), Category = "Ability Properties")
 	float HitChance = 100.0f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	bool bHasCritChance;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (EditCondition = "bHasCritChance"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	bool bUseDynamicCritChance;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (EditCondition = "bHasCritChance && !bUseDynamicCritChance"), Category = "Ability Properties")
 	float CritChance = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI Properties")

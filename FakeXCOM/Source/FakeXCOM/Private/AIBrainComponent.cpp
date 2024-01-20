@@ -72,7 +72,7 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 	//Get the best action
 	float score = 0.0f;
 	int nextBestActionIndex = 0;
-	bool bDebugScore = false;
+	bool bDebugScore = bLogActionScore;
 	
 	for (int i=0; i<AllUMRows.Num(); i++)
 	{
@@ -144,7 +144,7 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 {
 	float score = 0.0f;
 	int  chosenNodeIndex = 0;
-	bool bDebugNodeScore = false;
+	const bool bDebugNodeScore = bShowNodeScore;
 	
 	TArray<UNodePath*> AllValidNode;
 	AllValidNode.Append(AllBaseDistanceNode);
@@ -154,7 +154,7 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 	{
 		float NewScore = ScoreNodePath(UMRow->TargetConsiderations, AllValidNode[i]);
 		
-		//use r.DebugSafeZone.MaxDebugTextStringsPerActor 30000 to extend the number of character you can see
+		//use r.DebugSafeZone.MaxDebugTextStringsPerActor 0 to extend the number of character you can see
 		if (bDebugNodeScore)
 		{
 			FString ScoreString = FString::Printf(TEXT("%.3f"), NewScore);
@@ -210,18 +210,34 @@ int UAIBrainComponent::PickTargetActor(FUtilityMatrixDT* UMRow)
 {
 	float score = 0.0f;
 	int  chosenActorIndex = -1;
+
+	const bool bDebugTargetActorScore = bShowTargetActorScore;
 	
 	TArray<AActor*> AllTarget = TBTacticalGameMode->TargetManager->AllCurrentAvailableTarget;
 	for (int i=0; i<AllTarget.Num(); i++)
 	{
 		float NewScore = ScoreTargetActor(UMRow->TargetConsiderations, AllTarget[i]);
+
+		//use r.DebugSafeZone.MaxDebugTextStringsPerActor 0 to extend the number of character you can see
+		if (bDebugTargetActorScore)
+		{
+			FString ScoreString = FString::Printf(TEXT("%.3f"), NewScore);
+			DrawDebugString(GetWorld(), AllTarget[i]->GetActorLocation(), ScoreString, 0,FColor::Red, DelayBetweenDecision, false, 1);
+		}
+		
 		if (NewScore > score)
 		{
 			chosenActorIndex = i;
 			score = NewScore;
 		}
 	}
-
+	
+	if (bDebugTargetActorScore && chosenActorIndex != -1)
+	{
+		FString ScoreString = FString::Printf(TEXT("%.3f"), score);
+		DrawDebugString(GetWorld(), AllTarget[chosenActorIndex]->GetActorLocation(), ScoreString, 0,FColor::Purple, DelayBetweenDecision, false, 1);
+	}
+	
 	return chosenActorIndex;
 }
 

@@ -56,7 +56,17 @@ public:
 	float ScoreNodePath(TArray<UConsideration*> Considerations, UNodePath* Node);
 
 	int PickTargetActor(FUtilityMatrixDT* UMRow);
+	
 	float ScoreTargetActor(TArray<UConsideration*> Considerations, AActor* Actor);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Debug Properties")
+	bool bLogActionScore = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Debug Properties")
+	bool bShowNodeScore = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Debug Properties")
+	bool bShowTargetActorScore = false;
 	
 private:
 
