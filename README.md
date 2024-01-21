@@ -15,5 +15,5 @@ Video presentation:
 
 Video explaining how to install the project:
 
-Build of a basic level made with the framework (showcased in the presentation) : 
+Build of a basic level made with the framework (showcased in the presentation) : </br>
 https://artanist.com/FakeXCOM/FakeXCOMBuild.zip
