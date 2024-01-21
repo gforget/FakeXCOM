@@ -1,11 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "TurnManager.h"
 #include "FactionManager.h"
 #include "TBTacticalGameMode.h"
 #include "UnitAbilityManager.h"
-
 
 // Sets default values for this component's properties
 UTurnManager::UTurnManager()
@@ -14,7 +12,6 @@ UTurnManager::UTurnManager()
 	FactionTurnOrder.Add(EFaction::XCOM);
 	FactionTurnOrder.Add(EFaction::Alien);
 }
-
 
 // Called when the game starts
 void UTurnManager::BeginPlay()

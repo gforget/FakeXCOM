@@ -77,7 +77,7 @@ void UUnitManager::SelectPreviousUnit()
 
 AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 {
-	DebugScreen("New Soldier Selected !", FColor::Yellow);
+	//DebugScreen("New Soldier Selected !", FColor::Yellow);
 	
 	AUnit* SelectedUnit = AllUnitReference[UnitId];
 	const EFaction SelectedFaction = TBTacticalGameMode->TurnManagerComponent->GetSelectedFaction();
@@ -174,6 +174,7 @@ void UUnitManager::AddUnitToManager(int IdUnit, AUnit* Unit)
 
 	OnUnitSpawnedEvent.Broadcast(Unit);
 	Unit->OnUnitRanOutOfActionsEvent.AddDynamic(this, &UUnitManager::OnUnitRanOutOfActions);
+	Unit->OnUnitIsDeadEvent.AddDynamic(this, &UUnitManager::OnUnitIsDead);
 }
 
 void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
@@ -197,6 +198,27 @@ void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
 			bAllUnitOutOfAction = false;
 			break;
 		}
+	}
+}
+
+void UUnitManager::OnUnitIsDead(AUnit* Unit)
+{
+	bool bAllUnitFromFactionAreDead = true;
+	for(int i=0; i<AllUnitFactionReferenceMap[Unit->Faction].UnitInFaction.Num(); i++)
+	{
+		const int UnitId = AllUnitFactionReferenceMap[Unit->Faction].UnitInFaction[i];
+		AUnit* UnitPtr = AllUnitReference[UnitId];
+
+		if (!UnitPtr->GetIsDead())
+		{
+			bAllUnitFromFactionAreDead = false;
+			break;
+		}
+	}
+
+	if (bAllUnitFromFactionAreDead)
+	{
+		OnAllUnitFromFactionDeadEvent.Broadcast(Unit->Faction);
 	}
 }
 

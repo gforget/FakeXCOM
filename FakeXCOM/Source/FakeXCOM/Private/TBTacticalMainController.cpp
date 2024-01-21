@@ -9,6 +9,7 @@
 #include "UnitManager.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 // Sets default values
@@ -81,6 +82,8 @@ void ATBTacticalMainController::BeginPlay()
 		InputComponent->BindAction("CameraDown", IE_Pressed, this, &ATBTacticalMainController::PressCameraDown);
 
 		InputComponent->BindAction("RightClick", IE_Pressed, this, &ATBTacticalMainController::PressRightClick);
+
+		InputComponent->BindAction("Escape", IE_Pressed, this, &ATBTacticalMainController::PressEscape);
 	}
 	
 	TBTacticalGameMode->TurnManagerComponent->OnTurnStartedEvent.AddDynamic(this, &ATBTacticalMainController::OnTurnStartedEvent);
@@ -366,6 +369,11 @@ void ATBTacticalMainController::PressRightClick()
 	{
 		TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
 	}
+}
+
+void ATBTacticalMainController::PressEscape()
+{
+	UKismetSystemLibrary::QuitGame(GetWorld(), 0, EQuitPreference::Quit, false);
 }
 
 void ATBTacticalMainController::MouseScroll()

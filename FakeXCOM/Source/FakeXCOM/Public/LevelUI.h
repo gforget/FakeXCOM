@@ -44,7 +44,6 @@ public:
 	void Initialization();
 	void SubscribeToUnitEvent(AUnit* Unit);
 	
-	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
 	void OnBPUnitSpawnedEvent(AUnit* Unit);
 
@@ -102,6 +101,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Main Events")
 	void OnUnitIsDeadEvent(AUnit* DeadUnit);
 
+	UFUNCTION(BlueprintNativeEvent, Category = "Main Events")
+	void OnAllUnitFromFactionDeadEvent(EFaction Faction);
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Main Events")
 	void SetControlInterfaceVisibility(bool Val);
 
@@ -120,6 +122,9 @@ private:
 
 	UFUNCTION()
 	void OnUnitIsDead(AUnit* Unit);
+
+	UFUNCTION()
+	void OnAllUnitFromFactionDead(EFaction Faction);
 	
 	UFUNCTION()
 	void OnUnitHealthChange(AUnit* Unit);

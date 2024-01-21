@@ -101,6 +101,12 @@ public:
 
 	UPROPERTY()
 	TArray<FVector> SightSurroundTargetingAnchor;
+
+	UPROPERTY()
+	TArray<FVector> SightSurroundFlankTargetingAnchor;
+
+	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
+	float DistanceSurroundFlankTargetingAnchor = 100.0f;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
 	float DistanceSurroundTargetingAnchor = 50.0f;

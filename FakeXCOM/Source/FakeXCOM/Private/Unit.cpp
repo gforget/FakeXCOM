@@ -72,7 +72,12 @@ void AUnit::BeginPlay()
 	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundTargetingAnchor, SightStartingAnchor.Z));
 	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X - DistanceSurroundTargetingAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
 	SightSurroundTargetingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundTargetingAnchor, SightStartingAnchor.Z));
-	
+
+	SightSurroundFlankTargetingAnchor.Add(SightStartingAnchor);
+	SightSurroundFlankTargetingAnchor.Add(FVector(SightStartingAnchor.X + DistanceSurroundFlankTargetingAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
+	SightSurroundFlankTargetingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundFlankTargetingAnchor, SightStartingAnchor.Z));
+	SightSurroundFlankTargetingAnchor.Add(FVector(SightStartingAnchor.X - DistanceSurroundFlankTargetingAnchor, SightStartingAnchor.Y, SightStartingAnchor.Z));
+	SightSurroundFlankTargetingAnchor.Add(FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundFlankTargetingAnchor, SightStartingAnchor.Z));
 }
 
 UUnitAbility* AUnit::GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const
@@ -132,6 +137,11 @@ void AUnit::GenerateEditorAnchorPositionVisualisation() const
 			// SightStartingPosition Anchor
 			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor, 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
 
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X + DistanceSurroundFlankTargetingAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundFlankTargetingAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X - DistanceSurroundFlankTargetingAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundFlankTargetingAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			
 			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X + DistanceSurroundTargetingAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
 			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundTargetingAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
 			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X - DistanceSurroundTargetingAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
@@ -141,6 +151,7 @@ void AUnit::GenerateEditorAnchorPositionVisualisation() const
 			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y + DistanceSurroundDefendingAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
 			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X - DistanceSurroundDefendingAnchor, SightStartingAnchor.Y, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
 			DrawDebugSphere(GetWorld(), ActorLocation + SightStartingAnchor + FVector(SightStartingAnchor.X, SightStartingAnchor.Y - DistanceSurroundDefendingAnchor, 0.0f), 5.0f, 12, FColor::Orange, true, 0.0f, 0, 0.0f);
+			
 		}
 	}
 #endif
@@ -216,14 +227,6 @@ void AUnit::CallHealthChanged()
 float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, UNodePath* TargetNode)
 {
 	const TArray<FCoverInfo> AllCoverInfo = TargetNode->AllCoverInfos;
-
-	//point blank range is always a crit
-	const FVector2d DeltaUnitToTarget= FVector2D(TargetNode->GetComponentLocation().X, TargetNode->GetComponentLocation().Y) - FVector2D(UnitNode->GetComponentLocation().X, UnitNode->GetComponentLocation().Y);
-	const float DeltaDistance = DeltaUnitToTarget.Size();
-	if (DeltaDistance <= 142.0f)
-	{
-		return 0.0f;	
-	}
 	
 	bool bCoverIsEffective = false;
 	FCoverInfo CoverInfoToUse;
@@ -238,14 +241,14 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, 
 		
 		// if one check fail, then cover not effective
 		bool bCurrentCoverTest = true;
-		for (int j=0; j<SightSurroundTargetingAnchor.Num(); j++)
+		for (int j=0; j<SightSurroundFlankTargetingAnchor.Num(); j++)
 		{
-			FVector2D DeltaUnitToTargetNormalized = TargetPosition - (FVector2D(UnitNode->GetComponentLocation().X, UnitNode->GetComponentLocation().Y) + FVector2D(SightSurroundTargetingAnchor[j].X, SightSurroundTargetingAnchor[j].Y));
+			FVector2D DeltaUnitToTargetNormalized = TargetPosition - (FVector2D(UnitNode->GetComponentLocation().X, UnitNode->GetComponentLocation().Y) + FVector2D(SightSurroundFlankTargetingAnchor[j].X, SightSurroundFlankTargetingAnchor[j].Y));
 			DeltaUnitToTargetNormalized.Normalize();
 			
 			const float DotProduct = FVector2D::DotProduct(DeltaTargetToCoverNormalized, DeltaUnitToTargetNormalized);
 			//if (DotProduct >= -0.25f)
-			if (DotProduct >= -0.15f)
+			if (DotProduct >= 0.0f)
 			{
 				bCurrentCoverTest = false;
 			}

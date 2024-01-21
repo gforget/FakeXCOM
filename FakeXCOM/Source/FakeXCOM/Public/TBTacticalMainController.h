@@ -199,6 +199,8 @@ private:
 	void PressCameraDown();
 
 	void PressRightClick();
+
+	void PressEscape();
 	
 	//Player Move Camera Function
 	void MouseScroll();

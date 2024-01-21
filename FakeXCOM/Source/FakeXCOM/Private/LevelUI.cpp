@@ -32,6 +32,7 @@ void ULevelUI::Initialization()
 	{
 		TBTacticalGameMode->UnitManager->OnUnitSpawnedEvent.AddDynamic(this,  &ULevelUI::OnUnitSpawned);
 		TBTacticalGameMode->UnitManager->OnUnitSelectedEvent.AddDynamic(this, &ULevelUI::OnUnitSelected);
+		TBTacticalGameMode->UnitManager->OnAllUnitFromFactionDeadEvent.AddDynamic(this, &ULevelUI::OnAllUnitFromFactionDead);
 		TBTacticalGameMode->TargetManager->OnTargetSelectedEvent.AddDynamic(this, &ULevelUI::OnTargetSelected);
 		TBTacticalGameMode->TurnManagerComponent->OnTurnStartedEvent.AddDynamic(this, &ULevelUI::OnTurnStartedEvent);
 		TBTacticalGameMode->UnitAbilityManager->OnAbilitySelectionModeChangeEvent.AddDynamic(this, &ULevelUI::OnAbilitySelectionModeChangeEvent);
@@ -106,6 +107,19 @@ void ULevelUI::OnUnitIsDead(AUnit* DeadUnit)
 	OnUnitIsDeadEvent(DeadUnit);
 }
 
+void ULevelUI::OnUnitIsDeadEvent_Implementation(AUnit* DeadUnit)
+{
+}
+
+void ULevelUI::OnAllUnitFromFactionDead(EFaction Faction)
+{
+	OnAllUnitFromFactionDeadEvent(Faction);
+}
+
+void ULevelUI::OnAllUnitFromFactionDeadEvent_Implementation(EFaction Faction)
+{
+}
+
 void ULevelUI::OnUnitHealthChange(AUnit* Unit)
 {
 	OnBPUnitHealthChangeEvent(Unit);
@@ -140,12 +154,6 @@ void ULevelUI::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionModeValue)
 }
 
 void ULevelUI::OnBPAbilitySelectionModeChangeEvent_Implementation(bool AbilitySelectionModeValue)
-{
-}
-
-
-
-void ULevelUI::OnUnitIsDeadEvent_Implementation(AUnit* DeadUnit)
 {
 }
 

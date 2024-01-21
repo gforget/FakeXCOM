@@ -35,6 +35,7 @@ struct NO_API FUnitFactionStruct
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSpawnedEvent, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitSelectedEvent, AUnit*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAllUnitFromFactionDeadEvent, EFaction, Faction);
 
 UCLASS()
 class FAKEXCOM_API UUnitManager : public UObject
@@ -53,6 +54,9 @@ public :
 	UPROPERTY(BlueprintAssignable)
 	FUnitSelectedEvent OnUnitSelectedEvent;
 
+	UPROPERTY(BlueprintAssignable)
+	FAllUnitFromFactionDeadEvent OnAllUnitFromFactionDeadEvent;
+	
 	UPROPERTY(BlueprintReadOnly)
 	TMap<int, AUnit*> AllUnitReference;
 
@@ -97,4 +101,7 @@ private:
 	
 	UFUNCTION()
 	void OnUnitRanOutOfActions(AUnit* Unit);
+
+	UFUNCTION()
+	void OnUnitIsDead(AUnit* Unit);
 };
