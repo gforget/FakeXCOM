@@ -9,7 +9,11 @@ This project aim at creating an open source framework to create prototype level 
 ## Disclaimer
 <b>The current version of this project is not finished and development is still ongoing, the current presentation is mainly to showcase what already had been done and the way it is implemented </b>
 
-Download the build at this link :
-https://artanist.com/FakeXCOM/FakeXCOMBuild.zip
+## Useful link
 
-[<img src="/Screenshot/GunTarget.png">](https://www.youtube.com/watch?v=u3HeqEHAUN0)
+Video presentation:
+
+Video explaining how to install the project:
+
+Build of a basic level made with the framework (showcased in the presentation) : 
+https://artanist.com/FakeXCOM/FakeXCOMBuild.zip
