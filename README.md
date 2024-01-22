@@ -17,8 +17,8 @@ This project aim at creating an open source framework to create prototype level 
 Initial Presentation:</br>
 https://www.youtube.com/watch?v=qL5ZdT1GYdI
 
-AI Presentation:</br>
-https://www.youtube.com/watch?v=bUz2mx7p4vc
+AI Showcase:</br>
+https://www.youtube.com/watch?v=6FXBLhw37tY
 
 ### Instruction videos
 
