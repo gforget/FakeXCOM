@@ -1,5 +1,5 @@
-# FakeXCOM Project
 ![Screenshot of the projectt](/Screenshot/ProjectHeader.png)</BR>
+# FakeXCOM Project
 This project aim at creating an open source framework to create prototype level of the modern version of the game XCOM (Enemy Unknown and XCOM2 alike) within the Unreal Engine. With it, you will be able to create with relative ease new Level, new Unit with different abilities and an AI system that can be adapted to those changes.
 
 ## Important note:
