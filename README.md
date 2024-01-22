@@ -11,9 +11,27 @@ This project aim at creating an open source framework to create prototype level 
 
 ## Useful link
 
-Video presentation:
+### Introduction
 
-Video explaining how to install the project:
+Initial Presentation:</br>
+<i>Coming soon</i>
 
 Build of a basic level made with the framework (showcased in the presentation) : </br>
 https://artanist.com/FakeXCOM/FakeXCOMBuild.zip
+
+AI Presentation:</br>
+<i>Coming soon</i>
+
+### Instruction videos
+
+Video explaining how to install the project:
+<i>Coming soon</i>
+
+Video explaining level blocking:
+<i>Coming soon</i>
+
+Video explaining the ability system:
+<i>Coming soon</i>
+
+Video explaining the AI system:
+<i>Coming soon</i>
