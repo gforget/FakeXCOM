@@ -17,7 +17,7 @@ This project aim at creating an open source framework to create prototype level 
 Initial Presentation:</br>
 <i>Coming soon</i>
 
-Build of a basic level made with the framework (showcased in the presentation) : </br>
+Build of the basic level used in the presentation : </br>
 https://artanist.com/FakeXCOM/FakeXCOMBuild.zip
 
 AI Presentation:</br>
