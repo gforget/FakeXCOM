@@ -24,14 +24,14 @@ AI Presentation:</br>
 
 ### Instruction videos
 
-Video explaining how to install the project:
+Video explaining how to install the project:</br>
 <i>Coming soon</i>
 
-Video explaining level blocking:
+Video explaining level blocking:</br>
 <i>Coming soon</i>
 
-Video explaining the ability system:
+Video explaining the ability system:</br>
 <i>Coming soon</i>
 
-Video explaining the AI system:
+Video explaining the AI system:</br>
 <i>Coming soon</i>
