@@ -17,9 +17,6 @@ This project aim at creating an open source framework to create prototype level 
 Initial Presentation:</br>
 <i>Coming soon</i>
 
-Build of the basic level used in the presentation : </br>
-https://artanist.com/FakeXCOM/FakeXCOMBuild.zip
-
 AI Presentation:</br>
 https://www.youtube.com/watch?v=bUz2mx7p4vc
 
@@ -36,3 +33,6 @@ Video explaining the ability system:</br>
 
 Video explaining the AI system:</br>
 <i>Coming soon</i>
+
+### Build of the basic level used in the presentation
+https://artanist.com/FakeXCOM/FakeXCOMBuild.zip
