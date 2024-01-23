@@ -128,7 +128,7 @@ void FTilePathfinderManagerModule::OnActorSelected(const TArray<UObject*>& objec
 {
 	if (objectsSelected.Num() > 0)
 	{
-		const UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
+		UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
 		if (!WorldPtr) return;
 		
 		UKismetSystemLibrary::FlushPersistentDebugLines(objectsSelected[0]);
@@ -137,7 +137,7 @@ void FTilePathfinderManagerModule::OnActorSelected(const TArray<UObject*>& objec
 			
 			if (objectsSelected[i]->IsA(ALevelBlock::StaticClass()))
 			{
-				const ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(objectsSelected[i]);
+				ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(objectsSelected[i]);
 				
 				TArray<UNodePath*> AllNodePaths;
 				LevelBlockPtr->GetComponents<UNodePath>(AllNodePaths);
@@ -156,12 +156,9 @@ void FTilePathfinderManagerModule::OnActorSelected(const TArray<UObject*>& objec
 						}
 					}
 				}
+
+				LevelBlockPtr->GenerateNodePathPositionVisualisation(WorldPtr, false);
 				
-				FVector ActorLocation = LevelBlockPtr->GetActorLocation();
-				for (int j=0; j<LevelBlockPtr->NodePathPositions.Num(); j++)
-				{
-					DrawDebugSphere(objectsSelected[i]->GetWorld(), ActorLocation + LevelBlockPtr->NodePathPositions[j], 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
-				}
 			}
 		}
 	}

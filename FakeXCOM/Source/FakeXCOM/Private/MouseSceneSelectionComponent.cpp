@@ -48,6 +48,12 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 	{
 		return;
 	}
+
+	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->Faction]
+		== EAssignedController::AIController)
+	{
+		return;
+	}
 	
 	FVector HitLocation;
 	if (AActor* ReturnedActor = SelectActorFromMousePosition(HitLocation))
@@ -68,6 +74,11 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 
 void UMouseSceneSelectionComponent::LeftClickSelection()
 {
+	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->Faction]
+	== EAssignedController::AIController)
+	{
+		return;
+	}
 	FVector HitLocation;
 	AActor* ReturnedActor = SelectActorFromMousePosition(HitLocation);
 	OnLeftClickSelectActorEvent.Broadcast(ReturnedActor, HitLocation);
@@ -75,6 +86,12 @@ void UMouseSceneSelectionComponent::LeftClickSelection()
 
 void UMouseSceneSelectionComponent::RightClickSelection()
 {
+	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->Faction]
+	== EAssignedController::AIController)
+	{
+		return;
+	}
+	
 	FVector HitLocation;
 	AActor* ReturnedActor = SelectActorFromMousePosition(HitLocation);
 	OnRightClickSelectActorEvent.Broadcast(ReturnedActor, HitLocation);

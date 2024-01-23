@@ -37,20 +37,20 @@ void ALevelBlock::PostActorCreated()
 	Super::PostActorCreated();
 	
 	ActivateArrowComponent();
-	GenerateNodePathPositionVisualisation();
+	GenerateNodePathPositionVisualisation(GetWorld());
 }
 
 void ALevelBlock::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	ActivateArrowComponent();
-	GenerateNodePathPositionVisualisation();
+	GenerateNodePathPositionVisualisation(GetWorld());
 }
 
 void ALevelBlock::PostEditMove(bool bFinished)
 {
 	Super::PostEditMove(bFinished);
-	GenerateNodePathPositionVisualisation();
+	GenerateNodePathPositionVisualisation(GetWorld());
 }
 #endif
 
@@ -60,24 +60,30 @@ void ALevelBlock::Destroyed()
 	UKismetSystemLibrary::FlushPersistentDebugLines(this);
 }
 
-void ALevelBlock::GenerateNodePathPositionVisualisation()
+void ALevelBlock::GenerateNodePathPositionVisualisation(UWorld* World, bool bFlushDebugLine)
 {
 #if WITH_EDITOR
-	if (GetWorld()->WorldType == EWorldType::EditorPreview)
+	if (World)
 	{
-		UKismetSystemLibrary::FlushPersistentDebugLines(this);
+		// if (GetWorld()->WorldType == EWorldType::EditorPreview)
+		// {
+			if (bFlushDebugLine)
+			{
+				UKismetSystemLibrary::FlushPersistentDebugLines(this);
+			}
+		
+			const FVector ActorLocation = GetActorLocation();
+			for (int i=0; i<NodePathPositions.Num(); i++)
+			{
+				DrawDebugSphere(World, ActorLocation + NodePathPositions[i], 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
+			}
 
-		const FVector ActorLocation = GetActorLocation();
-		for (int i=0; i<NodePathPositions.Num(); i++)
-		{
-			DrawDebugSphere(GetWorld(), ActorLocation + NodePathPositions[i], 20.0f, 12, FColor::Cyan, true, 0.0f, 0, 0.0f);
-		}
-
-		if (IsSlope)
-		{
-			DrawDebugSphere(GetWorld(), ActorLocation + BottomSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
-			DrawDebugSphere(GetWorld(), ActorLocation + TopSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
-		}
+			if (IsSlope)
+			{
+				DrawDebugSphere(World, ActorLocation + BottomSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
+				DrawDebugSphere(World, ActorLocation + TopSlopePosition, 20.0f, 12, FColor::Red, true, 0.0f, 0, 0.0f);
+			}
+		//}
 	}
 #endif
 }

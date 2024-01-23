@@ -64,8 +64,9 @@ public:
 	UPROPERTY()
 	UArrowComponent* ArrowComponent = nullptr;
 
+	void GenerateNodePathPositionVisualisation(UWorld* World, bool bFlushDebugLine = true);
+
 private:
-	void GenerateNodePathPositionVisualisation();
 	void ActivateArrowComponent();
 };
 
