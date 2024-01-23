@@ -1,6 +1,6 @@
 ![Screenshot of the projectt](/Screenshot/ProjectHeader.png)</BR>
 # FakeXCOM Project
-This project aim at creating an open source framework to create prototype level of the modern version of the game XCOM (Enemy Unknown and XCOM2 alike) within the Unreal Engine. This framework will allow somebody with average Unreal knowledge to create new Level, new Unit with different abilities and an AI system that can be adapted to those changes.
+This project aim at creating a framework to create prototype level of the modern version of the game XCOM (Enemy Unknown and XCOM2 alike) within the Unreal Engine. This framework will allow somebody with average Unreal knowledge to create new Level, new Unit with different abilities and an AI system that can be adapted to those changes.
 
 ## Important note:
 - This is not a framework that can easely be change to any kind of other Turn Base shooter, it has been made specifically with the rules and gameplay of XCOM in mind. It could be use as a starting point for a new kind of Turn Base Shooter, but it would require significant work.
