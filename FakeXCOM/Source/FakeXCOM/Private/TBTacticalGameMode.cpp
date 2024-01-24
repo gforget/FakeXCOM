@@ -136,8 +136,11 @@ void ATBTacticalGameMode::BeginPlay()
 		}
 		
 		bInitialized = true;
-		UnitManager->SelectUnit(FirstUnitToSelectId);
-		TurnManagerComponent->OnTurnStartedEvent.Broadcast(TurnManagerComponent->GetSelectedFaction());
+		if (FirstUnitToSelectId != -1)
+		{
+			UnitManager->SelectUnit(FirstUnitToSelectId);
+			TurnManagerComponent->OnTurnStartedEvent.Broadcast(TurnManagerComponent->GetSelectedFaction());
+		}
 	}
 }
 
