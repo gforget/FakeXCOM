@@ -248,7 +248,7 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, 
 			
 			const float DotProduct = FVector2D::DotProduct(DeltaTargetToCoverNormalized, DeltaUnitToTargetNormalized);
 			//if (DotProduct >= -0.25f)
-			if (DotProduct >= 0.0f)
+			if (DotProduct >= -0.1f)
 			{
 				bCurrentCoverTest = false;
 			}
