@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Copyright(c) 2023 Gabriel Forget. All Rights Reserved.
 
 
 #include "UI3DManager.h"
@@ -190,6 +190,9 @@ void UUI3DManager::SpawnDistanceIcons(TArray<UNodePath*> AllNodes, int Distance,
 			{
 				if (CornerToSpawn[j])
 				{
+					//Rotating around the normal of the surface would probably be better, but this cover all possible type of
+					//Level block
+					
 					FRotator IconRotation = AllNodes[i]->GetComponentRotation();
 					AActor* Icon =GetWorld()->SpawnActor<AActor>(IconSubClass,
 						AllNodes[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),

@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// Copyright(c) 2023 Gabriel Forget. All Rights Reserved.
+
+#pragma once
 
 #include "CoreMinimal.h"
 #include "DebugHeader.h"

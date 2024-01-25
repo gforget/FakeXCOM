@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// Copyright(c) 2023 Gabriel Forget. All Rights Reserved.
+
+#pragma once
 inline void DebugScreen(const FString& Message, const FColor& Color)
 {
 	if (GEngine)

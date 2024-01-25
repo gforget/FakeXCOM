@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright(c) 2023 Gabriel Forget. All Rights Reserved.
 #if WITH_EDITOR
 
 #include "TilePathfinderManager.h"

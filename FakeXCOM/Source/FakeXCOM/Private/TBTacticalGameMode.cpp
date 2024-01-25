@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Copyright(c) 2023 Gabriel Forget. All Rights Reserved.
 
 #include "TBTacticalGameMode.h"
 #include "Kismet/GameplayStatics.h"

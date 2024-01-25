@@ -1,5 +1,7 @@
+// Copyright(c) 2023 Gabriel Forget. All Rights Reserved.
+
 #if WITH_EDITOR
-// Copyright Epic Games, Inc. All Rights Reserved.
+
 #pragma once
 
 #include "CoreMinimal.h"
