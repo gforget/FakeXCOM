@@ -41,6 +41,12 @@ public:
 	bool IsSlope;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Slope Property")
+	bool bIsVerticalSlope;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Slope Property", meta = (EditCondition = "bIsVerticalSlope"))
+	bool bIsFrontSlope;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Slope Property")
 	FVector TopSlopePosition;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Slope Property")

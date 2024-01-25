@@ -191,15 +191,19 @@ void UUI3DManager::SpawnDistanceIcons(TArray<UNodePath*> AllNodes, int Distance,
 				if (CornerToSpawn[j])
 				{
 					FRotator IconRotation = AllNodes[i]->GetComponentRotation();
-					IconRotation.Yaw = 0.0f;
-				
 					AActor* Icon =GetWorld()->SpawnActor<AActor>(IconSubClass,
 						AllNodes[i]->GetComponentLocation() + FVector(0.0f,0.0f,0.5f),
 						IconRotation);
-
+					
+					
+					float VerticalSlopeAdjustement = 0.0f;
+					if (Cast<ALevelBlock>(AllNodes[i]->GetOwner())->bIsVerticalSlope)
+					{
+						VerticalSlopeAdjustement = Cast<ALevelBlock>(AllNodes[i]->GetOwner())->bIsFrontSlope ? -90.0f : 90.0f;
+					}
+					
 					//0 = down, 90 = left, 180 = top, 270 = right
-					Icon->AddActorLocalRotation(FRotator(0.0f,90.0f + (90.0f*j),0.0f));
-				
+					Icon->AddActorLocalRotation(FRotator(0.0f,180.0f + VerticalSlopeAdjustement + (90.0f*j),0.0f));
 					AllPathDistance3DIcons.Add(Icon);
 				}
 			}
