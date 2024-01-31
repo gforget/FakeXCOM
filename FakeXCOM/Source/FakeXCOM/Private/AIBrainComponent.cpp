@@ -34,6 +34,15 @@ void UAIBrainComponent::BeginPlay()
 		for (int i=0; i<AllUMRows.Num(); i++)
 		{
 			OwningUnit->AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AllUMRows[i]->ActionAbility, 0, -1));
+			if (AllUMRows[i]->TargetType == EAIAbilityTargetType::NodePath)
+			{
+				TargetNodePath.Add(i, nullptr);
+			}
+
+			if (AllUMRows[i]->TargetType == EAIAbilityTargetType::Actor)
+			{
+				TargetActorIndex.Add(i, -1);
+			}
 		}
 	}
 }
@@ -71,27 +80,31 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 	
 	//Get the best action
 	float score = 0.0f;
-	int nextBestActionIndex = 0;
+	int nextBestActionIndex = -1;
 	bool bDebugScore = bLogActionScore;
 	
 	for (int i=0; i<AllUMRows.Num(); i++)
 	{
-		if (!AllUMRows[i]->IsEnabled) continue;
+		if (!AllUMRows[i]->IsEnabled)
+		{
+			continue;
+		} 
 		
 		//Check if you need a chosen node path first
 		if (AllUMRows[i]->TargetType == EAIAbilityTargetType::NodePath)
 		{
-			TargetNodePath = PickNodePath(AllUMRows[i]);
+			TargetNodePath[i] = PickNodePath(i, AllUMRows[i]);
 		}
 		
 		//Check if you need a target actor first
 		if (AllUMRows[i]->TargetType == EAIAbilityTargetType::Actor)
 		{
-			TargetActorIndex = PickTargetActor(AllUMRows[i]);
+			TargetActorIndex[i] = PickTargetActor(i, AllUMRows[i]);
 		}
 
 		//score the action next
-		float NewScore = ScoreAction(AllUMRows[i]->ActionConsiderations);
+		TArray<FString> DebugConsiderationString;
+		float NewScore = ScoreAction(i, AllUMRows[i]->ActionConsiderations, DebugConsiderationString);
 		if (NewScore > score)
 		{
 			nextBestActionIndex = i;
@@ -100,29 +113,49 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 
 		if (bDebugScore)
 		{
-			FString ScoreString = FString::Printf(TEXT("%.3f"), NewScore);
-			FString CompleteDebugString =  AllRowsName[i].ToString() + " : " + ScoreString;
-			DebugScreen(CompleteDebugString, FColor::Cyan);
+			FString AllDebugString =  AllRowsName[i].ToString() + " : " + FString::Printf(TEXT("%.3f"), NewScore);
+			for (int j=0; j<DebugConsiderationString.Num(); j++)
+			{
+				AllDebugString += "\n     " + DebugConsiderationString[j];
+			}
+			
+			DebugScreen(AllDebugString, FColor::Cyan);
+		}
+	}
+
+	if (nextBestActionIndex == -1)
+	{
+		for (int i=0; i<AllUMRows.Num(); i++)
+		{
+			if (AllUMRows[i]->IsDefaultAction)
+			{
+				nextBestActionIndex = i;
+				break;
+			}
 		}
 	}
 	
 	if (bDebugScore)
 	{
+		DebugScreen("Chosen Action : " + AllRowsName[nextBestActionIndex].ToString(), FColor::Cyan);
 		DebugScreen("------------", FColor::Cyan);
 	}
-	
+
+	ChosenActionIndex = nextBestActionIndex;
 	return AllUMRows[nextBestActionIndex]->ActionAbility; 
 }
 
-float UAIBrainComponent::ScoreAction(TArray<UConsideration*> Considerations)
+float UAIBrainComponent::ScoreAction(int ActionIndex, TArray<UConsideration*> Considerations, TArray<FString>& DebugStrings)
 {
 	float score = 1.0f;
 	
 	for (int i = 0; i < Considerations.Num(); i++) 
 	{
-		float considerationScore = Considerations[i]->ScoreConsideration(OwningUnit, OwningUnit->TBTacticalGameMode);
+		float considerationScore = Considerations[i]->ScoreConsideration(OwningUnit, ActionIndex, OwningUnit->TBTacticalGameMode);
 		score *= considerationScore;
 		
+		DebugStrings.Add(Considerations[i]->GetName() + " : " + FString::Printf(TEXT("%f"), considerationScore));
+
 		if (score == 0) 
 		{
 			return score; //no point computing further
@@ -140,7 +173,7 @@ float UAIBrainComponent::ScoreAction(TArray<UConsideration*> Considerations)
 	return score;
 }
 
-UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
+UNodePath* UAIBrainComponent::PickNodePath(int ActionIndex, FUtilityMatrixDT* UMRow)
 {
 	float score = 0.0f;
 	int  chosenNodeIndex = 0;
@@ -152,7 +185,7 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 	
 	for (int i=0; i<AllValidNode.Num(); i++)
 	{
-		float NewScore = ScoreNodePath(UMRow->TargetConsiderations, AllValidNode[i]);
+		float NewScore = ScoreNodePath(ActionIndex, UMRow->TargetConsiderations, AllValidNode[i]);
 		
 		//use r.DebugSafeZone.MaxDebugTextStringsPerActor 0 to extend the number of character you can see
 		if (bDebugNodeScore)
@@ -177,13 +210,14 @@ UNodePath* UAIBrainComponent::PickNodePath(FUtilityMatrixDT* UMRow)
 	return AllValidNode[chosenNodeIndex];
 }
 
-float UAIBrainComponent::ScoreNodePath(TArray<UConsideration*> Considerations, UNodePath* Node)
+float UAIBrainComponent::ScoreNodePath(int ActionIndex, TArray<UConsideration*> Considerations, UNodePath* Node)
 {
 	float score = 1.0f;
 	for (int i = 0; i < Considerations.Num(); i++) 
 	{
 		const float considerationScore = Considerations[i]->ScoreConsiderationNode(
 			OwningUnit,
+			ActionIndex,
 			OwningUnit->TBTacticalGameMode,
 			Node);
 		score *= considerationScore;
@@ -206,7 +240,7 @@ float UAIBrainComponent::ScoreNodePath(TArray<UConsideration*> Considerations, U
 	return score;
 }
 
-int UAIBrainComponent::PickTargetActor(FUtilityMatrixDT* UMRow)
+int UAIBrainComponent::PickTargetActor(int ActionIndex, FUtilityMatrixDT* UMRow)
 {
 	float score = 0.0f;
 	int  chosenActorIndex = -1;
@@ -216,7 +250,7 @@ int UAIBrainComponent::PickTargetActor(FUtilityMatrixDT* UMRow)
 	TArray<AActor*> AllTarget = TBTacticalGameMode->TargetManager->AllCurrentAvailableTarget;
 	for (int i=0; i<AllTarget.Num(); i++)
 	{
-		float NewScore = ScoreTargetActor(UMRow->TargetConsiderations, AllTarget[i]);
+		float NewScore = ScoreTargetActor(ActionIndex, UMRow->TargetConsiderations, AllTarget[i]);
 
 		//use r.DebugSafeZone.MaxDebugTextStringsPerActor 0 to extend the number of character you can see
 		if (bDebugTargetActorScore)
@@ -241,13 +275,14 @@ int UAIBrainComponent::PickTargetActor(FUtilityMatrixDT* UMRow)
 	return chosenActorIndex;
 }
 
-float UAIBrainComponent::ScoreTargetActor(TArray<UConsideration*> Considerations, AActor* Actor)
+float UAIBrainComponent::ScoreTargetActor(int ActionIndex, TArray<UConsideration*> Considerations, AActor* Actor)
 {
 	float score = 1.0f;
 	for (int i = 0; i < Considerations.Num(); i++) 
 	{
 		const float considerationScore = Considerations[i]->ScoreConsiderationActor(
 			OwningUnit,
+			ActionIndex,
 			OwningUnit->TBTacticalGameMode,
 			Actor);
 		score *= considerationScore;

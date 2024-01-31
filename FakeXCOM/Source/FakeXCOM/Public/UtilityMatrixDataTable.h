@@ -28,9 +28,12 @@ struct FUtilityMatrixDT : public FTableRowBase
 public:
 
 	FUtilityMatrixDT(){}
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
 	bool IsEnabled = true;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
+	bool IsDefaultAction = false;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
 	TSubclassOf<UAIAbility> ActionAbility;

@@ -28,14 +28,20 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:
-	
-	UPROPERTY(BlueprintReadOnly)
-	UNodePath* TargetNodePath;
 
 	UPROPERTY(BlueprintReadOnly)
-	int TargetActorIndex;
+	int ChosenActionIndex;
 	
+	UPROPERTY(BlueprintReadOnly)
+	TMap<int, UNodePath*> TargetNodePath;
+
+	UPROPERTY(BlueprintReadOnly)
+	TMap<int, int> TargetActorIndex;
+
+	UPROPERTY(BlueprintReadOnly, Category="Memorized Node")
 	TArray<UNodePath*> AllBaseDistanceNode;
+
+	UPROPERTY(BlueprintReadOnly, Category="Memorized Node")
 	TArray<UNodePath*> AllLongDistanceNode;
 	
 	UPROPERTY(EditDefaultsOnly)
@@ -50,14 +56,14 @@ public:
 	
 	TSubclassOf<UAIAbility> DecideBestAction();
 	
-	float ScoreAction(TArray<UConsideration*> Considerations);
+	float ScoreAction(int ActionIndex, TArray<UConsideration*> Considerations,  TArray<FString>& DebugStrings);
 	
-	UNodePath* PickNodePath(FUtilityMatrixDT* UMRow);
-	float ScoreNodePath(TArray<UConsideration*> Considerations, UNodePath* Node);
+	UNodePath* PickNodePath(int ActionIndex, FUtilityMatrixDT* UMRow);
+	float ScoreNodePath(int ActionIndex, TArray<UConsideration*> Considerations, UNodePath* Node);
 
-	int PickTargetActor(FUtilityMatrixDT* UMRow);
+	int PickTargetActor(int ActionIndex, FUtilityMatrixDT* UMRow);
 	
-	float ScoreTargetActor(TArray<UConsideration*> Considerations, AActor* Actor);
+	float ScoreTargetActor(int ActionIndex, TArray<UConsideration*> Considerations, AActor* Actor);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Debug Properties")
 	bool bLogActionScore = false;

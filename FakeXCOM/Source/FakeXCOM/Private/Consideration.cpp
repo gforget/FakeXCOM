@@ -10,17 +10,17 @@
 #include "TBTacticalGameMode.h"
 #include "TileMovementComponent.h"
 
-float UConsideration::ScoreConsideration_Implementation(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode)
+float UConsideration::ScoreConsideration_Implementation(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode)
 {
 	return 1.0f;
 }
 
-float UConsideration::ScoreConsiderationNode_Implementation(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode)
+float UConsideration::ScoreConsiderationNode_Implementation(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode)
 {
 	return 1.0f;
 }
 
-float UConsideration::ScoreConsiderationActor_Implementation(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode,
+float UConsideration::ScoreConsiderationActor_Implementation(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode,
 	AActor* TargetActor)
 {
 	return 1.0f;

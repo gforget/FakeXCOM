@@ -129,15 +129,41 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 {
 	TArray<AActor*> ReturnedTargets;
 	
-	//Get all Unit from the valid factions
+	TArray<int> AllValidUnitId = GetAllValidUnitIdFromFactionRelation(SeekingUnit, ValidFactionsRelation);
+	
+	//Validate Line of sight of each potential target
+	for (int i=0; i<AllValidUnitId.Num(); i++)
+	{
+		AUnit* PotentialTarget = TBTacticalGameMode->UnitManager->GetUnitFromId(AllValidUnitId[i]);
+		if (!ValidateTargetDeathFilter(PotentialTarget, DeadTargetFilter))
+		{
+			continue;
+		}
+		
+		if (ConfirmLineOfSightOnUnit(SeekingUnit,
+			PotentialTarget,
+			SeekingUnit->GetActorLocation(),
+			PotentialTarget->GetActorLocation(),
+			LineOfSightRange
+			))
+		{
+			ReturnedTargets.Add(Cast<AActor>(PotentialTarget));
+		}
+	}
+	
+	return ReturnedTargets;
+}
+
+TArray<int> UTargetManager::GetAllValidUnitIdFromFactionRelation(AUnit* SeekingUnit, TArray<TEnumAsByte<EFactionRelation>> ValidRelations)
+{
 	TArray<EFaction> AllValidFaction;
-	for (int i=0; i<ValidFactionsRelation.Num(); i++)
+	for (int i=0; i<ValidRelations.Num(); i++)
 	{
 		const TArray<EFaction> AllFaction = TBTacticalGameMode->FactionManagerComponent->AllFaction;
 		for (int j=0; j<AllFaction.Num(); j++)
 		{
 			EFaction CurrentFactionValue = AllFaction[j];
-			if (TBTacticalGameMode->FactionManagerComponent->GetFactionRelation(SeekingUnit->Faction, CurrentFactionValue) == ValidFactionsRelation[i])
+			if (TBTacticalGameMode->FactionManagerComponent->GetFactionRelation(SeekingUnit->Faction, CurrentFactionValue) == ValidRelations[i])
 			{
 				AllValidFaction.Add(CurrentFactionValue);
 			}
@@ -149,44 +175,31 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	{
 		AllValidUnitId.Append(TBTacticalGameMode->UnitManager->GetAllUnitsIdFromFactions(AllValidFaction[i]));
 	}
-	
-	//Validate Line of sight of each potential target
-	for (int i=0; i<AllValidUnitId.Num(); i++)
+
+	return AllValidUnitId;
+}
+
+bool UTargetManager::ValidateTargetDeathFilter(AUnit* PotentialTarget, TEnumAsByte<EDeadTargetFilter> DeadTargetFilter)
+{
+	switch(DeadTargetFilter)
 	{
-		AUnit* PotentialTarget = TBTacticalGameMode->UnitManager->GetUnitFromId(AllValidUnitId[i]);
-
-		switch(DeadTargetFilter)
-		{
-			case EDeadTargetFilter::NoDeadTarget:
-				if (PotentialTarget->GetIsDead())
-				{
-					continue;
-				} 
+		case EDeadTargetFilter::NoDeadTarget:
+			if (PotentialTarget->GetIsDead())
+			{
+				return false;
+			} 
 			break;
-
-			case EDeadTargetFilter::OnlyDeadTarget:
-				if (!PotentialTarget->GetIsDead())
-				{
-					continue;
-				}
+		
+		case EDeadTargetFilter::OnlyDeadTarget:
+			if (!PotentialTarget->GetIsDead())
+			{
+				return false;
+			}
 			break;
-			default: ;
-		}
-
-		if (ConfirmLineOfSightOnUnit(SeekingUnit,
-			PotentialTarget,
-			SeekingUnit->GetActorLocation(),
-			PotentialTarget->GetActorLocation(),
-			LineOfSightRange
-			))
-		{
-			ReturnedTargets.Add(Cast<AActor>(PotentialTarget));
-		}
+		default: ;
 	}
 
-	return ReturnedTargets;
-	
-	//TODO: later do the same thing with interactible object when they are available
+	return true;
 }
 
 bool UTargetManager::ConfirmLineOfSightOnUnit(

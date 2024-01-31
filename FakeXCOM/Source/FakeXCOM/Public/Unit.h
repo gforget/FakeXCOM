@@ -90,7 +90,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Unit Properties")
 	TEnumAsByte<EFaction> Faction = EFaction::XCOM;
 
-	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Unit Properties")
 	float ZGroundOffset = 88.0f;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")

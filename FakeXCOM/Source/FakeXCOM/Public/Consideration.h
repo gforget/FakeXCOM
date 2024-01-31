@@ -17,13 +17,13 @@ class FAKEXCOM_API UConsideration : public UPrimaryDataAsset
 public:
 	
 	UFUNCTION(BlueprintNativeEvent, Category = "Main Functions")
-	float ScoreConsideration(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode);
+	float ScoreConsideration(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Main Functions")
-	float ScoreConsiderationNode(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode);
+	float ScoreConsiderationNode(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Main Functions")
-	float ScoreConsiderationActor(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode, AActor* TargetActor);
+	float ScoreConsiderationActor(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode, AActor* TargetActor);
 
 	//Node consideration function
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")

@@ -67,6 +67,12 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Main Functions")
 	AActor* GetTargetFromIndex(int TargetIndex);
 
+	UFUNCTION(BlueprintPure, Category = "Main Functions")
+	TArray<int> GetAllValidUnitIdFromFactionRelation(AUnit* SeekingUnit, TArray<TEnumAsByte<EFactionRelation>> ValidRelations);
+	
+	UFUNCTION(BlueprintCallable, Category = "Main Functions")
+	bool ValidateTargetDeathFilter(AUnit* PotentialTarget, TEnumAsByte<EDeadTargetFilter> DeadTargetFilter);
+	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
 	TArray<AActor*> GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility* UnitAbility);
 
