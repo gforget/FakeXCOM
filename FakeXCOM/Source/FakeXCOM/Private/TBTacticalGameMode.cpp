@@ -1,20 +1,21 @@
 ﻿// Copyright(c) 2023 Gabriel Forget. All Rights Reserved.
 
 #include "TBTacticalGameMode.h"
-#include "Kismet/GameplayStatics.h"
-#include "LevelBlock.h"
-#include "LevelUI.h"
-#include "MouseSceneSelectionComponent.h"
-#include "NodePath.h"
-#include "TargetManager.h"
-#include "TBTacticalMainController.h"
-#include "TilePathFinder.h"
-#include "TurnManager.h"
-#include "UI3DManager.h"
-#include "Unit.h"
-#include "UnitAbilityManager.h"
-#include "UnitManager.h"
+
+#include "ActorsObject/LevelBlock.h"
+#include "ActorsObject/Unit.h"
 #include "Blueprint/UserWidget.h"
+#include "Controller/MouseSceneSelectionComponent.h"
+#include "Controller/TBTacticalMainController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Managers/TargetManager.h"
+#include "Managers/TurnManager.h"
+#include "Managers/UI3DManager.h"
+#include "Managers/UnitAbilityManager.h"
+#include "Managers/UnitManager.h"
+#include "Pathfinder/NodePath.h"
+#include "Pathfinder/TilePathFinder.h"
+#include "UI/LevelUI.h"
 
 ATBTacticalGameMode::ATBTacticalGameMode()
 {

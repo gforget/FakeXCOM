@@ -1,11 +1,12 @@
 ﻿// Copyright(c) 2023 Gabriel Forget. All Rights Reserved.
 
 #pragma once
-
-#include "LevelBlock.h"
 #include "CoreMinimal.h"
+
+#include "ActorsObject/LevelBlock.h"
 #include "GameFramework/GameModeBase.h"
-#include "LevelUI.h"
+#include "UI/LevelUI.h"
+
 #include "TBTacticalGameMode.generated.h"
 
 class ATBTacticalMainController;

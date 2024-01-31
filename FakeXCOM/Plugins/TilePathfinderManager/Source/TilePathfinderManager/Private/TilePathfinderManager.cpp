@@ -3,12 +3,13 @@
 
 #include "TilePathfinderManager.h"
 
-#include "DebugHeader.h"
-#include "LevelBlock.h"
 #include "LevelEditor.h"
-#include "NodePath.h"
+
+#include "ActorsObject/LevelBlock.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Pathfinder/NodePath.h"
+#include "Utility/DebugHeader.h"
 
 #define LOCTEXT_NAMESPACE "FTilePathfinderManagerModule"
 
