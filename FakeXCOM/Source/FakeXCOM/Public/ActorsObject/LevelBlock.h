@@ -70,6 +70,12 @@ public:
 	UPROPERTY()
 	UArrowComponent* ArrowComponent = nullptr;
 
+	UPROPERTY()
+	TMap<int, UNodePath*> AttachedNodePath;
+	
+	UPROPERTY()
+	TMap<int, FVector> AttachedNodePathPosition;
+	
 	void GenerateNodePathPositionVisualisation(UWorld* World, bool bFlushDebugLine = true);
 
 private:

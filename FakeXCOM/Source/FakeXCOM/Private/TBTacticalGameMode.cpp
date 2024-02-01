@@ -73,16 +73,19 @@ void ATBTacticalGameMode::BeginPlay()
 		{
 			if (const ALevelBlock* LevelBlockPtr = Cast<ALevelBlock>(AllActors[i]))
 			{
-				TArray<UNodePath*> AllNodePaths;
-				LevelBlockPtr->GetComponents<UNodePath>(AllNodePaths);
-				
 				if (LevelBlockPtr->bIsSpawningPosition)
 				{
 					for (int j=0; j<LevelBlockPtr->SpawningNodePathIndexes.Num(); j++)
 					{
-						const UNodePath* StartingNodePtr = AllNodePaths[LevelBlockPtr->SpawningNodePathIndexes[j]];
+						if (LevelBlockPtr->SpawningNodePathIndexes[j] >= LevelBlockPtr->AttachedNodePath.Num() || LevelBlockPtr->SpawningNodePathIndexes[j] < 0)
+						{
+							DebugScreen("StartingPosition of " + LevelBlockPtr->GetName() + "is to low or to high", FColor::Red);
+							continue;
+						}
 						
-						if (LevelBlockPtr->UnitClasses[j] && j < LevelBlockPtr->SpawningRotation.Num())
+						const UNodePath* StartingNodePtr = LevelBlockPtr->AttachedNodePath[LevelBlockPtr->SpawningNodePathIndexes[j]];
+						
+						if (LevelBlockPtr->UnitClasses[j] && j < LevelBlockPtr->SpawningNodePathIndexes.Num())
 						{
 							CurrentIdUnit++;
 							AUnit* UnitPtr = GetWorld()->SpawnActor<AUnit>(LevelBlockPtr->UnitClasses[j],
@@ -109,28 +112,30 @@ void ATBTacticalGameMode::BeginPlay()
 						}
 					}
 				}
-				
-				//Set Top and Bottom position
-				for (int j=0; j<AllNodePaths.Num(); j++)
+
+				for (const TPair<int, UNodePath*>& Pair : LevelBlockPtr->AttachedNodePath)
 				{
-					if (AllNodePaths[j]->GetComponentLocation().X > TopPosition.X)
+					int Key = Pair.Key;
+					UNodePath* CurrentNode = Pair.Value;
+					
+					if (CurrentNode->GetComponentLocation().X > TopPosition.X)
 					{
-						TopPosition.X = AllNodePaths[j]->GetComponentLocation().X;
+						TopPosition.X = CurrentNode->GetComponentLocation().X;
 					}
 						
-					if (AllNodePaths[j]->GetComponentLocation().Y > TopPosition.Y)
+					if (CurrentNode->GetComponentLocation().Y > TopPosition.Y)
 					{
-						TopPosition.Y = AllNodePaths[j]->GetComponentLocation().Y;
+						TopPosition.Y = CurrentNode->GetComponentLocation().Y;
 					}
 						
-					if (AllNodePaths[j]->GetComponentLocation().X < BottomPosition.X)
+					if (CurrentNode->GetComponentLocation().X < BottomPosition.X)
 					{
-						BottomPosition.X = AllNodePaths[j]->GetComponentLocation().X;
+						BottomPosition.X = CurrentNode->GetComponentLocation().X;
 					}
 						
-					if (AllNodePaths[j]->GetComponentLocation().Y < BottomPosition.Y)
+					if (CurrentNode->GetComponentLocation().Y < BottomPosition.Y)
 					{
-						BottomPosition.Y = AllNodePaths[j]->GetComponentLocation().Y;
+						BottomPosition.Y = CurrentNode->GetComponentLocation().Y;
 					}
 				}
 			}

@@ -94,10 +94,10 @@ void ALevelBlock::ActivateArrowComponent()
 	{
 		for (int i=0; i<SpawningNodePathIndexes.Num(); i++)
 		{
-			if (SpawningNodePathIndexes[i] < NodePathPositions.Num())
+			if (SpawningNodePathIndexes[i] < AttachedNodePathPosition.Num() && SpawningNodePathIndexes[i] >= 0)
 			{
 				ArrowComponent->SetVisibility(true);
-				FVector ArrowPosition = NodePathPositions[SpawningNodePathIndexes[i]];
+				FVector ArrowPosition = AttachedNodePathPosition[SpawningNodePathIndexes[i]];
 				ArrowPosition.Z += 100.0f;
 				ArrowComponent->SetRelativeLocation(ArrowPosition);
 				ArrowComponent->SetRelativeRotation(FRotator(-90.0f,0.0f,0.0f));

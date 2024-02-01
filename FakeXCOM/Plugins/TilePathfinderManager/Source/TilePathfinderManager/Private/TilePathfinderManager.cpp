@@ -85,6 +85,7 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 		{
 			if (ALevelBlock* LevelBlock = Cast<ALevelBlock>(AllActors[i]))
 			{
+				int NodePathIndex = 0;
 				for (int j=0; j<LevelBlock->NodePathPositions.Num(); j++)
 				{
 					//Check if there is no block on top of the block
@@ -100,7 +101,7 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 						if (UClass* ComponentClass = UNodePath::StaticClass())
 						{
 							FString name = "NodePath Component ";
-							name.Append(FString::FromInt(j));
+							name.Append(FString::FromInt(NodePathIndex));
 							
 							UNodePath* NodePathComponent = NewObject<UNodePath>(LevelBlock, FName(name));
 							NodePathComponent->IdNode = CurrentNodeId;
@@ -108,8 +109,13 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 							LevelBlock->AddInstanceComponent(NodePathComponent);
 							NodePathComponent->SetWorldLocation(LevelBlock->GetActorLocation() + LevelBlock->NodePathPositions[j]);
 							NodePathComponent->RegisterComponent();
-							
+
+							// this index is for locating the nodepath localy on the block
+							LevelBlock->AttachedNodePath.Add(NodePathIndex, NodePathComponent);
+							LevelBlock->AttachedNodePathPosition.Add(NodePathIndex, LevelBlock->NodePathPositions[j]); 
 							AllNodePathGenerated.Add(NodePathComponent);
+
+							NodePathIndex++;
 							CurrentNodeId++;
 						}
 					}
