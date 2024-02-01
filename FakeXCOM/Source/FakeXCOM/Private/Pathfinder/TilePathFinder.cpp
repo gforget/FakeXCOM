@@ -150,6 +150,12 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 		for (int i = 0; i<current->AllConnectedNeighbours.Num(); i++)
 		{
 			UNodePath* next = current->AllConnectedNeighbours[i];
+			if (!next)
+			{
+				DebugScreen("Current node"+ current->GetName() +" neighbour " + FString::FromInt(i) + "is Null, please regenerate the pathfinding graph", FColor::Red);
+				continue;
+			}
+			
 			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllConnectedNeighboursBaseCost[i]*next->WeightCost;
 			const int new_step = GetStepFromStepSoFar(step_so_far, current->IdNode) + 1;
 			if (lowestNewStep == -1) lowestNewStep = new_step;

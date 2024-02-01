@@ -117,6 +117,12 @@ void ATBTacticalGameMode::BeginPlay()
 				{
 					int Key = Pair.Key;
 					UNodePath* CurrentNode = Pair.Value;
+
+					if (!CurrentNode)
+					{
+						DebugScreen("Current node"+ LevelBlockPtr->GetName() +" is Null, please regenerate the pathfinding graph", FColor::Red);
+						continue;
+					}
 					
 					if (CurrentNode->GetComponentLocation().X > TopPosition.X)
 					{

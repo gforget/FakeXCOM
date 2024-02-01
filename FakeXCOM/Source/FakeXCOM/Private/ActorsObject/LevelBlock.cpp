@@ -4,6 +4,7 @@
 #include "Components/ArrowComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Pathfinder/NodePath.h"
+#include "Utility/DebugHeader.h"
 
 // Sets default values
 ALevelBlock::ALevelBlock()
@@ -101,6 +102,10 @@ void ALevelBlock::ActivateArrowComponent()
 				ArrowPosition.Z += 100.0f;
 				ArrowComponent->SetRelativeLocation(ArrowPosition);
 				ArrowComponent->SetRelativeRotation(FRotator(-90.0f,0.0f,0.0f));
+			}
+			else
+			{
+				DebugScreen("Node not included in the pathfinder, generate the node graph first to spawn soldier", FColor::Red);
 			}
 		}
 	}

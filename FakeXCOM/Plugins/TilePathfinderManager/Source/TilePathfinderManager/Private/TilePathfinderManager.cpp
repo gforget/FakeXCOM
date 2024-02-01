@@ -76,6 +76,9 @@ void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 					AllNodePaths[j]->UnregisterComponent();
 					AllNodePaths[j]->DestroyComponent();
 				}
+				
+				LevelBlock->AttachedNodePath.Empty();
+				LevelBlock->AttachedNodePathPosition.Empty();
 			}
 		}
 		
