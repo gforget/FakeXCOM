@@ -22,7 +22,6 @@ private:
 	
 	UFUNCTION()
 	void OnActorSelected(const TArray<UObject*>& objectsSelected, bool value);
-
 };
 
 #endif

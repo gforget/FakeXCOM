@@ -1,9 +1,11 @@
 // Copyright(c) 2023 Gabriel Forget. All Rights Reserved.
-#if WITH_EDITOR
 
+
+#if WITH_EDITOR
 #include "TilePathfinderManager.h"
 
 #include "LevelEditor.h"
+#include "Selection.h"
 
 #include "ActorsObject/LevelBlock.h"
 #include "Kismet/GameplayStatics.h"
@@ -30,7 +32,6 @@ void FTilePathfinderManagerModule::StartupModule()
 
 	//UI for selecting level block
 	LevelEditorModule.OnActorSelectionChanged().AddRaw(this, &FTilePathfinderManagerModule::OnActorSelected);
-	
 }
 
 void FTilePathfinderManagerModule::AddMenu(FMenuBarBuilder& MenuBuilder)
@@ -54,6 +55,8 @@ void FTilePathfinderManagerModule::FillMenu(FMenuBuilder& MenuBuilder)
 
 void FTilePathfinderManagerModule::OnPathfinderMenuButtonClicked()
 {
+	GEditor->GetSelectedActors()->DeselectAll(); //prevent crashing from selecting a node path while generating new one
+	
 	int CurrentNodeId = 0;
 	TArray<AActor*> AllActors;
 	UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();

@@ -6,7 +6,7 @@ inline void DebugScreen(const FString& Message, const FColor& Color)
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 8.0f, Color, Message);
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
 }
 
