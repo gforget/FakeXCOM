@@ -28,6 +28,24 @@ void ATBTacticalGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (!MainController)
+	{
+		DebugScreen("No Main Controller found in the level", FColor::Red);
+		return;
+	}
+	
+	//For some reason, assigning pointer generated here on other object result on them being deleted or not recognise later
+	TArray<AActor*> AllActors;
+
+#if WITH_EDITOR
+	const UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
+	
+#else
+	const UWorld* WorldPtr = GetWorld();
+#endif
+	
+	UGameplayStatics::GetAllActorsOfClass(WorldPtr,AActor::StaticClass(),AllActors);
+	
 	//Setup LevelUI
 	if (LevelUIClass)
 	{
@@ -51,18 +69,19 @@ void ATBTacticalGameMode::BeginPlay()
 	TargetManager->Initialize(this);
 	UI3DManagerComponent->Initialize();
 	LevelUIRef->Initialization();
-	
-	//For some reason, assigning pointer generated here on other object result on them being deleted or not recognise later
-	TArray<AActor*> AllActors;
 
-#if WITH_EDITOR
-	const UWorld* WorldPtr = GEditor->GetEditorWorldContext().World();
-#else
-	const UWorld* WorldPtr = GetWorld();
-#endif
-	
-	UGameplayStatics::GetAllActorsOfClass(WorldPtr,AActor::StaticClass(),AllActors);
 
+	TMap<EFaction, bool> ActiveFactions;
+	TArray<TEnumAsByte<EFaction>> FactionTurnOrder = TurnManagerComponent->FactionTurnOrder;
+
+	for (int i=0; i<FactionTurnOrder.Num(); i++)
+	{
+		if (!ActiveFactions.Contains(FactionTurnOrder[i]))
+		{
+			ActiveFactions.Add(FactionTurnOrder[i],false);
+		}
+	}
+	
 	int FirstUnitToSelectId = -1;
 	if (WorldPtr && AllActors.Num() > 0)
 	{
@@ -92,6 +111,11 @@ void ATBTacticalGameMode::BeginPlay()
 								StartingNodePtr->GetComponentLocation() + FVector(0.0f,0.0f,88.0f),
 								FRotator(0.0f, LevelBlockPtr->SpawningRotation[j], 0.0f))
 							;
+
+							if (ActiveFactions.Contains(UnitPtr->Faction))
+							{
+								ActiveFactions[UnitPtr->Faction] = true;
+							}
 							
 							UnitPtr->IdUnit = CurrentIdUnit;
 							
@@ -120,7 +144,7 @@ void ATBTacticalGameMode::BeginPlay()
 
 					if (!CurrentNode)
 					{
-						DebugScreen("Current node"+ LevelBlockPtr->GetName() +" is Null, please regenerate the pathfinding graph", FColor::Red);
+						DebugScreen("Current node on "+ LevelBlockPtr->GetName() +" is Null, please regenerate the pathfinding graph", FColor::Red);
 						continue;
 					}
 					
@@ -145,6 +169,16 @@ void ATBTacticalGameMode::BeginPlay()
 					}
 				}
 			}
+		}
+		
+		TArray<bool>ValidationArray;
+		ActiveFactions.GenerateValueArray(ValidationArray);
+		
+		if (ValidationArray.Contains(false))
+		{
+			DebugScreen("Not every faction represented, please make sure that at least one unit from active faction are spawned", FColor::Red);
+			MainController->DisableController(true);
+			return;
 		}
 		
 		bInitialized = true;

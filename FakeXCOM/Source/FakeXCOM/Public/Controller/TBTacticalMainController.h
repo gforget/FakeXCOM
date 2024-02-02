@@ -76,7 +76,10 @@ public:
 	bool bForceCameraLock = false;
 
 	UPROPERTY()
-	bool AICameraLock = false;
+	bool bAICameraLock = false;
+
+	UPROPERTY()
+	bool bControlDisable = false;
 	
 	void SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent);
 	void FollowActor(AActor* TargetActor);
@@ -104,7 +107,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Camera Functions")
 	void MoveCameraHeight(int CameraHeightIndex);
-	
+
+	void DisableController(bool Val);
 private:
 	
 	UPROPERTY()

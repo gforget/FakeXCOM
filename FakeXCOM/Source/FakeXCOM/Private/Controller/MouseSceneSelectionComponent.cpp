@@ -28,7 +28,6 @@ void UMouseSceneSelectionComponent::BeginPlay()
 	}
 	
 	TBTacticalGameMode = GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
-	TBTacticalGameMode->MainController = Cast<ATBTacticalMainController>(GetOwner());
 	SetComponentTickEnabled (false);
 }
 
@@ -74,6 +73,7 @@ void UMouseSceneSelectionComponent::TickComponent(float DeltaTime, ELevelTick Ti
 
 void UMouseSceneSelectionComponent::LeftClickSelection()
 {
+	if (TBTacticalGameMode->MainController->bControlDisable) return;
 	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->Faction]
 	== EAssignedController::AIController)
 	{
@@ -86,6 +86,7 @@ void UMouseSceneSelectionComponent::LeftClickSelection()
 
 void UMouseSceneSelectionComponent::RightClickSelection()
 {
+	if (TBTacticalGameMode->MainController->bControlDisable) return;
 	if (TBTacticalGameMode->FactionManagerComponent->FactionsController[TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit()->Faction]
 	== EAssignedController::AIController)
 	{
