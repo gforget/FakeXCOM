@@ -77,16 +77,16 @@ public:
 	UAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
-	TArray<int> DefaultAbilitiesIndexes;
+	FString DefaultAbilityId = "Shoot";
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> OwnedAbilitiesClasses;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
-	TArray<FGameplayAbilitySpecHandle> OwnedAbilitiesHandle;
+	TMap<FString, FGameplayAbilitySpecHandle> OwnedAbilitiesHandle;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
-	TArray<UUnitAbility*> OwnedAbilities;
+	TMap<FString, UUnitAbility*> OwnedAbilities;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Unit Properties")
 	TEnumAsByte<EFaction> Faction = EFaction::XCOM;
@@ -173,6 +173,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void DestroyCapsule();
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	bool TryActivateAbilityByID(FString AbilityID, bool ForceActivation = false);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	bool CheckAbilityById(FString AbilityID);
 	
 private:
 
@@ -184,4 +190,5 @@ private:
 	UUnitAbility* GetAbilityFromHandle(FGameplayAbilitySpecHandle AbilityHandle) const;
 
 	void MovementActionCost(const UNodePath* Destination);
+	
 };

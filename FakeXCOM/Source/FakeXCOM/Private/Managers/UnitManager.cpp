@@ -111,9 +111,9 @@ AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 	}
 	
 	//the ability cannot subscribe to the event, have to manually call the event
-	for(int i=0; i<SelectedUnit->OwnedAbilities.Num(); i++)
+	for (const TPair<FString, UUnitAbility*> Pair : SelectedUnit->OwnedAbilities)
 	{
-		SelectedUnit->OwnedAbilities[i]->OnUnitSelected(SelectedUnit->IdUnit);
+		SelectedUnit->OwnedAbilities[Pair.Key]->OnUnitSelected(SelectedUnit->IdUnit);
 	}
 
 	OnUnitSelectedEvent.Broadcast(SelectedUnit);

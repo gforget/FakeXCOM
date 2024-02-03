@@ -24,7 +24,7 @@ public:
 	AUnit* UnitRef;
 	
 	UPROPERTY(BlueprintReadWrite)
-	FGameplayAbilitySpecHandle AbilityHandle;
+	FString AbilityID;
 	
 	UFUNCTION()
 	void OnClick();

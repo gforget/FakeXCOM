@@ -8,6 +8,7 @@
 #include "ActorsObject/Unit.h"
 #include "GameplayAbilities/UnitAbility.h"
 #include "Managers/UnitAbilityManager.h"
+#include "Utility/DebugHeader.h"
 
 UActivateAbilityButton::UActivateAbilityButton()
 {
@@ -16,9 +17,16 @@ UActivateAbilityButton::UActivateAbilityButton()
 
 void UActivateAbilityButton::OnClick()
 {
-	if (UnitRef && !UnitRef->TBTacticalGameMode->UnitAbilityManager->CurrentSelectedAbility->GetIsDisabled(UnitRef))
+	if (UnitRef)
 	{
-		UnitRef->TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
-		UnitRef->AbilitySystemComponent->TryActivateAbility(AbilityHandle);
+		if (UnitRef->CheckAbilityById(AbilityID))
+		{
+			UnitRef->TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
+			UnitRef->TryActivateAbilityByID(AbilityID, true);
+		}
+		else
+		{
+			DebugScreen(AbilityID +" cannot be activated for some reason", FColor::Red);
+		}
 	}
 }

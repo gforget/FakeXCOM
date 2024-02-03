@@ -23,11 +23,8 @@ void UTargetButton::OnClick()
 	{
 		if (SelectDefaultAbility)
 		{
-			AUnit* SelectedUnit = TBTacticalGameModePtr->UnitManager->GetCurrentlySelectedUnit();
-			UUnitAbility* DefaultAbility = SelectedUnit->OwnedAbilities[SelectedUnit->DefaultAbilitiesIndexes[0]];
-			const FGameplayAbilitySpecHandle DefaultAbilityHandle = SelectedUnit->OwnedAbilitiesHandle[SelectedUnit->DefaultAbilitiesIndexes[0]];
-			
-			TBTacticalGameModePtr->UnitAbilityManager->ActivateAbilitySelectionMode(DefaultAbility, DefaultAbilityHandle);
+			const AUnit* SelectedUnit = TBTacticalGameModePtr->UnitManager->GetCurrentlySelectedUnit();
+			TBTacticalGameModePtr->UnitAbilityManager->ActivateAbilitySelectionMode(SelectedUnit->DefaultAbilityId);
 		}
 		
 		TBTacticalGameModePtr->TargetManager->SelectTarget(TargetActorIndex);

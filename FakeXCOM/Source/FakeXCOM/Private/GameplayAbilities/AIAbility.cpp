@@ -2,7 +2,10 @@
 
 
 #include "GameplayAbilities//AIAbility.h"
+
+#include "AbilitySystemComponent.h"
 #include "TBTacticalGameMode.h"
+#include "GameplayAbilities/UnitAbility.h"
 
 ATBTacticalGameMode* UAIAbility::GetTBTacticalGameMode()
 {

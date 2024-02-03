@@ -23,12 +23,9 @@ public:
 	FAbilitySelectionModeChangeEvent OnAbilitySelectionModeChangeEvent;
 	
 	UPROPERTY(BlueprintReadOnly)
-	UUnitAbility* CurrentSelectedAbility;
+	FString CurrentSelectedAbilityID;
 
-	UPROPERTY(BlueprintReadOnly)
-	FGameplayAbilitySpecHandle CurrentSelectedAbilityHandle;
-
-	void ActivateAbilitySelectionMode(UUnitAbility* CurrentSelectedAbilityArg, FGameplayAbilitySpecHandle CurrentSelectedAbilityHandleArg);
+	void ActivateAbilitySelectionMode(FString CurrentSelectedAbilityID);
 	void DeactivateAbilitySelectionMode();
 	
 	bool GetAbilitySelectionMode();

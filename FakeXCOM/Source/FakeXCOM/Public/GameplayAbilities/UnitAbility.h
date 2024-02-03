@@ -101,6 +101,9 @@ public :
 	UTexture2D* ButtonImage;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	FString AbilityId;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	FString AbilityName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
@@ -111,23 +114,23 @@ public :
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	bool bIsAOE = false;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
-	TEnumAsByte<EAbilityRange> AbilityRange;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	TEnumAsByte<ETargetType> TargetType;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "TargetType != ETargetType::Self"), Category = "Ability Properties")
+	TEnumAsByte<EAbilityRange> AbilityRange;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "TargetType != ETargetType::Self"), Category = "Ability Properties")
 	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter = NoDeadTarget;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "TargetType != ETargetType::Self"), Category = "Ability Properties")
 	TArray<TEnumAsByte<EFactionRelation>> ValidTargetFactionRelation;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "TargetType != ETargetType::Self"), Category = "Ability Properties")
 	bool bUseDynamicRange;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "!bUseDynamicRange"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "TargetType != ETargetType::Self && !bUseDynamicRange"), Category = "Ability Properties")
 	float RangeValue;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")

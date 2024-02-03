@@ -208,9 +208,11 @@ void AUnit::Initialize()
 		for (int i=0; i<OwnedAbilitiesClasses.Num();i++)
 		{
 			const FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(OwnedAbilitiesClasses[i], 0, -1));
+
 			UUnitAbility* CurrentAbility = GetAbilityFromHandle(Handle);
-			OwnedAbilities.Add(CurrentAbility);
-			OwnedAbilitiesHandle.Add(Handle);
+			OwnedAbilities.Add(CurrentAbility->AbilityId, CurrentAbility);
+			OwnedAbilitiesHandle.Add(CurrentAbility->AbilityId, Handle);
+			
 			CurrentAbility->OnAbilityAssigned(TBTacticalGameMode, IdUnit);
 		}
 	}
@@ -341,3 +343,37 @@ void AUnit::MovementActionCost(const UNodePath* Destination)
 	UnitAttributeSet->SetActions(UnitAttributeSet->GetActions()-ActionCost);
 }
 
+bool AUnit::TryActivateAbilityByID(FString AbilityID, bool ForceActivation)
+{
+	if (ForceActivation)
+	{
+		GetAbilitySystemComponent()->TryActivateAbility(OwnedAbilitiesHandle[AbilityID]);
+		return true;
+	}
+	
+	if (CheckAbilityById(AbilityID))
+	{
+		GetAbilitySystemComponent()->TryActivateAbility(OwnedAbilitiesHandle[AbilityID]);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool AUnit::CheckAbilityById(FString AbilityID)
+{
+	UUnitAbility* AbilityToActivate = OwnedAbilities[AbilityID];
+	if (!AbilityToActivate)
+	{
+		return false;
+	}
+
+	if (AbilityToActivate->GetIsDisabled(this) || AbilityToActivate->GetIsHidden(this))
+	{
+		return false;
+	}
+
+	return true;
+}

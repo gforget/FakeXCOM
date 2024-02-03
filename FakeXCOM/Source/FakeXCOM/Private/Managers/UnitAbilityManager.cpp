@@ -2,13 +2,9 @@
 
 #include "Managers/UnitAbilityManager.h"
 
-void UUnitAbilityManager::ActivateAbilitySelectionMode(
-	UUnitAbility* CurrentSelectedAbilityArg,
-	FGameplayAbilitySpecHandle CurrentSelectedAbilityHandleArg
-	)
+void UUnitAbilityManager::ActivateAbilitySelectionMode(FString CurrentSelectedAbilityIDArg)
 {
-	CurrentSelectedAbility = CurrentSelectedAbilityArg;
-	CurrentSelectedAbilityHandle = CurrentSelectedAbilityHandleArg;
+	CurrentSelectedAbilityID = CurrentSelectedAbilityIDArg;
 	
 	bAbilitySelectionMode = true;
 	OnAbilitySelectionModeChangeEvent.Broadcast(bAbilitySelectionMode);
