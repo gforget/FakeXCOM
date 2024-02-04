@@ -355,14 +355,12 @@ bool AUnit::TryActivateAbilityByID(FString AbilityID, bool ForceActivation)
 {
 	if (ForceActivation)
 	{
-		GetAbilitySystemComponent()->TryActivateAbility(OwnedAbilitiesHandle[AbilityID]);
-		return true;
+		return GetAbilitySystemComponent()->TryActivateAbility(OwnedAbilitiesHandle[AbilityID]);
 	}
 	
 	if (CheckAbilityById(AbilityID))
 	{
-		GetAbilitySystemComponent()->TryActivateAbility(OwnedAbilitiesHandle[AbilityID]);
-		return true;
+		return GetAbilitySystemComponent()->TryActivateAbility(OwnedAbilitiesHandle[AbilityID]);
 	}
 	else
 	{
@@ -372,6 +370,11 @@ bool AUnit::TryActivateAbilityByID(FString AbilityID, bool ForceActivation)
 
 bool AUnit::CheckAbilityById(FString AbilityID)
 {
+	if (!OwnedAbilities.Contains(AbilityID))
+	{
+		return false;
+	}
+	
 	UUnitAbility* AbilityToActivate = OwnedAbilities[AbilityID];
 	if (!AbilityToActivate)
 	{
@@ -382,6 +385,6 @@ bool AUnit::CheckAbilityById(FString AbilityID)
 	{
 		return false;
 	}
-
+	
 	return true;
 }

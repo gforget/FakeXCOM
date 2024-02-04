@@ -7,6 +7,7 @@
 
 #include "Controller/TBTacticalMainController.h"
 #include "GameplayAbilities/UnitAbility.h"
+#include "Utility/DebugHeader.h"
 
 void UTargetManager::Initialize(ATBTacticalGameMode* TBTacticalGameModeRef)
 {
@@ -27,7 +28,13 @@ void UTargetManager::SelectTarget(int TargetIndex)
 
 AActor* UTargetManager::GetCurrentlySelectedTarget()
 {
-	return AllCurrentAvailableTarget[SelectedTargetIndex];
+	if (SelectedTargetIndex != -1)
+	{
+		return AllCurrentAvailableTarget[SelectedTargetIndex];
+	}
+	
+	DebugScreen("There is no currently selected target", FColor::Red);
+	return nullptr;
 }
 
 void UTargetManager::SelectNextTarget()

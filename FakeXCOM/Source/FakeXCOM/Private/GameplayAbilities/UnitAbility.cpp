@@ -163,7 +163,7 @@ void UUnitAbility::RotateTowardTarget(AUnit* Unit, AActor* Target)
 void UUnitAbility::SetTargets_Implementation(int IdUnit)
 {
 	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	if (TBTacticalGameMode)
+	if (GetTBTacticalGameMode())
 	{
 		UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets.Empty();
 		UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances.Empty();

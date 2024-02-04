@@ -68,7 +68,11 @@ void UAIBrainComponent::OnUnitSelected(AUnit* Unit)
 
 void UAIBrainComponent::DecideActionTimerFunction()
 {
-	OwningUnit->AbilitySystemComponent->TryActivateAbilityByClass(DecideBestAction());
+	TSubclassOf<UAIAbility> ChosenAbility = DecideBestAction();
+	if (ChosenAbility)
+	{
+		OwningUnit->AbilitySystemComponent->TryActivateAbilityByClass(ChosenAbility);
+	}
 }
 
 TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
@@ -127,7 +131,7 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 	{
 		for (int i=0; i<AllUMRows.Num(); i++)
 		{
-			if (AllUMRows[i]->IsDefaultAction)
+			if (AllUMRows[i]->IsDefaultAction && AllUMRows[i]->IsEnabled)
 			{
 				nextBestActionIndex = i;
 				break;
@@ -142,12 +146,22 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 	}
 
 	ChosenActionIndex = nextBestActionIndex;
-	return AllUMRows[nextBestActionIndex]->ActionAbility; 
+	if (nextBestActionIndex != -1)
+	{
+		return AllUMRows[nextBestActionIndex]->ActionAbility;
+	}
+	else
+	{
+		DebugScreen("AI Can't pick action, none of them are enabled and set to default", FColor::Red);
+		return nullptr;
+	}
 }
 
 float UAIBrainComponent::ScoreAction(int ActionIndex, TArray<UConsideration*> Considerations, TArray<FString>& DebugStrings)
 {
 	float score = 1.0f;
+	
+	if (Considerations.Num() == 0 ) return 0.0f;
 	
 	for (int i = 0; i < Considerations.Num(); i++) 
 	{
@@ -213,6 +227,8 @@ UNodePath* UAIBrainComponent::PickNodePath(int ActionIndex, FUtilityMatrixDT* UM
 float UAIBrainComponent::ScoreNodePath(int ActionIndex, TArray<UConsideration*> Considerations, UNodePath* Node)
 {
 	float score = 1.0f;
+	if (Considerations.Num() == 0 ) return 0.0f;
+	
 	for (int i = 0; i < Considerations.Num(); i++) 
 	{
 		const float considerationScore = Considerations[i]->ScoreConsiderationNode(
@@ -278,6 +294,8 @@ int UAIBrainComponent::PickTargetActor(int ActionIndex, FUtilityMatrixDT* UMRow)
 float UAIBrainComponent::ScoreTargetActor(int ActionIndex, TArray<UConsideration*> Considerations, AActor* Actor)
 {
 	float score = 1.0f;
+	if (Considerations.Num() == 0 ) return 0.0f;
+	
 	for (int i = 0; i < Considerations.Num(); i++) 
 	{
 		const float considerationScore = Considerations[i]->ScoreConsiderationActor(
