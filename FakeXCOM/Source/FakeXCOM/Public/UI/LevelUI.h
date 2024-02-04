@@ -25,7 +25,9 @@ enum EStatusType
 	Miss,
 	OverWatch,
 	Reloading,
-	HunkerDown
+	HunkerDown,
+	Healing,
+	CriticalHealing
 };
 
 UCLASS()

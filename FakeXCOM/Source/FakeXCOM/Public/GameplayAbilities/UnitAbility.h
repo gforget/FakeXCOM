@@ -130,7 +130,7 @@ public :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "TargetType != ETargetType::Self"), Category = "Ability Properties")
 	bool bUseDynamicRange;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "TargetType != ETargetType::Self && !bUseDynamicRange"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "TargetType != ETargetType::Self && !bUseDynamicRange"), Category = "Ability Properties")
 	float RangeValue;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
@@ -139,10 +139,10 @@ public :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	bool bUseDynamicDamage;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "bHasDamage && !bUseDynamicDamage"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bHasDamage && !bUseDynamicDamage"), Category = "Ability Properties")
 	float MinDamage;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (EditCondition = "bHasDamage && !bUseDynamicDamage"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bHasDamage && !bUseDynamicDamage"), Category = "Ability Properties")
 	float MaxDamage;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
@@ -151,7 +151,7 @@ public :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	bool bUseDynamicHitChance;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (EditCondition = "bHasHitChance && !bUseDynamicHitChance"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly,meta = (EditCondition = "bHasHitChance && !bUseDynamicHitChance"), Category = "Ability Properties")
 	float HitChance = 100.0f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
@@ -160,7 +160,7 @@ public :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	bool bUseDynamicCritChance;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (EditCondition = "bHasCritChance && !bUseDynamicCritChance"), Category = "Ability Properties")
+	UPROPERTY(EditDefaultsOnly,meta = (EditCondition = "bHasCritChance && !bUseDynamicCritChance"), Category = "Ability Properties")
 	float CritChance = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI Properties")
@@ -254,6 +254,9 @@ public :
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void ApplyDamage(AActor* Target, float DamageValue, bool IsCrit = false);
 
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void ApplyHeal(AActor* Target, float DamageValue, bool IsCrit = false);
+	
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	bool RollDiceForHit(int IdUnitTryingToHit, AActor* Target);
 

@@ -52,7 +52,7 @@ void UUnitAbility::SetAbilityPropertiesOnAssigned(int IdUnit)
 {
 	if (bUseDynamicRange)
 	{
-		SetDynamicRangeValueEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
+		SetDynamicRangeValueEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit));
 	}
 	else
 	{
@@ -61,7 +61,7 @@ void UUnitAbility::SetAbilityPropertiesOnAssigned(int IdUnit)
 	
 	if (bUseDynamicDamage)
 	{
-		SetDynamicDamageValueEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
+		SetDynamicDamageValueEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit));
 	}
 	else
 	{
@@ -114,7 +114,7 @@ void UUnitAbility::OnUnitSelected(int IdUnit)
 	{
 		if (bUseDynamicHitChance)
 		{
-			SetHitChanceEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
+			SetHitChanceEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
 		}
 		else
 		{
@@ -123,7 +123,7 @@ void UUnitAbility::OnUnitSelected(int IdUnit)
 
 		if (bUseDynamicCritChance)
 		{
-			SetCritChanceEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
+			SetCritChanceEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit), UnitAbilityInfos[IdUnit].AllAvailableTargets[i]);
 		}
 		else
 		{
@@ -161,7 +161,7 @@ void UUnitAbility::SetTargets_Implementation(int IdUnit)
 		UnitAbilityInfos[IdUnit].TargetsHitChances.Empty();
 		UnitAbilityInfos[IdUnit].TargetsCritChances.Empty();
 		
-		UnitAbilityInfos[IdUnit].AllAvailableTargets = TBTacticalGameMode->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this);
+		UnitAbilityInfos[IdUnit].AllAvailableTargets = GetTBTacticalGameMode()->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this);
 		for (int i=0; i<UnitAbilityInfos[IdUnit].AllAvailableTargets.Num(); i++)
 		{
 			AActor* TargetActor = UnitAbilityInfos[IdUnit].AllAvailableTargets[i];
@@ -169,8 +169,8 @@ void UUnitAbility::SetTargets_Implementation(int IdUnit)
 			UnitAbilityInfos[IdUnit].TargetsCritChances.Add(TargetActor, CritChance);
 		}
 		
-		SetAbilityEnabledEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
-		SetAbilityHiddenEvent(TBTacticalGameMode->UnitManager->GetUnitFromId(IdUnit));
+		SetAbilityEnabledEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit));
+		SetAbilityHiddenEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit));
 	}
 }
 
@@ -279,6 +279,25 @@ void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue, const bool IsC
 	}
 }
 
+void UUnitAbility::ApplyHeal(AActor* Target, float DamageValue, bool IsCrit)
+{
+	if (AUnit* UnitTarget = Cast<AUnit>(Target))
+	{
+		const UUnitAttributeSet* TargetUnitAttributeSet = UnitTarget->UnitAttributeSet;
+		const float NewHealth = TargetUnitAttributeSet->GetHealth() + DamageValue;
+		TargetUnitAttributeSet->SetHealth(NewHealth);
+
+		if (IsCrit)
+		{
+			GetTBTacticalGameMode()->LevelUIRef->CallStatusEvent(UnitTarget, EStatusType::CriticalHealing, DamageValue);
+		}
+		else
+		{
+			GetTBTacticalGameMode()->LevelUIRef->CallStatusEvent(UnitTarget, EStatusType::Healing, DamageValue);
+		}
+	}
+}
+
 bool UUnitAbility::RollDiceForHit(int IdUnitTryingToHit, AActor* Target)
 {
 	const float CurrentHitChance = UnitAbilityInfos[IdUnitTryingToHit].TargetsHitChances[Target];
@@ -295,7 +314,14 @@ bool UUnitAbility::RollDiceForCrit(int IdUnitTryingToHit, AActor* Target)
 
 ATBTacticalGameMode* UUnitAbility::GetTBTacticalGameMode()
 {
-	return GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	if (!TBTacticalGameMode)
+	{
+		return GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
+	}
+	else
+	{
+		return TBTacticalGameMode;
+	}
 }
 
 
