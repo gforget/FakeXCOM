@@ -22,69 +22,6 @@ enum EAbilityRange
 	RangeLineOfSight
 };
 
-USTRUCT(BlueprintType)
-struct NO_API FUnitAbilityInfoStruct
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsDisabled;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsHidden;
-	
-	UPROPERTY(BlueprintReadWrite)
-	float RangeValue;
-
-	UPROPERTY(BlueprintReadWrite)
-	float MinDamage;
-
-	UPROPERTY(BlueprintReadWrite)
-	float MaxDamage;
-
-	UPROPERTY(BlueprintReadWrite)
-	TArray<AActor*> AllAvailableTargets;
-	
-	UPROPERTY(BlueprintReadWrite)
-	TMap<AActor*, float> TargetsHitChances;
-
-	UPROPERTY(BlueprintReadWrite)
-	TMap<AActor*, float> TargetsCritChances;
-	
-	FUnitAbilityInfoStruct()
-	{
-		bIsDisabled = false;
-		bIsHidden = false;
-		RangeValue = 0.0f;
-		MinDamage = 0.0f;
-		MaxDamage = 0.0f;
-		AllAvailableTargets = TArray<AActor*>();
-		TargetsHitChances = TMap<AActor*, float>();
-		TargetsCritChances = TMap<AActor*, float>();
-	}
-	
-	FUnitAbilityInfoStruct(
-		bool _bIsDisabled,
-		bool _bIsHidden,
-		float _RangeValue,
-		float _MinDamageValue,
-		float _MaxDamageValue,
-		const TArray<AActor*>& _AllAvailableTargets,
-		const TMap<AActor*, float>& _TargetsHitChances,
-		const TMap<AActor*, float>& _TargetsCritChances
-		)
-	{
-		bIsDisabled = _bIsDisabled;
-		bIsHidden = _bIsHidden;
-		RangeValue = _RangeValue;
-		MinDamage = _MinDamageValue;
-		MaxDamage = _MaxDamageValue;
-		AllAvailableTargets = _AllAvailableTargets;
-		TargetsHitChances = _TargetsHitChances;
-		TargetsCritChances = _TargetsCritChances;
-	}
-};
-
 class AGun;
 
 UCLASS()
@@ -265,9 +202,6 @@ public :
 	
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	ATBTacticalGameMode* GetTBTacticalGameMode();
-	
-	UPROPERTY(BlueprintReadWrite, category = "Data")
-	TMap<int, FUnitAbilityInfoStruct> UnitAbilityInfos;
 
 	void OnUnitSelected(int IdUnit);
 

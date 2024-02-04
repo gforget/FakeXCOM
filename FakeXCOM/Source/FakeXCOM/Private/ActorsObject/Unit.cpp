@@ -210,8 +210,16 @@ void AUnit::Initialize()
 			const FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(OwnedAbilitiesClasses[i], 0, -1));
 
 			UUnitAbility* CurrentAbility = GetAbilityFromHandle(Handle);
-			OwnedAbilities.Add(CurrentAbility->AbilityId, CurrentAbility);
-			OwnedAbilitiesHandle.Add(CurrentAbility->AbilityId, Handle);
+			if (!OwnedAbilities.Contains(CurrentAbility->AbilityId))
+			{
+				OwnedAbilities.Add(CurrentAbility->AbilityId, CurrentAbility);
+				OwnedAbilitiesHandle.Add(CurrentAbility->AbilityId, Handle);
+				UnitAbilityInfos.Add(CurrentAbility->AbilityId, FUnitAbilityInfoStruct());
+			}
+			else
+			{
+				DebugScreen(GetName() + " Unit got 2 or more abilities with the same ID :" + CurrentAbility->AbilityId + ". Please give these abilities different ID", FColor::Red);
+			}
 			
 			CurrentAbility->OnAbilityAssigned(TBTacticalGameMode, IdUnit);
 		}
