@@ -25,7 +25,7 @@ https://www.youtube.com/watch?v=6FXBLhw37tY
 Video explaining how to install the project:</br>
 https://www.youtube.com/watch?v=1O3VS0oOqhY
 
-Video explaining how to level block using the framework (Featuring a custom Pathfinder made for a tile base system):</br>
+Video explaining how to level block using the framework (Featuring a custom Pathfinder made for a tile base movement system):</br>
 https://www.youtube.com/watch?v=U6oDr-Gjhig
 
 Video explaining the ability system (Featuring a customization of the Gemeplay Ability System):</br>
