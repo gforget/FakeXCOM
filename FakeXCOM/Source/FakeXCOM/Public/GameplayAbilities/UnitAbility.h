@@ -125,6 +125,15 @@ public :
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
 	void SetTargets(int IdUnit);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void AddTargets(int IdOwningUnit, TArray<int> IdTargetUnits);
+	
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void RemoveTargets(int IdOwningUnit, TArray<int> IdTargetUnits);
+
+	UFUNCTION(BlueprintCallable, Category="Main Functions")
+	void EndSetTargets(int IdOwningUnit);
 	
 	void SetAbilityPropertiesOnAssigned(int IdUnit);
 

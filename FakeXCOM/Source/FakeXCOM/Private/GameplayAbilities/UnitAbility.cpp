@@ -162,9 +162,10 @@ void UUnitAbility::RotateTowardTarget(AUnit* Unit, AActor* Target)
 
 void UUnitAbility::SetTargets_Implementation(int IdUnit)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
 	if (GetTBTacticalGameMode())
 	{
+		AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
+		
 		UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets.Empty();
 		UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances.Empty();
 		UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances.Empty();
@@ -176,9 +177,49 @@ void UUnitAbility::SetTargets_Implementation(int IdUnit)
 			UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances.Add(TargetActor, HitChance);
 			UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances.Add(TargetActor, CritChance);
 		}
-		
-		SetAbilityEnabledEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit));
-		SetAbilityHiddenEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit));
+
+		EndSetTargets(IdUnit);
+	}
+}
+
+void UUnitAbility::AddTargets(int IdOwningUnit, TArray<int> IdTargetUnits)
+{
+	if (GetTBTacticalGameMode())
+	{
+		AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdOwningUnit);
+		for (int i=0; i<IdTargetUnits.Num(); i++)
+		{
+			AUnit* TargetUnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdTargetUnits[i]);
+	
+			UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets.Add(TargetUnitRef);
+			UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances.Add(TargetUnitRef);
+			UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances.Add(TargetUnitRef);
+		}
+	}
+}
+
+void UUnitAbility::RemoveTargets(int IdOwningUnit, TArray<int> IdTargetUnits)
+{
+	if (GetTBTacticalGameMode())
+	{
+		AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdOwningUnit);
+		for (int i=0; i<IdTargetUnits.Num(); i++)
+		{
+			AUnit* TargetUnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdTargetUnits[i]);
+	
+			UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets.Remove(TargetUnitRef);
+			UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances.Remove(TargetUnitRef);
+			UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances.Remove(TargetUnitRef);
+		}
+	}
+}
+
+void UUnitAbility::EndSetTargets(int IdOwningUnit)
+{
+	if (GetTBTacticalGameMode())
+	{
+		SetAbilityEnabledEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdOwningUnit));
+		SetAbilityHiddenEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdOwningUnit));
 	}
 }
 
