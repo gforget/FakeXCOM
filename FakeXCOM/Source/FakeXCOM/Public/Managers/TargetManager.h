@@ -74,7 +74,7 @@ public:
 	bool ValidateTargetDeathFilter(AUnit* PotentialTarget, TEnumAsByte<EDeadTargetFilter> DeadTargetFilter);
 	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
-	TArray<AActor*> GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility* UnitAbility);
+	void GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility* UnitAbility, TArray<AUnit*>& AllAvailableUnitTargets);
 
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
 	bool ConfirmLineOfSightOnUnit(
@@ -85,26 +85,29 @@ public:
 		float LineOfSightRange);
 	
 private:
-	TArray<AActor*> GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility);
+	void GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility, TArray<AUnit*>& AllAvailableUnitTargets);
 	
-	TArray<AActor*> GetTargetsInRange(
+	void GetTargetsInRange(
 		AUnit* SeekingUnit,
 		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
 		float Range,
-		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
+		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+		TArray<AUnit*>& AllAvailableUnitTargets
 		);
 	
-	TArray<AActor*> GetTargetsInRangeUsingLineOfSight(
+	void GetTargetsInRangeUsingLineOfSight(
 		AUnit* SeekingUnit,
 		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
 		float LineOfSightRange,
-		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
+		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+		TArray<AUnit*>& AllAvailableUnitTargets
 		);
 	
-	TArray<AActor*>  GetTargetsUsingMeleeRange(
+	void  GetTargetsUsingMeleeRange(
 		AUnit* SeekingUnit,
 		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
+		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+		TArray<AUnit*>& AllAvailableUnitTargets
 	);
 	
 };

@@ -24,6 +24,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitHealthChangeDelegate, AUnit*, U
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitIsDeadDelegate, AUnit*, Unit);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUnitOrderedToMoveDelegate, AUnit*, Unit);
 
+//This struct is define here and not in the ability, because storing value at runtime in the ability
+//seem unreliable (variables seem to get reset randomly).
+
 USTRUCT(BlueprintType)
 struct NO_API FUnitAbilityInfoStruct
 {
@@ -39,51 +42,51 @@ struct NO_API FUnitAbilityInfoStruct
 	float RangeValue;
 
 	UPROPERTY(BlueprintReadWrite)
-	float MinDamage;
+	TArray<AUnit*> AllAvailableUnitTargets;
 
 	UPROPERTY(BlueprintReadWrite)
-	float MaxDamage;
+	TMap<int, float> TargetUnitsMinDamage;
 
 	UPROPERTY(BlueprintReadWrite)
-	TArray<AActor*> AllAvailableTargets;
+	TMap<int, float> TargetUnitsMaxDamage;
 	
 	UPROPERTY(BlueprintReadWrite)
-	TMap<AActor*, float> TargetsHitChances;
+	TMap<int, float> TargetUnitsHitChances;
 
 	UPROPERTY(BlueprintReadWrite)
-	TMap<AActor*, float> TargetsCritChances;
+	TMap<int, float> TargetUnitsCritChance;
 	
 	FUnitAbilityInfoStruct()
 	{
 		bIsDisabled = false;
 		bIsHidden = false;
 		RangeValue = 0.0f;
-		MinDamage = 0.0f;
-		MaxDamage = 0.0f;
-		AllAvailableTargets = TArray<AActor*>();
-		TargetsHitChances = TMap<AActor*, float>();
-		TargetsCritChances = TMap<AActor*, float>();
+		AllAvailableUnitTargets = TArray<AUnit*>();
+		TargetUnitsMinDamage = TMap<int, float>();
+		TargetUnitsMaxDamage = TMap<int, float>();
+		TargetUnitsHitChances = TMap<int, float>();
+		TargetUnitsCritChance = TMap<int, float>();
 	}
 	
 	FUnitAbilityInfoStruct(
 		bool _bIsDisabled,
 		bool _bIsHidden,
 		float _RangeValue,
-		float _MinDamageValue,
-		float _MaxDamageValue,
-		const TArray<AActor*>& _AllAvailableTargets,
-		const TMap<AActor*, float>& _TargetsHitChances,
-		const TMap<AActor*, float>& _TargetsCritChances
+		const TArray<AUnit*>& _AllAvailableTargets,
+		const TMap<int, float>& _TargetMinDamages,
+		const TMap<int, float>& _TargetMaxDamages,
+		const TMap<int, float>& _TargetsHitChances,
+		const TMap<int, float>& _TargetsCritChances
 		)
 	{
 		bIsDisabled = _bIsDisabled;
 		bIsHidden = _bIsHidden;
 		RangeValue = _RangeValue;
-		MinDamage = _MinDamageValue;
-		MaxDamage = _MaxDamageValue;
-		AllAvailableTargets = _AllAvailableTargets;
-		TargetsHitChances = _TargetsHitChances;
-		TargetsCritChances = _TargetsCritChances;
+		AllAvailableUnitTargets = _AllAvailableTargets;
+		TargetUnitsMinDamage = _TargetMinDamages;
+		TargetUnitsMaxDamage = _TargetMaxDamages;
+		TargetUnitsHitChances = _TargetsHitChances;
+		TargetUnitsCritChance = _TargetsCritChances;
 	}
 };
 

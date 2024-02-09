@@ -72,19 +72,18 @@ AActor* UTargetManager::GetTargetFromIndex(int TargetIndex)
 	return nullptr;
 }
 
-TArray<AActor*> UTargetManager::GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility* UnitAbility)
+void UTargetManager::GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility* UnitAbility, TArray<AUnit*>& AllAvailableUnitTargets)
 {
-	TArray<AActor*> ReturnedTargets;
 	AUnit* CurrentUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
 	
 	switch (UnitAbility->TargetType)
 	{
 	case ETargetType::Self:
-		ReturnedTargets.Add(CurrentUnit);
+		AllAvailableUnitTargets.Add(CurrentUnit);
 		break;
 		
 	case ETargetType::SingleTarget:
-		ReturnedTargets.Append(GetTargetsFromAbiiltyRange(UnitAbility));
+		GetTargetsFromAbiiltyRange(UnitAbility, AllAvailableUnitTargets);
 		break;
 		
 	case ETargetType::SpecificGroundPosition:
@@ -94,50 +93,46 @@ TArray<AActor*> UTargetManager::GetAllAvailableTargetsBaseOnAbilityProperties(UU
 	default:
 		break;
 	}
-
-	return ReturnedTargets;
 }
 
-TArray<AActor*> UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility)
+void UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility, TArray<AUnit*>& AllAvailableUnitTargets)
 {
 	AUnit* SeekingUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
-	TArray<AActor*> ReturnedTargets;
 	
 	switch(UnitAbility->AbilityRange)
 	{
 		case Melee:
-			ReturnedTargets = GetTargetsUsingMeleeRange(SeekingUnit,
+			GetTargetsUsingMeleeRange(SeekingUnit,
 				UnitAbility->ValidTargetFactionRelation,
-				UnitAbility->DeadTargetFilter);
+				UnitAbility->DeadTargetFilter,
+				AllAvailableUnitTargets);
 			break;
 		case Range:
-			ReturnedTargets = GetTargetsInRange(SeekingUnit,
+			GetTargetsInRange(SeekingUnit,
 				UnitAbility->ValidTargetFactionRelation,
-				UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit),
-				UnitAbility->DeadTargetFilter);
+				UnitAbility->GetDynamicRangeValue(SeekingUnit),
+				UnitAbility->DeadTargetFilter,
+				AllAvailableUnitTargets);
 			break;
 		case RangeLineOfSight:
-			ReturnedTargets = GetTargetsInRangeUsingLineOfSight(SeekingUnit,
+			GetTargetsInRangeUsingLineOfSight(SeekingUnit,
 				UnitAbility->ValidTargetFactionRelation,
-				UnitAbility->GetDynamicRangeValue(SeekingUnit->IdUnit),
-				UnitAbility->DeadTargetFilter);
+				UnitAbility->GetDynamicRangeValue(SeekingUnit),
+				UnitAbility->DeadTargetFilter,
+				AllAvailableUnitTargets);
 			break;
 		default: ;
 	}
-	
-	return ReturnedTargets;
-	
 }
 
-TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
+void UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	AUnit* SeekingUnit,
 	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
 	float LineOfSightRange,
-	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
+	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+	TArray<AUnit*>& AllAvailableUnitTargets
 	)
 {
-	TArray<AActor*> ReturnedTargets;
-	
 	TArray<int> AllValidUnitId = GetAllValidUnitIdFromFactionRelation(SeekingUnit, ValidFactionsRelation);
 	
 	//Validate Line of sight of each potential target
@@ -156,11 +151,9 @@ TArray<AActor*> UTargetManager::GetTargetsInRangeUsingLineOfSight(
 			LineOfSightRange
 			))
 		{
-			ReturnedTargets.Add(Cast<AActor>(PotentialTarget));
+			AllAvailableUnitTargets.Add(PotentialTarget);
 		}
 	}
-	
-	return ReturnedTargets;
 }
 
 TArray<int> UTargetManager::GetAllValidUnitIdFromFactionRelation(AUnit* SeekingUnit, TArray<TEnumAsByte<EFactionRelation>> ValidRelations)
@@ -264,22 +257,22 @@ bool UTargetManager::ConfirmLineOfSightOnUnit(
 	return false;
 }
 
-TArray<AActor*> UTargetManager::GetTargetsInRange(
+void UTargetManager::GetTargetsInRange(
 	AUnit* SeekingUnit,
 	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
 	float Range,
-	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter)
+	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+	TArray<AUnit*>& AllAvailableUnitTargets)
 {
-	TArray<AActor*> ReturnedTargets;
-	return ReturnedTargets;
+	//TODO: Feed AllAvailableUnitTargets
 }
 
-TArray<AActor*> UTargetManager::GetTargetsUsingMeleeRange(
+void UTargetManager::GetTargetsUsingMeleeRange(
 	AUnit* SeekingUnit,
 	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter
+	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+	TArray<AUnit*>& AllAvailableUnitTargets
 	)
 {
-	TArray<AActor*> ReturnedTargets;
-	return ReturnedTargets;
+	//TODO: Feed AllAvailableUnitTargets
 }

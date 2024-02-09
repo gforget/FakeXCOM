@@ -221,7 +221,7 @@ void AUnit::Initialize()
 				DebugScreen(GetName() + " Unit got 2 or more abilities with the same ID :" + CurrentAbility->AbilityId + ". Please give these abilities different ID", FColor::Red);
 			}
 			
-			CurrentAbility->OnAbilityAssigned(TBTacticalGameMode, IdUnit);
+			CurrentAbility->OnAbilityAssigned(TBTacticalGameMode, this);
 		}
 	}
 }

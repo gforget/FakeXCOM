@@ -103,7 +103,7 @@ public :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI Properties")
 	bool bUseTargetImage = false;
 	
-	void OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, int IdUnit);
+	void OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, AUnit* Unit);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enabling Ability Event")
 	void SetAbilityEnabledEvent(AUnit* Unit);
@@ -124,39 +124,39 @@ public :
 	bool GetIsHidden(AUnit* Unit);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetTargets(int IdUnit);
+	void SetTargets(AUnit* OwningUnit);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void AddTargets(int IdOwningUnit, TArray<int> IdTargetUnits);
+	void AddTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits);
 	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void RemoveTargets(int IdOwningUnit, TArray<int> IdTargetUnits);
+	void RemoveTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void EndSetTargets(int IdOwningUnit);
+	void EndSetTargets(AUnit* OwningUnit);
 	
-	void SetAbilityPropertiesOnAssigned(int IdUnit);
+	void SetAbilityPropertiesOnAssigned(AUnit* Unit);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
 	void SetDynamicRangeValueEvent(AUnit* Unit);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void SetDynamicRangeValue(int IdUnit, float NewRangeValue);
+	void SetDynamicRangeValue(AUnit* Unit, float NewRangeValue);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	float GetDynamicRangeValue(int IdUnit);
+	float GetDynamicRangeValue(AUnit* Unit);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetDynamicDamageValueEvent(AUnit* Unit);
+	void SetDynamicDamageValueEvent(AUnit* Unit, AActor* Target);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void SetDynamicDamageValue(int IdUnit, float NewMinDamageValue, float NewMaxDamageValue);
+	void SetDynamicDamageValue(AUnit* Unit, AActor* Target, float NewMinDamageValue, float NewMaxDamageValue);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	float GetDynamicMinDamageValue(int IdUnit);
+	float GetDynamicMinDamageValue(AUnit* Unit, AActor* Target);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	float GetDynamicMaxDamageValue(int IdUnit);
+	float GetDynamicMaxDamageValue(AUnit* Unit, AActor* Target);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
 	void SetHitChanceEvent(AUnit* Unit, AActor* Target);
@@ -165,7 +165,7 @@ public :
 	float GetHitChance(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath);
 	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void SetHitChance(int IdUnit, AActor* Target, float NewHitChanceValue);
+	void SetHitChance(AUnit* Unit, AActor* Target, float NewHitChanceValue);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
 	void SetCritChanceEvent(AUnit* Unit, AActor* Target);
@@ -174,22 +174,22 @@ public :
 	float GetCritChance(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath);
 	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void SetCritChance(int IdUnit, AActor* Target, float NewCritChanceValue);
+	void SetCritChance(AUnit* Unit, AActor* Target, float NewCritChanceValue);
 
 	UFUNCTION(BlueprintPure, Category="Utility Functions")
 	float GetRangeToTarget(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath);
 
 	UFUNCTION(BlueprintPure, Category="Utility Functions")
-	float GetTargetHitChance(int IdUnit, AActor* Target);
+	float GetTargetHitChance(AUnit* Unit, AActor* Target);
 
 	UFUNCTION(BlueprintPure, Category="Utility Functions")
-	float GetTargetCritChance(int IdUnit, AActor* Target);
+	float GetTargetCritChance(AUnit* Unit, AActor* Target);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void CostAllActions(int IdUnit);
+	void CostAllActions(AUnit* Unit);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void CostActions(int IdUnit, float CostValue);
+	void CostActions(AUnit* Unit, float CostValue);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void CostAmmo(AGun* Gun, float CostValue);
@@ -204,10 +204,10 @@ public :
 	void ApplyHeal(AActor* Target, float DamageValue, bool IsCrit = false);
 	
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	bool RollDiceForHit(int IdUnitTryingToHit, AActor* Target);
+	bool RollDiceForHit(AUnit* UnitTryingToHit, AActor* Target);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	bool RollDiceForCrit(int IdUnitTryingToHit, AActor* Target);
+	bool RollDiceForCrit(AUnit* UnitTryingToHit, AActor* Target);
 	
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	ATBTacticalGameMode* GetTBTacticalGameMode();

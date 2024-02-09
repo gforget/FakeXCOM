@@ -10,11 +10,12 @@
 #include "AttributeSets/UnitAttributeSet.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Pathfinder/NodePath.h"
+#include "Utility/DebugHeader.h"
 
-void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, int IdUnit)
+void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, AUnit* Unit)
 {
 	TBTacticalGameMode = TBTacticalGameModeRef;
-	SetAbilityPropertiesOnAssigned(IdUnit);
+	SetAbilityPropertiesOnAssigned(Unit);
 }
 
 void UUnitAbility::SetIsDisabled(AUnit* Unit, bool Val)
@@ -47,26 +48,15 @@ void UUnitAbility::SetAbilityHiddenEvent_Implementation(AUnit* Unit)
 	Unit->UnitAbilityInfos[AbilityId].bIsHidden = false;
 }
 
-void UUnitAbility::SetAbilityPropertiesOnAssigned(int IdUnit)
+void UUnitAbility::SetAbilityPropertiesOnAssigned(AUnit* Unit)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
 	if (bUseDynamicRange)
 	{
-		SetDynamicRangeValueEvent(UnitRef);
+		SetDynamicRangeValueEvent(Unit);
 	}
 	else
 	{
-		UnitRef->UnitAbilityInfos[AbilityId].RangeValue = RangeValue;
-	}
-	
-	if (bUseDynamicDamage)
-	{
-		SetDynamicDamageValueEvent(UnitRef);
-	}
-	else
-	{
-		UnitRef->UnitAbilityInfos[AbilityId].MinDamage = MinDamage;
-		UnitRef->UnitAbilityInfos[AbilityId].MaxDamage = MaxDamage;
+		Unit->UnitAbilityInfos[AbilityId].RangeValue = RangeValue;
 	}
 }
 
@@ -75,75 +65,113 @@ void UUnitAbility::SetDynamicRangeValueEvent_Implementation(AUnit* Unit)
 	Unit->UnitAbilityInfos[AbilityId].RangeValue = RangeValue;
 }
 
-void UUnitAbility::SetDynamicRangeValue(int IdUnit, float NewRangeValue)
+void UUnitAbility::SetDynamicRangeValue(AUnit* Unit, float NewRangeValue)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	UnitRef->UnitAbilityInfos[AbilityId].RangeValue = NewRangeValue;
+	Unit->UnitAbilityInfos[AbilityId].RangeValue = NewRangeValue;
 }
 
-float UUnitAbility::GetDynamicRangeValue(int IdUnit)
+float UUnitAbility::GetDynamicRangeValue(AUnit* Unit)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	return UnitRef->UnitAbilityInfos[AbilityId].RangeValue;
+	return Unit->UnitAbilityInfos[AbilityId].RangeValue;
 }
 
-void UUnitAbility::SetDynamicDamageValueEvent_Implementation(AUnit* Unit)
+void UUnitAbility::SetDynamicDamageValueEvent_Implementation(AUnit* Unit, AActor* Target)
 {
-	Unit->UnitAbilityInfos[AbilityId].MinDamage = MinDamage;
-	Unit->UnitAbilityInfos[AbilityId].MaxDamage = MaxDamage;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		Unit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage[TargetUnit->IdUnit] = MinDamage;
+		Unit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage[TargetUnit->IdUnit] = MaxDamage;
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::SetDynamicDamageValueEvent_Implementation : Target is an invalid actor", FColor::Red);
+	}
 }
 
-void UUnitAbility::SetDynamicDamageValue(int IdUnit, float NewMinDamageValue, float NewMaxDamageValue)
+void UUnitAbility::SetDynamicDamageValue(AUnit* Unit, AActor* Target, float NewMinDamageValue, float NewMaxDamageValue)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	UnitRef->UnitAbilityInfos[AbilityId].MinDamage = NewMinDamageValue;
-	UnitRef->UnitAbilityInfos[AbilityId].MaxDamage = NewMaxDamageValue;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		Unit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage[TargetUnit->IdUnit] = NewMinDamageValue;
+		Unit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage[TargetUnit->IdUnit] = NewMaxDamageValue;
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::SetDynamicDamageValue : Target is an invalid actor", FColor::Red);
+	}
 }
 
-float UUnitAbility::GetDynamicMinDamageValue(int IdUnit)
+float UUnitAbility::GetDynamicMinDamageValue(AUnit* Unit, AActor* Target)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	return UnitRef->UnitAbilityInfos[AbilityId].MinDamage;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		return Unit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage[TargetUnit->IdUnit];
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::GetDynamicMinDamageValue : Target is an invalid actor", FColor::Red);
+		return -1.0f;
+	}
 }
 
-float UUnitAbility::GetDynamicMaxDamageValue(int IdUnit)
+float UUnitAbility::GetDynamicMaxDamageValue(AUnit* Unit, AActor* Target)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	return UnitRef->UnitAbilityInfos[AbilityId].MaxDamage;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		return Unit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage[TargetUnit->IdUnit];
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::GetDynamicMaxDamageValue : Target is an invalid actor", FColor::Red);
+		return -1.0f;
+	}
 }
 
 void UUnitAbility::OnUnitSelected(int IdUnit)
 {
 	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
+	SetTargets(UnitRef);
 	
-	SetTargets(IdUnit);
-	for (int i=0; i<UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets.Num(); i++)
+	for (int i=0; i<UnitRef->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Num(); i++)
 	{
-		if (bUseDynamicHitChance)
+		if (AUnit* TargetUnit = Cast<AUnit>(UnitRef->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets[i]))
 		{
-			SetHitChanceEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit), UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets[i]);
-		}
-		else
-		{
-			UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances[UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets[i]] = HitChance;
-		}
+			if (bUseDynamicDamage)
+			{
+				SetDynamicDamageValueEvent(UnitRef, TargetUnit);
+			}
+			else
+			{
+				UnitRef->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage[TargetUnit->IdUnit] = MinDamage;
+				UnitRef->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage[TargetUnit->IdUnit] = MaxDamage;
+			}
+		
+			if (bUseDynamicHitChance)
+			{
+				SetHitChanceEvent(UnitRef, TargetUnit);
+			}
+			else
+			{
+				UnitRef->UnitAbilityInfos[AbilityId].TargetUnitsHitChances[TargetUnit->IdUnit] = HitChance;
+			}
 
-		if (bUseDynamicCritChance)
-		{
-			SetCritChanceEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit), UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets[i]);
-		}
-		else
-		{
-			UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances[UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets[i]] = CritChance;
+			if (bUseDynamicCritChance)
+			{
+				SetCritChanceEvent(UnitRef, TargetUnit);
+			}
+			else
+			{
+				UnitRef->UnitAbilityInfos[AbilityId].TargetUnitsCritChance[TargetUnit->IdUnit] = CritChance;
+			}
 		}
 	}
 
 	//Sort the target by hit chance
 	FUnitAbilityInfoStruct& UnitAbilityInfoRef = UnitRef->UnitAbilityInfos[AbilityId];
-	UnitAbilityInfoRef.AllAvailableTargets.Sort([&UnitAbilityInfoRef](const AActor& A, const AActor& B)
+	UnitAbilityInfoRef.AllAvailableUnitTargets.Sort([&UnitAbilityInfoRef](const AUnit& A, const AUnit& B)
 	{
-		const float HitChanceA = UnitAbilityInfoRef.TargetsHitChances.FindRef(&A);
-		const float HitChanceB = UnitAbilityInfoRef.TargetsHitChances.FindRef(&B);
+		const float HitChanceA = UnitAbilityInfoRef.TargetUnitsHitChances.FindRef(A.IdUnit);
+		const float HitChanceB = UnitAbilityInfoRef.TargetUnitsHitChances.FindRef(B.IdUnit);
 		return HitChanceA > HitChanceB;
 	});
 }
@@ -160,72 +188,88 @@ void UUnitAbility::RotateTowardTarget(AUnit* Unit, AActor* Target)
 	Unit->SetActorRotation(LookAtRotation, ETeleportType::TeleportPhysics);
 }
 
-void UUnitAbility::SetTargets_Implementation(int IdUnit)
+void UUnitAbility::SetTargets_Implementation(AUnit* OwningUnit)
 {
 	if (GetTBTacticalGameMode())
 	{
-		AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
 		
-		UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets.Empty();
-		UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances.Empty();
-		UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances.Empty();
+		OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Empty();
+		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Empty();
+		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Empty();
+		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Empty();
+		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Empty();
+
+		//TODO: Change GetAllAvailableTargetsBaseOnAbilityProperties so it receive reference of list of Unit and fill it. Later could add damageable object
+		GetTBTacticalGameMode()->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this, OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets);
 		
-		UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets = GetTBTacticalGameMode()->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this);
-		for (int i=0; i<UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets.Num(); i++)
+		for (int i=0; i<OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Num(); i++)
 		{
-			AActor* TargetActor = UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets[i];
-			UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances.Add(TargetActor, HitChance);
-			UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances.Add(TargetActor, CritChance);
+			if (const AUnit* TargetUnit = Cast<AUnit>(OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets[i]))
+			{
+				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Add(TargetUnit->IdUnit, MinDamage);
+				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Add(TargetUnit->IdUnit, MaxDamage);
+				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Add(TargetUnit->IdUnit, HitChance);
+				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Add(TargetUnit->IdUnit, CritChance);
+			}
 		}
 
-		EndSetTargets(IdUnit);
+		EndSetTargets(OwningUnit);
 	}
 }
 
-void UUnitAbility::AddTargets(int IdOwningUnit, TArray<int> IdTargetUnits)
+void UUnitAbility::AddTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)
 {
 	if (GetTBTacticalGameMode())
 	{
-		AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdOwningUnit);
 		for (int i=0; i<IdTargetUnits.Num(); i++)
 		{
 			AUnit* TargetUnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdTargetUnits[i]);
 	
-			UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets.Add(TargetUnitRef);
-			UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances.Add(TargetUnitRef);
-			UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances.Add(TargetUnitRef);
+			OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Add(TargetUnitRef);
+			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Add(IdTargetUnits[i], MinDamage);
+			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Add(IdTargetUnits[i], MaxDamage);
+			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Add(IdTargetUnits[i], HitChance);
+			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Add(IdTargetUnits[i], CritChance);
 		}
 	}
 }
 
-void UUnitAbility::RemoveTargets(int IdOwningUnit, TArray<int> IdTargetUnits)
+void UUnitAbility::RemoveTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)
 {
 	if (GetTBTacticalGameMode())
 	{
-		AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdOwningUnit);
 		for (int i=0; i<IdTargetUnits.Num(); i++)
 		{
 			AUnit* TargetUnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdTargetUnits[i]);
 	
-			UnitRef->UnitAbilityInfos[AbilityId].AllAvailableTargets.Remove(TargetUnitRef);
-			UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances.Remove(TargetUnitRef);
-			UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances.Remove(TargetUnitRef);
+			OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Remove(TargetUnitRef);
+			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Remove(IdTargetUnits[i]);
+			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Remove(IdTargetUnits[i]);
+			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Remove(IdTargetUnits[i]);
+			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Remove(IdTargetUnits[i]);
 		}
 	}
 }
 
-void UUnitAbility::EndSetTargets(int IdOwningUnit)
+void UUnitAbility::EndSetTargets(AUnit* OwningUnit)
 {
 	if (GetTBTacticalGameMode())
 	{
-		SetAbilityEnabledEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdOwningUnit));
-		SetAbilityHiddenEvent(GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdOwningUnit));
+		SetAbilityEnabledEvent(OwningUnit);
+		SetAbilityHiddenEvent(OwningUnit);
 	}
 }
 
 void UUnitAbility::SetHitChanceEvent_Implementation(AUnit* Unit, AActor* Target)
 {
-	Unit->UnitAbilityInfos[AbilityId].TargetsHitChances[Target] = HitChance;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		Unit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances[TargetUnit->IdUnit] = HitChance;
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::SetHitChanceEvent_Implementation : Target is an invalid actor", FColor::Red);
+	}
 }
 
 float UUnitAbility::GetHitChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
@@ -233,15 +277,28 @@ float UUnitAbility::GetHitChance_Implementation(AUnit* Unit, AActor* Target, UNo
 	return HitChance;
 }
 
-void UUnitAbility::SetHitChance(int IdUnit, AActor* Target, float NewHitChanceValue)
+void UUnitAbility::SetHitChance(AUnit* Unit, AActor* Target, float NewHitChanceValue)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances[Target] = NewHitChanceValue;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		Unit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances[TargetUnit->IdUnit] = NewHitChanceValue;
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::SetHitChanceEvent_Implementation : Target is an invalid actor", FColor::Red);
+	}
 }
 
 void UUnitAbility::SetCritChanceEvent_Implementation(AUnit* Unit, AActor* Target)
 {
-	Unit->UnitAbilityInfos[AbilityId].TargetsCritChances[Target] = CritChance;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		Unit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance[TargetUnit->IdUnit] = CritChance;
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::SetCritChanceEvent_Implementation : Target is an invalid actor", FColor::Red);
+	}
 }
 
 float UUnitAbility::GetCritChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
@@ -249,10 +306,16 @@ float UUnitAbility::GetCritChance_Implementation(AUnit* Unit, AActor* Target, UN
 	return CritChance;
 }
 
-void UUnitAbility::SetCritChance(int IdUnit, AActor* Target, float NewCritChanceValue)
+void UUnitAbility::SetCritChance(AUnit* Unit , AActor* Target, float NewCritChanceValue)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances[Target] = NewCritChanceValue;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		Unit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance[TargetUnit->IdUnit] = NewCritChanceValue;
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::SetCritChance : Target is an invalid actor", FColor::Red);
+	}
 }
 
 float UUnitAbility::GetRangeToTarget(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
@@ -265,38 +328,49 @@ float UUnitAbility::GetRangeToTarget(AUnit* Unit, AActor* Target, UNodePath* Uni
 				(UnitNodePath->GetComponentLocation() + FVector(0.0f, 0.0f, Unit->ZGroundOffset) + Unit->SightStartingAnchor);
 		return DeltaToTarget.Size();		
 	}
-	
-	return 0.0f;
-}
-
-float UUnitAbility::GetTargetHitChance(int IdUnit, AActor* Target)
-{
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	return UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances[Target];
-}
-
-float UUnitAbility::GetTargetCritChance(int IdUnit, AActor* Target)
-{
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	return UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances[Target];
-}
-
-void UUnitAbility::CostAllActions(int IdUnit)
-{
-	if (const AUnit* Unit = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit))
+	else
 	{
-		Unit->UnitAttributeSet->SetActions(0.0f);
+		DebugScreen("UUnitAbility::GetRangeToTarget : Target is an invalid actor", FColor::Red);
+		return 0.0f;
 	}
 }
 
-void UUnitAbility::CostActions(int IdUnit, float CostValue)
+float UUnitAbility::GetTargetHitChance(AUnit* Unit, AActor* Target)
 {
-	if (const AUnit* Unit = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit))
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
-		const UUnitAttributeSet* TargetUnitAttributeSet = Unit->UnitAttributeSet;
-		const float NewActionsValue = TargetUnitAttributeSet->GetActions() - CostValue;
-		TargetUnitAttributeSet->SetActions(NewActionsValue);
+		return Unit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances[TargetUnit->IdUnit];
 	}
+	else
+	{
+		DebugScreen("UUnitAbility::GetTargetHitChance : Target is an invalid actor", FColor::Red);
+		return -1.0f;
+	}
+}
+
+float UUnitAbility::GetTargetCritChance(AUnit* Unit, AActor* Target)
+{
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		return Unit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance[TargetUnit->IdUnit];
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::GetTargetCritChance : Target is an invalid actor", FColor::Red);
+		return -1.0f;
+	}
+}
+
+void UUnitAbility::CostAllActions(AUnit* Unit)
+{
+	Unit->UnitAttributeSet->SetActions(0.0f);
+}
+
+void UUnitAbility::CostActions(AUnit* Unit, float CostValue)
+{
+	const UUnitAttributeSet* TargetUnitAttributeSet = Unit->UnitAttributeSet;
+	const float NewActionsValue = TargetUnitAttributeSet->GetActions() - CostValue;
+	TargetUnitAttributeSet->SetActions(NewActionsValue);
 }
 
 void UUnitAbility::CostAmmo(AGun* Gun, float CostValue)
@@ -351,20 +425,34 @@ void UUnitAbility::ApplyHeal(AActor* Target, float DamageValue, bool IsCrit)
 	}
 }
 
-bool UUnitAbility::RollDiceForHit(int IdUnitTryingToHit, AActor* Target)
+bool UUnitAbility::RollDiceForHit(AUnit* UnitTryingToHit, AActor* Target)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnitTryingToHit);
-	const float CurrentHitChance = UnitRef->UnitAbilityInfos[AbilityId].TargetsHitChances[Target];
-	const float DiceRoll = FMath::RandRange(0.0f, 100.0f);
-	return CurrentHitChance > DiceRoll;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		const float CurrentHitChance = UnitTryingToHit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances[TargetUnit->IdUnit];
+		const float DiceRoll = FMath::RandRange(0.0f, 100.0f);
+		return CurrentHitChance > DiceRoll;
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::RollDiceForHit : Target is an invalid actor", FColor::Red);
+		return false;
+	}
 }
 
-bool UUnitAbility::RollDiceForCrit(int IdUnitTryingToHit, AActor* Target)
+bool UUnitAbility::RollDiceForCrit(AUnit* UnitTryingToHit, AActor* Target)
 {
-	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnitTryingToHit);
-	const float CurrentCritChance = UnitRef->UnitAbilityInfos[AbilityId].TargetsCritChances[Target];
-	const float DiceRoll = FMath::RandRange(0.0f, 100.0f);
-	return CurrentCritChance > DiceRoll;
+	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
+	{
+		const float CurrentCritChance = UnitTryingToHit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance[TargetUnit->IdUnit];
+		const float DiceRoll = FMath::RandRange(0.0f, 100.0f);
+		return CurrentCritChance > DiceRoll;
+	}
+	else
+	{
+		DebugScreen("UUnitAbility::RollDiceForCrit : Target is an invalid actor", FColor::Red);
+		return false;
+	}
 }
 
 ATBTacticalGameMode* UUnitAbility::GetTBTacticalGameMode()
