@@ -14,13 +14,16 @@ void UTargetManager::Initialize(ATBTacticalGameMode* TBTacticalGameModeRef)
 	TBTacticalGameMode = TBTacticalGameModeRef;
 }
 
-void UTargetManager::SelectTarget(int TargetIndex)
+void UTargetManager::SelectTarget(int TargetIndex, bool bMoveToActor)
 {
 	if (TargetIndex >= 0 && TargetIndex < AllCurrentAvailableTarget.Num())
 	{
 		SelectedTargetIndex = TargetIndex;
 		AActor* UnitTarget = AllCurrentAvailableTarget[SelectedTargetIndex];
-		TBTacticalGameMode->MainController->GoToActor(UnitTarget);
+		if (bMoveToActor)
+		{
+			TBTacticalGameMode->MainController->GoToActor(UnitTarget);
+		}
 		
 		OnTargetSelectedEvent.Broadcast(SelectedTargetIndex, TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit());
 	}
@@ -61,6 +64,17 @@ void UTargetManager::SelectPreviousTarget()
 	}
 
 	SelectTarget(SelectedTargetIndex);
+}
+
+void UTargetManager::UpdateAllCurrentAvailableTargetWithAbilityTargets(AUnit* OwningUnit, const FString& UnitAbilityId)
+{
+	//TODO: will add other type of target later
+	TBTacticalGameMode->TargetManager->AllCurrentAvailableTarget.Empty();
+	TArray<AUnit*> AllTargetUnit = OwningUnit->UnitAbilityInfos[UnitAbilityId].AllAvailableUnitTargets;
+	for (int i=0; i<AllTargetUnit.Num(); i++)
+	{
+		TBTacticalGameMode->TargetManager->AllCurrentAvailableTarget.Add(Cast<AActor>(AllTargetUnit[i]));
+	}
 }
 
 AActor* UTargetManager::GetTargetFromIndex(int TargetIndex)

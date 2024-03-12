@@ -33,7 +33,11 @@ void UAIBrainComponent::BeginPlay()
 		UtilityMatrix->GetAllRows(TEXT("UAIBrainComponent::BeginPlay"), AllUMRows);
 		for (int i=0; i<AllUMRows.Num(); i++)
 		{
-			OwningUnit->AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AllUMRows[i]->ActionAbility, 0, -1));
+			if (AllUMRows[i]->ActionType == EActionType::AIAbilityAction)
+			{
+				OwningUnit->AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(AllUMRows[i]->AIAbility, 0, -1));
+			}
+			
 			if (AllUMRows[i]->TargetType == EAIAbilityTargetType::NodePath)
 			{
 				TargetNodePath.Add(i, nullptr);
@@ -44,6 +48,28 @@ void UAIBrainComponent::BeginPlay()
 				TargetActorIndex.Add(i, -1);
 			}
 		}
+	}
+}
+
+void UAIBrainComponent::UseUnitAbility(const FString& UnitAbilityId, EAIAbilityTargetType TargetType)
+{
+	if (TargetType == EAIAbilityTargetType::Actor)
+	{
+		if (TargetActorIndex[ChosenActionIndex] != -1)
+		{
+			TBTacticalGameMode->TargetManager->UpdateAllCurrentAvailableTargetWithAbilityTargets(OwningUnit, UnitAbilityId);
+			TBTacticalGameMode->TargetManager->SelectTarget(TargetActorIndex[ChosenActionIndex], false);
+		}
+		else
+		{
+			DebugScreen(UnitAbilityId + " need a target actor and none is provided", FColor::Red);
+			return;
+		}
+	}
+
+	if (!OwningUnit->TryActivateAbilityByID(UnitAbilityId))
+	{
+		DebugScreen(UnitAbilityId + " cannot be used by the currently selected unit", FColor::Red);
 	}
 }
 
@@ -68,14 +94,30 @@ void UAIBrainComponent::OnUnitSelected(AUnit* Unit)
 
 void UAIBrainComponent::DecideActionTimerFunction()
 {
-	TSubclassOf<UAIAbility> ChosenAbility = DecideBestAction();
-	if (ChosenAbility)
+	if (const FUtilityMatrixDT* ChosenAction = DecideBestAction())
 	{
-		OwningUnit->AbilitySystemComponent->TryActivateAbilityByClass(ChosenAbility);
+		switch (ChosenAction->ActionType)
+		{
+			case EActionType::UnitAbilityAction:
+				UseUnitAbility(ChosenAction->UnitAbilityId, ChosenAction->TargetType);
+				break;
+		        
+			case EActionType::MovementAction:
+				MoveToTargetNode();
+				break;
+		        
+			case EActionType::AIAbilityAction:
+				OwningUnit->AbilitySystemComponent->TryActivateAbilityByClass(ChosenAction->AIAbility);
+				break;
+		
+			default:
+				
+				break;
+		}
 	}
 }
 
-TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
+FUtilityMatrixDT* UAIBrainComponent::DecideBestAction()
 {
 	// Get all rows if you need them all
 	TArray<FUtilityMatrixDT*> AllUMRows;
@@ -148,12 +190,24 @@ TSubclassOf<UAIAbility> UAIBrainComponent::DecideBestAction()
 	ChosenActionIndex = nextBestActionIndex;
 	if (nextBestActionIndex != -1)
 	{
-		return AllUMRows[nextBestActionIndex]->ActionAbility;
+		return AllUMRows[nextBestActionIndex];
 	}
 	else
 	{
 		DebugScreen("AI Can't pick action, none of them are enabled and set to default", FColor::Red);
 		return nullptr;
+	}
+}
+
+void UAIBrainComponent::MoveToTargetNode()
+{
+	if (TargetNodePath[ChosenActionIndex] != nullptr)
+	{
+		OwningUnit->MoveToNodePath(TargetNodePath[ChosenActionIndex]);
+	}
+	else
+	{
+		DebugScreen("AI can't move, no node path was selected", FColor::Red);
 	}
 }
 
@@ -262,8 +316,22 @@ int UAIBrainComponent::PickTargetActor(int ActionIndex, FUtilityMatrixDT* UMRow)
 	int  chosenActorIndex = -1;
 
 	const bool bDebugTargetActorScore = bShowTargetActorScore;
+	TArray<AActor*> AllTarget;
 	
-	TArray<AActor*> AllTarget = TBTacticalGameMode->TargetManager->AllCurrentAvailableTarget;
+	if (UMRow->ActionType == EActionType::UnitAbilityAction)
+	{
+		TArray<AUnit*> AllTargetUnit = OwningUnit->UnitAbilityInfos[UMRow->UnitAbilityId].AllAvailableUnitTargets;
+		for (int i=0; i<AllTargetUnit.Num(); i++)
+		{
+			AllTarget.Add(Cast<AActor>(AllTargetUnit[i]));
+		}
+	}
+	else
+	{
+		// list of the default ability target, might not be right in the long run
+		AllTarget = TBTacticalGameMode->TargetManager->AllCurrentAvailableTarget;
+	}
+	
 	for (int i=0; i<AllTarget.Num(); i++)
 	{
 		float NewScore = ScoreTargetActor(ActionIndex, UMRow->TargetConsiderations, AllTarget[i]);

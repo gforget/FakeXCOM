@@ -57,9 +57,12 @@ public:
 
 	void SelectNextTarget();
 	void SelectPreviousTarget();
+
+	UFUNCTION(BlueprintCallable, Category = "Main Functions")
+	void UpdateAllCurrentAvailableTargetWithAbilityTargets(AUnit* OwningUnit, const FString& UnitAbilityId);
 	
 	UFUNCTION(BlueprintCallable, Category = "Main Functions")
-	void SelectTarget(int TargetIndex);
+	void SelectTarget(int TargetIndex, bool bMoveToActor = true);
 
 	UFUNCTION(BlueprintPure, Category = "Main Functions")
 	AActor* GetCurrentlySelectedTarget();

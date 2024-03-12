@@ -54,7 +54,9 @@ public:
 	FTimerHandle DecideActionTimerHandle;
 	void DecideActionTimerFunction();
 	
-	TSubclassOf<UAIAbility> DecideBestAction();
+	FUtilityMatrixDT* DecideBestAction();
+
+	void MoveToTargetNode();
 	
 	float ScoreAction(int ActionIndex, TArray<UConsideration*> Considerations,  TArray<FString>& DebugStrings);
 	
@@ -76,6 +78,8 @@ public:
 	
 private:
 
+	void UseUnitAbility(const FString& UnitAbilityId, EAIAbilityTargetType TargetType);
+	
 	UFUNCTION()
 	void OnUnitSelected(AUnit* Unit);
 	
