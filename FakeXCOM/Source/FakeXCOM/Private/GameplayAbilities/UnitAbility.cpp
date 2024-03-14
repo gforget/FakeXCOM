@@ -28,6 +28,12 @@ bool UUnitAbility::GetIsDisabled(AUnit* Unit)
 	return Unit->UnitAbilityInfos[AbilityId].bIsDisabled;
 }
 
+void UUnitAbility::EndUnitAbility()
+{
+	GetTBTacticalGameMode()->UnitManager->EndOfAbility();
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+}
+
 void UUnitAbility::SetIsHidden(AUnit* Unit, bool Val)
 {
 	Unit->UnitAbilityInfos[AbilityId].bIsHidden = Val;
@@ -70,7 +76,7 @@ void UUnitAbility::SetDynamicRangeValue(AUnit* Unit, float NewRangeValue)
 	Unit->UnitAbilityInfos[AbilityId].RangeValue = NewRangeValue;
 }
 
-float UUnitAbility::GetDynamicRangeValue(AUnit* Unit)
+float UUnitAbility::GetRangeValue(AUnit* Unit)
 {
 	return Unit->UnitAbilityInfos[AbilityId].RangeValue;
 }
@@ -101,7 +107,13 @@ void UUnitAbility::SetDynamicDamageValue(AUnit* Unit, AActor* Target, float NewM
 	}
 }
 
-float UUnitAbility::GetDynamicMinDamageValue(AUnit* Unit, AActor* Target)
+float UUnitAbility::GetDamageValue(AUnit* Unit, AActor* Target)
+{
+	const float DamageReturn = FMath::RandRange(GetMinDamageValue(Unit, Target), GetMaxDamageValue(Unit, Target));
+	return FMath::RoundToInt(DamageReturn);
+}
+
+float UUnitAbility::GetMinDamageValue(AUnit* Unit, AActor* Target)
 {
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
@@ -114,7 +126,7 @@ float UUnitAbility::GetDynamicMinDamageValue(AUnit* Unit, AActor* Target)
 	}
 }
 
-float UUnitAbility::GetDynamicMaxDamageValue(AUnit* Unit, AActor* Target)
+float UUnitAbility::GetMaxDamageValue(AUnit* Unit, AActor* Target)
 {
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
@@ -134,7 +146,7 @@ void UUnitAbility::OnUnitSelected(int IdUnit)
 	
 	for (int i=0; i<UnitRef->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Num(); i++)
 	{
-		if (AUnit* TargetUnit = Cast<AUnit>(UnitRef->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets[i]))
+		if (AUnit* TargetUnit = UnitRef->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets[i])
 		{
 			if (bUseDynamicDamage)
 			{
@@ -199,7 +211,7 @@ void UUnitAbility::SetTargets_Implementation(AUnit* OwningUnit)
 		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Empty();
 		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Empty();
 
-		//TODO: Change GetAllAvailableTargetsBaseOnAbilityProperties so it receive reference of list of Unit and fill it. Later could add damageable object
+		//TODO: Add other kind of potential target list (ex: damageable object) as another argument for GetAllAvailableTargetsBaseOnAbilityProperties
 		GetTBTacticalGameMode()->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this, OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets);
 		
 		for (int i=0; i<OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Num(); i++)
@@ -217,7 +229,7 @@ void UUnitAbility::SetTargets_Implementation(AUnit* OwningUnit)
 	}
 }
 
-void UUnitAbility::AddTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)
+void UUnitAbility::AddUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)
 {
 	if (GetTBTacticalGameMode())
 	{
@@ -234,7 +246,7 @@ void UUnitAbility::AddTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)
 	}
 }
 
-void UUnitAbility::RemoveTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)
+void UUnitAbility::RemoveUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)
 {
 	if (GetTBTacticalGameMode())
 	{

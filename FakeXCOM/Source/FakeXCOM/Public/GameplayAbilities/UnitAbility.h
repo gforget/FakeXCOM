@@ -104,7 +104,7 @@ public :
 	bool bUseTargetImage = false;
 	
 	void OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, AUnit* Unit);
-
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enabling Ability Event")
 	void SetAbilityEnabledEvent(AUnit* Unit);
 
@@ -117,6 +117,9 @@ public :
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enabling Ability Event")
 	void SetAbilityHiddenEvent(AUnit* Unit);
 
+	UFUNCTION(BlueprintCallable, Category = "Main Functions")
+	void EndUnitAbility();
+	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void SetIsHidden(AUnit* Unit, bool Val);
 
@@ -127,10 +130,10 @@ public :
 	void SetTargets(AUnit* OwningUnit);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void AddTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits);
+	void AddUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits);
 	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void RemoveTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits);
+	void RemoveUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void EndSetTargets(AUnit* OwningUnit);
@@ -144,7 +147,7 @@ public :
 	void SetDynamicRangeValue(AUnit* Unit, float NewRangeValue);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	float GetDynamicRangeValue(AUnit* Unit);
+	float GetRangeValue(AUnit* Unit);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
 	void SetDynamicDamageValueEvent(AUnit* Unit, AActor* Target);
@@ -153,10 +156,13 @@ public :
 	void SetDynamicDamageValue(AUnit* Unit, AActor* Target, float NewMinDamageValue, float NewMaxDamageValue);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	float GetDynamicMinDamageValue(AUnit* Unit, AActor* Target);
+	float GetDamageValue(AUnit* Unit, AActor* Target);
+	
+	UFUNCTION(BlueprintPure, Category="Main Functions")
+	float GetMinDamageValue(AUnit* Unit, AActor* Target);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
-	float GetDynamicMaxDamageValue(AUnit* Unit, AActor* Target);
+	float GetMaxDamageValue(AUnit* Unit, AActor* Target);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
 	void SetHitChanceEvent(AUnit* Unit, AActor* Target);

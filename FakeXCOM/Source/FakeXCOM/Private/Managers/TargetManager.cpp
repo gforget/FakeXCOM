@@ -124,14 +124,14 @@ void UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility, TArra
 		case Range:
 			GetTargetsInRange(SeekingUnit,
 				UnitAbility->ValidTargetFactionRelation,
-				UnitAbility->GetDynamicRangeValue(SeekingUnit),
+				UnitAbility->GetRangeValue(SeekingUnit),
 				UnitAbility->DeadTargetFilter,
 				AllAvailableUnitTargets);
 			break;
 		case RangeLineOfSight:
 			GetTargetsInRangeUsingLineOfSight(SeekingUnit,
 				UnitAbility->ValidTargetFactionRelation,
-				UnitAbility->GetDynamicRangeValue(SeekingUnit),
+				UnitAbility->GetRangeValue(SeekingUnit),
 				UnitAbility->DeadTargetFilter,
 				AllAvailableUnitTargets);
 			break;
