@@ -234,40 +234,6 @@ bool UUnitAbility::FilterTargets_Implementation(AUnit* OwningUnit, AActor* Targe
 	return true;
 }
 
-void UUnitAbility::AddUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)
-{
-	if (GetTBTacticalGameMode())
-	{
-		for (int i=0; i<IdTargetUnits.Num(); i++)
-		{
-			AUnit* TargetUnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdTargetUnits[i]);
-	
-			OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Add(TargetUnitRef);
-			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Add(IdTargetUnits[i], MinDamage);
-			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Add(IdTargetUnits[i], MaxDamage);
-			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Add(IdTargetUnits[i], HitChance);
-			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Add(IdTargetUnits[i], CritChance);
-		}
-	}
-}
-
-void UUnitAbility::RemoveUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)
-{
-	if (GetTBTacticalGameMode())
-	{
-		for (int i=0; i<IdTargetUnits.Num(); i++)
-		{
-			AUnit* TargetUnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdTargetUnits[i]);
-	
-			OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Remove(TargetUnitRef);
-			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Remove(IdTargetUnits[i]);
-			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Remove(IdTargetUnits[i]);
-			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Remove(IdTargetUnits[i]);
-			OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Remove(IdTargetUnits[i]);
-		}
-	}
-}
-
 void UUnitAbility::EndSetTargets(AUnit* OwningUnit)
 {
 	if (GetTBTacticalGameMode())

@@ -19,9 +19,9 @@ UENUM(BlueprintType)
 enum ETargetType
 {
 	Self,
-	SingleTarget,
-	FreeGroundPosition,
-	SpecificGroundPosition
+	SingleTarget
+	//FreeGroundPosition,
+	//SpecificGroundPosition
 };
 
 UENUM(BlueprintType)

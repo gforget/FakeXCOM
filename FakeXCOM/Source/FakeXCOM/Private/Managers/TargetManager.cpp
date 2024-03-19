@@ -100,9 +100,9 @@ void UTargetManager::GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility*
 		GetTargetsFromAbiiltyRange(UnitAbility, AllAvailableUnitTargets);
 		break;
 		
-	case ETargetType::SpecificGroundPosition:
-		
-		break;
+	// case ETargetType::SpecificGroundPosition:
+	// 	
+	// 	break;
 		
 	default:
 		break;
@@ -115,16 +115,16 @@ void UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility, TArra
 	
 	switch(UnitAbility->AbilityRange)
 	{
-		case Melee:
-			GetTargetsUsingMeleeRange(SeekingUnit,
-				UnitAbility,
-				AllAvailableUnitTargets);
-			break;
-		case Range:
-			GetTargetsInRange(SeekingUnit,
-				UnitAbility,
-				AllAvailableUnitTargets);
-			break;
+		// case Melee:
+		// 	GetTargetsUsingMeleeRange(SeekingUnit,
+		// 		UnitAbility,
+		// 		AllAvailableUnitTargets);
+		// 	break;
+		// case Range:
+		// 	GetTargetsInRange(SeekingUnit,
+		// 		UnitAbility,
+		// 		AllAvailableUnitTargets);
+		// 	break;
 		case RangeLineOfSight:
 			GetTargetsInRangeUsingLineOfSight(SeekingUnit,
 				UnitAbility,

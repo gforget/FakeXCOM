@@ -17,8 +17,8 @@
 UENUM(BlueprintType)
 enum EAbilityRange
 {
-	Melee,
-	Range,
+	//Melee,
+	//Range,
 	RangeLineOfSight
 };
 
@@ -46,11 +46,11 @@ public :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	FString AbilityDescription;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ability Properties")
+	UPROPERTY(BlueprintReadWrite, Category = "Ability Properties")
 	FString AbilityDisabledText;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
-	bool bIsAOE = false;
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
+	// bool bIsAOE = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	TEnumAsByte<ETargetType> TargetType;
@@ -130,12 +130,6 @@ public :
 	bool FilterTargets(AUnit* OwningUnit, AActor* TargetActor);
 
 	void SetTargets(AUnit* OwningUnit);
-	
-	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void AddUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits);
-	
-	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void RemoveUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void EndSetTargets(AUnit* OwningUnit);
