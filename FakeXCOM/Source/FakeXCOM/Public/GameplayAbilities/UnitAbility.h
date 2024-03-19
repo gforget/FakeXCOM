@@ -127,8 +127,10 @@ public :
 	bool GetIsHidden(AUnit* Unit);
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Dynamic Value Event")
-	void SetTargets(AUnit* OwningUnit);
+	bool FilterTargets(AUnit* OwningUnit, AActor* TargetActor);
 
+	void SetTargets(AUnit* OwningUnit);
+	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void AddUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits);
 	

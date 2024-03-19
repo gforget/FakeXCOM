@@ -44,6 +44,35 @@ bool UUnitAbility::GetIsHidden(AUnit* Unit)
 	return Unit->UnitAbilityInfos[AbilityId].bIsHidden;
 }
 
+void UUnitAbility::SetTargets(AUnit* OwningUnit)
+{
+	if (GetTBTacticalGameMode())
+	{
+		
+		OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Empty();
+		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Empty();
+		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Empty();
+		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Empty();
+		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Empty();
+
+		//TODO: Add other kind of potential target list (ex: damageable object) as another argument for GetAllAvailableTargetsBaseOnAbilityProperties
+		GetTBTacticalGameMode()->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this, OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets);
+		
+		for (int i=0; i<OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Num(); i++)
+		{
+			if (const AUnit* TargetUnit = Cast<AUnit>(OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets[i]))
+			{
+				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Add(TargetUnit->IdUnit, MinDamage);
+				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Add(TargetUnit->IdUnit, MaxDamage);
+				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Add(TargetUnit->IdUnit, HitChance);
+				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Add(TargetUnit->IdUnit, CritChance);
+			}
+		}
+
+		EndSetTargets(OwningUnit);
+	}
+}
+
 void UUnitAbility::SetAbilityEnabledEvent_Implementation(AUnit* Unit)
 {
 	Unit->UnitAbilityInfos[AbilityId].bIsDisabled = false;
@@ -200,33 +229,9 @@ void UUnitAbility::RotateTowardTarget(AUnit* Unit, AActor* Target)
 	Unit->SetActorRotation(LookAtRotation, ETeleportType::TeleportPhysics);
 }
 
-void UUnitAbility::SetTargets_Implementation(AUnit* OwningUnit)
+bool UUnitAbility::FilterTargets_Implementation(AUnit* OwningUnit, AActor* TargetActor)
 {
-	if (GetTBTacticalGameMode())
-	{
-		
-		OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Empty();
-		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Empty();
-		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Empty();
-		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Empty();
-		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Empty();
-
-		//TODO: Add other kind of potential target list (ex: damageable object) as another argument for GetAllAvailableTargetsBaseOnAbilityProperties
-		GetTBTacticalGameMode()->TargetManager->GetAllAvailableTargetsBaseOnAbilityProperties(this, OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets);
-		
-		for (int i=0; i<OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Num(); i++)
-		{
-			if (const AUnit* TargetUnit = Cast<AUnit>(OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets[i]))
-			{
-				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Add(TargetUnit->IdUnit, MinDamage);
-				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Add(TargetUnit->IdUnit, MaxDamage);
-				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances.Add(TargetUnit->IdUnit, HitChance);
-				OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance.Add(TargetUnit->IdUnit, CritChance);
-			}
-		}
-
-		EndSetTargets(OwningUnit);
-	}
+	return true;
 }
 
 void UUnitAbility::AddUnitTargets(AUnit* OwningUnit, TArray<int> IdTargetUnits)

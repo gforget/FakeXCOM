@@ -117,22 +117,17 @@ void UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility, TArra
 	{
 		case Melee:
 			GetTargetsUsingMeleeRange(SeekingUnit,
-				UnitAbility->ValidTargetFactionRelation,
-				UnitAbility->DeadTargetFilter,
+				UnitAbility,
 				AllAvailableUnitTargets);
 			break;
 		case Range:
 			GetTargetsInRange(SeekingUnit,
-				UnitAbility->ValidTargetFactionRelation,
-				UnitAbility->GetRangeValue(SeekingUnit),
-				UnitAbility->DeadTargetFilter,
+				UnitAbility,
 				AllAvailableUnitTargets);
 			break;
 		case RangeLineOfSight:
 			GetTargetsInRangeUsingLineOfSight(SeekingUnit,
-				UnitAbility->ValidTargetFactionRelation,
-				UnitAbility->GetRangeValue(SeekingUnit),
-				UnitAbility->DeadTargetFilter,
+				UnitAbility,
 				AllAvailableUnitTargets);
 			break;
 		default: ;
@@ -141,19 +136,22 @@ void UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility, TArra
 
 void UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	AUnit* SeekingUnit,
-	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-	float LineOfSightRange,
-	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+	UUnitAbility* UnitAbility,
 	TArray<AUnit*>& AllAvailableUnitTargets
 	)
 {
-	TArray<int> AllValidUnitId = GetAllValidUnitIdFromFactionRelation(SeekingUnit, ValidFactionsRelation);
+	TArray<int> AllValidUnitId = GetAllValidUnitIdFromFactionRelation(SeekingUnit, UnitAbility->ValidTargetFactionRelation);
 	
 	//Validate Line of sight of each potential target
 	for (int i=0; i<AllValidUnitId.Num(); i++)
 	{
 		AUnit* PotentialTarget = TBTacticalGameMode->UnitManager->GetUnitFromId(AllValidUnitId[i]);
-		if (!ValidateTargetDeathFilter(PotentialTarget, DeadTargetFilter))
+		if (!UnitAbility->FilterTargets(SeekingUnit, PotentialTarget))
+		{
+			continue;	
+		}
+		
+		if (!ValidateTargetDeathFilter(PotentialTarget, UnitAbility->DeadTargetFilter))
 		{
 			continue;
 		}
@@ -162,7 +160,7 @@ void UTargetManager::GetTargetsInRangeUsingLineOfSight(
 			PotentialTarget,
 			SeekingUnit->GetActorLocation(),
 			PotentialTarget->GetActorLocation(),
-			LineOfSightRange
+			UnitAbility->GetRangeValue(SeekingUnit)
 			))
 		{
 			AllAvailableUnitTargets.Add(PotentialTarget);
@@ -273,9 +271,7 @@ bool UTargetManager::ConfirmLineOfSightOnUnit(
 
 void UTargetManager::GetTargetsInRange(
 	AUnit* SeekingUnit,
-	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-	float Range,
-	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+	UUnitAbility* UnitAbility,
 	TArray<AUnit*>& AllAvailableUnitTargets)
 {
 	//TODO: Feed AllAvailableUnitTargets
@@ -283,8 +279,7 @@ void UTargetManager::GetTargetsInRange(
 
 void UTargetManager::GetTargetsUsingMeleeRange(
 	AUnit* SeekingUnit,
-	TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-	TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+	UUnitAbility* UnitAbility,
 	TArray<AUnit*>& AllAvailableUnitTargets
 	)
 {

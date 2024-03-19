@@ -92,24 +92,19 @@ private:
 	
 	void GetTargetsInRange(
 		AUnit* SeekingUnit,
-		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-		float Range,
-		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+		UUnitAbility* UnitAbility,
 		TArray<AUnit*>& AllAvailableUnitTargets
 		);
 	
 	void GetTargetsInRangeUsingLineOfSight(
 		AUnit* SeekingUnit,
-		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-		float LineOfSightRange,
-		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+		UUnitAbility* UnitAbility,
 		TArray<AUnit*>& AllAvailableUnitTargets
 		);
 	
 	void  GetTargetsUsingMeleeRange(
 		AUnit* SeekingUnit,
-		TArray<TEnumAsByte<EFactionRelation>> ValidFactionsRelation,
-		TEnumAsByte<EDeadTargetFilter> DeadTargetFilter,
+		UUnitAbility* UnitAbility,
 		TArray<AUnit*>& AllAvailableUnitTargets
 	);
 	
