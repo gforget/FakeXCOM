@@ -14,41 +14,42 @@
 
 void UUnitAbility::OnAbilityAssigned(ATBTacticalGameMode* TBTacticalGameModeRef, AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(TBTacticalGameModeRef)) return;
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	TBTacticalGameMode = TBTacticalGameModeRef;
 	SetAbilityPropertiesOnAssigned(Unit);
 }
 
 void UUnitAbility::SetIsDisabled(AUnit* Unit, bool Val)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
 	Unit->UnitAbilityInfos[AbilityId].bIsDisabled = Val;
 }
 
 bool UUnitAbility::GetIsDisabled(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return false;
 	return Unit->UnitAbilityInfos[AbilityId].bIsDisabled;
-}
-
-void UUnitAbility::EndUnitAbility()
-{
-	GetTBTacticalGameMode()->UnitManager->EndOfAbility();
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
 }
 
 void UUnitAbility::SetIsHidden(AUnit* Unit, bool Val)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
 	Unit->UnitAbilityInfos[AbilityId].bIsHidden = Val;
 }
 
 bool UUnitAbility::GetIsHidden(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return false;
 	return Unit->UnitAbilityInfos[AbilityId].bIsHidden;
 }
 
 void UUnitAbility::SetTargets(AUnit* OwningUnit)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return;
 	if (GetTBTacticalGameMode())
 	{
-		
 		OwningUnit->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Empty();
 		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage.Empty();
 		OwningUnit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage.Empty();
@@ -75,16 +76,19 @@ void UUnitAbility::SetTargets(AUnit* OwningUnit)
 
 void UUnitAbility::SetAbilityEnabledEvent_Implementation(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
 	Unit->UnitAbilityInfos[AbilityId].bIsDisabled = false;
 }
 
 void UUnitAbility::SetAbilityHiddenEvent_Implementation(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
 	Unit->UnitAbilityInfos[AbilityId].bIsHidden = false;
 }
 
 void UUnitAbility::SetAbilityPropertiesOnAssigned(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
 	if (bUseDynamicRange)
 	{
 		SetDynamicRangeValueEvent(Unit);
@@ -97,21 +101,27 @@ void UUnitAbility::SetAbilityPropertiesOnAssigned(AUnit* Unit)
 
 void UUnitAbility::SetDynamicRangeValueEvent_Implementation(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
 	Unit->UnitAbilityInfos[AbilityId].RangeValue = RangeValue;
 }
 
 void UUnitAbility::SetDynamicRangeValue(AUnit* Unit, float NewRangeValue)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
 	Unit->UnitAbilityInfos[AbilityId].RangeValue = NewRangeValue;
 }
 
 float UUnitAbility::GetRangeValue(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return 0.0f;
 	return Unit->UnitAbilityInfos[AbilityId].RangeValue;
 }
 
 void UUnitAbility::SetDynamicDamageValueEvent_Implementation(AUnit* Unit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	if (CHECK_NULL_POINTER(Target)) return;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		Unit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage[TargetUnit->IdUnit] = MinDamage;
@@ -125,6 +135,9 @@ void UUnitAbility::SetDynamicDamageValueEvent_Implementation(AUnit* Unit, AActor
 
 void UUnitAbility::SetDynamicDamageValue(AUnit* Unit, AActor* Target, float NewMinDamageValue, float NewMaxDamageValue)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	if (CHECK_NULL_POINTER(Target)) return;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		Unit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage[TargetUnit->IdUnit] = NewMinDamageValue;
@@ -138,12 +151,18 @@ void UUnitAbility::SetDynamicDamageValue(AUnit* Unit, AActor* Target, float NewM
 
 float UUnitAbility::GetDamageValue(AUnit* Unit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(Unit)) return 0.0f;
+	if (CHECK_NULL_POINTER(Target)) return 0.0f;
+	
 	const float DamageReturn = FMath::RandRange(GetMinDamageValue(Unit, Target), GetMaxDamageValue(Unit, Target));
 	return FMath::RoundToInt(DamageReturn);
 }
 
 float UUnitAbility::GetMinDamageValue(AUnit* Unit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(Unit)) return 0.0f;
+	if (CHECK_NULL_POINTER(Target)) return 0.0f;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		return Unit->UnitAbilityInfos[AbilityId].TargetUnitsMinDamage[TargetUnit->IdUnit];
@@ -157,6 +176,9 @@ float UUnitAbility::GetMinDamageValue(AUnit* Unit, AActor* Target)
 
 float UUnitAbility::GetMaxDamageValue(AUnit* Unit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(Unit)) return 0.0f;
+	if (CHECK_NULL_POINTER(Target)) return 0.0f;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		return Unit->UnitAbilityInfos[AbilityId].TargetUnitsMaxDamage[TargetUnit->IdUnit];
@@ -171,6 +193,8 @@ float UUnitAbility::GetMaxDamageValue(AUnit* Unit, AActor* Target)
 void UUnitAbility::OnUnitSelected(int IdUnit)
 {
 	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
+	if (CHECK_NULL_POINTER(UnitRef)) return;
+	
 	SetTargets(UnitRef);
 	
 	for (int i=0; i<UnitRef->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Num(); i++)
@@ -219,6 +243,9 @@ void UUnitAbility::OnUnitSelected(int IdUnit)
 
 void UUnitAbility::RotateTowardTarget(AUnit* Unit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	if (CHECK_NULL_POINTER(Target)) return;
+	
 	FVector UnitLocation = Unit->GetActorLocation();
 	UnitLocation.Z = 0.0f;
 
@@ -231,11 +258,16 @@ void UUnitAbility::RotateTowardTarget(AUnit* Unit, AActor* Target)
 
 bool UUnitAbility::FilterTargets_Implementation(AUnit* OwningUnit, AActor* TargetActor)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return true;
+	if (CHECK_NULL_POINTER(TargetActor)) return true;
+	
 	return true;
 }
 
 void UUnitAbility::EndSetTargets(AUnit* OwningUnit)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return;
+	
 	if (GetTBTacticalGameMode())
 	{
 		SetAbilityEnabledEvent(OwningUnit);
@@ -245,6 +277,9 @@ void UUnitAbility::EndSetTargets(AUnit* OwningUnit)
 
 void UUnitAbility::SetHitChanceEvent_Implementation(AUnit* Unit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	if (CHECK_NULL_POINTER(Target)) return;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		Unit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances[TargetUnit->IdUnit] = HitChance;
@@ -257,11 +292,19 @@ void UUnitAbility::SetHitChanceEvent_Implementation(AUnit* Unit, AActor* Target)
 
 float UUnitAbility::GetHitChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
 {
+	if (CHECK_NULL_POINTER(Unit)) return 0.0f;
+	if (CHECK_NULL_POINTER(Target)) return 0.0f;
+	if (CHECK_NULL_POINTER(UnitNodePath)) return 0.0f;
+	if (CHECK_NULL_POINTER(TargetNodePath)) return 0.0f;
+	
 	return HitChance;
 }
 
 void UUnitAbility::SetHitChance(AUnit* Unit, AActor* Target, float NewHitChanceValue)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	if (CHECK_NULL_POINTER(Target)) return;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		Unit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances[TargetUnit->IdUnit] = NewHitChanceValue;
@@ -274,6 +317,9 @@ void UUnitAbility::SetHitChance(AUnit* Unit, AActor* Target, float NewHitChanceV
 
 void UUnitAbility::SetCritChanceEvent_Implementation(AUnit* Unit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	if (CHECK_NULL_POINTER(Target)) return;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		Unit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance[TargetUnit->IdUnit] = CritChance;
@@ -286,11 +332,19 @@ void UUnitAbility::SetCritChanceEvent_Implementation(AUnit* Unit, AActor* Target
 
 float UUnitAbility::GetCritChance_Implementation(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
 {
+	if (CHECK_NULL_POINTER(Unit)) return 0.0f;
+	if (CHECK_NULL_POINTER(Target)) return 0.0f;
+	if (CHECK_NULL_POINTER(UnitNodePath)) return 0.0f;
+	if (CHECK_NULL_POINTER(TargetNodePath)) return 0.0f;
+	
 	return CritChance;
 }
 
 void UUnitAbility::SetCritChance(AUnit* Unit , AActor* Target, float NewCritChanceValue)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	if (CHECK_NULL_POINTER(Target)) return;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		Unit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance[TargetUnit->IdUnit] = NewCritChanceValue;
@@ -303,6 +357,11 @@ void UUnitAbility::SetCritChance(AUnit* Unit , AActor* Target, float NewCritChan
 
 float UUnitAbility::GetRangeToTarget(AUnit* Unit, AActor* Target, UNodePath* UnitNodePath, UNodePath* TargetNodePath)
 {
+	if (CHECK_NULL_POINTER(Unit)) return 0.0f;
+	if (CHECK_NULL_POINTER(Target)) return 0.0f;
+	if (CHECK_NULL_POINTER(UnitNodePath)) return 0.0f;
+	if (CHECK_NULL_POINTER(TargetNodePath)) return 0.0f;
+	
 	//TODO: in future, might have interactible destructible object
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
@@ -320,6 +379,9 @@ float UUnitAbility::GetRangeToTarget(AUnit* Unit, AActor* Target, UNodePath* Uni
 
 float UUnitAbility::GetTargetHitChance(AUnit* Unit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(Unit)) return -1.0f;
+	if (CHECK_NULL_POINTER(Target)) return -1.0f;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		return Unit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances[TargetUnit->IdUnit];
@@ -333,6 +395,9 @@ float UUnitAbility::GetTargetHitChance(AUnit* Unit, AActor* Target)
 
 float UUnitAbility::GetTargetCritChance(AUnit* Unit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(Unit)) return -1.0f;
+	if (CHECK_NULL_POINTER(Target)) return -1.0f;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		return Unit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance[TargetUnit->IdUnit];
@@ -346,11 +411,15 @@ float UUnitAbility::GetTargetCritChance(AUnit* Unit, AActor* Target)
 
 void UUnitAbility::CostAllActions(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	Unit->UnitAttributeSet->SetActions(0.0f);
 }
 
 void UUnitAbility::CostActions(AUnit* Unit, float CostValue)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	const UUnitAttributeSet* TargetUnitAttributeSet = Unit->UnitAttributeSet;
 	const float NewActionsValue = TargetUnitAttributeSet->GetActions() - CostValue;
 	TargetUnitAttributeSet->SetActions(NewActionsValue);
@@ -358,6 +427,8 @@ void UUnitAbility::CostActions(AUnit* Unit, float CostValue)
 
 void UUnitAbility::CostAmmo(AGun* Gun, float CostValue)
 {
+	if (CHECK_NULL_POINTER(Gun)) return;
+	
 	const UGunAttributeSet* OwnedGunAttributeSet = Gun->GunAttributeSet;
 	const float NewAmmosValue = OwnedGunAttributeSet->GetAmmo() - CostValue;
 	OwnedGunAttributeSet->SetAmmo(NewAmmosValue);
@@ -365,6 +436,8 @@ void UUnitAbility::CostAmmo(AGun* Gun, float CostValue)
 
 void UUnitAbility::RechargeAllAmmo(AGun* Gun)
 {
+	if (CHECK_NULL_POINTER(Gun)) return;
+	
 	const UGunAttributeSet* OwnedGunAttributeSet = Gun->GunAttributeSet;
 	const float NewAmmosValue = OwnedGunAttributeSet->GetMaxAmmo();
 	OwnedGunAttributeSet->SetAmmo(NewAmmosValue);
@@ -372,6 +445,8 @@ void UUnitAbility::RechargeAllAmmo(AGun* Gun)
 
 void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue, const bool IsCrit)
 {
+	if (CHECK_NULL_POINTER(Target)) return;
+	
 	if (AUnit* UnitTarget = Cast<AUnit>(Target))
 	{
 		const UUnitAttributeSet* TargetUnitAttributeSet = UnitTarget->UnitAttributeSet;
@@ -391,6 +466,8 @@ void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue, const bool IsC
 
 void UUnitAbility::ApplyHeal(AActor* Target, float DamageValue, bool IsCrit)
 {
+	if (CHECK_NULL_POINTER(Target)) return;
+	
 	if (AUnit* UnitTarget = Cast<AUnit>(Target))
 	{
 		const UUnitAttributeSet* TargetUnitAttributeSet = UnitTarget->UnitAttributeSet;
@@ -410,6 +487,9 @@ void UUnitAbility::ApplyHeal(AActor* Target, float DamageValue, bool IsCrit)
 
 bool UUnitAbility::RollDiceForHit(AUnit* UnitTryingToHit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(UnitTryingToHit)) return false;
+	if (CHECK_NULL_POINTER(Target)) return false;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		const float CurrentHitChance = UnitTryingToHit->UnitAbilityInfos[AbilityId].TargetUnitsHitChances[TargetUnit->IdUnit];
@@ -425,6 +505,9 @@ bool UUnitAbility::RollDiceForHit(AUnit* UnitTryingToHit, AActor* Target)
 
 bool UUnitAbility::RollDiceForCrit(AUnit* UnitTryingToHit, AActor* Target)
 {
+	if (CHECK_NULL_POINTER(UnitTryingToHit)) return false;
+	if (CHECK_NULL_POINTER(Target)) return false;
+	
 	if (const AUnit* TargetUnit = Cast<AUnit>(Target))
 	{
 		const float CurrentCritChance = UnitTryingToHit->UnitAbilityInfos[AbilityId].TargetUnitsCritChance[TargetUnit->IdUnit];
@@ -450,6 +533,11 @@ ATBTacticalGameMode* UUnitAbility::GetTBTacticalGameMode()
 	}
 }
 
+void UUnitAbility::EndUnitAbility()
+{
+	GetTBTacticalGameMode()->UnitManager->EndOfAbility();
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+}
 
 
 

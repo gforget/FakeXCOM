@@ -17,6 +17,7 @@
 UENUM(BlueprintType)
 enum EAbilityRange
 {
+	//TODO: V1 properties
 	//Melee,
 	//Range,
 	RangeLineOfSight
@@ -48,7 +49,8 @@ public :
 
 	UPROPERTY(BlueprintReadWrite, Category = "Ability Properties")
 	FString AbilityDisabledText;
-	
+
+	//TODO: V1 properties
 	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Properties")
 	// bool bIsAOE = false;
 
@@ -114,12 +116,10 @@ public :
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	bool GetIsDisabled(AUnit* Unit);
 	
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enabling Ability Event")
 	void SetAbilityHiddenEvent(AUnit* Unit);
 
-	UFUNCTION(BlueprintCallable, Category = "Main Functions")
-	void EndUnitAbility();
-	
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void SetIsHidden(AUnit* Unit, bool Val);
 
@@ -218,6 +218,10 @@ public :
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void RotateTowardTarget(AUnit* Unit, AActor* Target);
+
+	UFUNCTION(BlueprintCallable, Category = "Main Functions")
+	void EndUnitAbility();
+	
 };
 
 
