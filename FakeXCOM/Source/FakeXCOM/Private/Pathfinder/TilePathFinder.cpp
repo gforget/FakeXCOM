@@ -14,12 +14,14 @@
 
 void UTilePathFinder::SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent)
 {
+	if (CHECK_NULL_POINTER(UnitMovementComponent)) return;
 	UnitMovementComponent->OnUnitStartMovingEvent.AddDynamic(this, &UTilePathFinder::OnUnitStartMovingEvent);
 	UnitMovementComponent->OnUnitStopMovingEvent.AddDynamic(this, &UTilePathFinder::OnUnitStopMovingEvent);
 }
 
 void UTilePathFinder::SubscribeGameModeEvent(ATBTacticalGameMode* TBTacticalGameMode)
 {
+	if (CHECK_NULL_POINTER(TBTacticalGameMode)) return;
 	TBTacticalGameMode->UnitAbilityManager->OnAbilitySelectionModeChangeEvent.AddDynamic(this, &UTilePathFinder::OnAbilitySelectionModeChangeEvent);
 }
 
@@ -37,16 +39,21 @@ void UTilePathFinder::OnAbilitySelectionModeChangeEvent(bool AbilitySelectionMod
 
 void UTilePathFinder::OnUnitStartMovingEvent(AActor* MovingActor)
 {
+	if (CHECK_NULL_POINTER(MovingActor)) return;
 	bCanMoveUnit = false;
 }
 
 void UTilePathFinder::OnUnitStopMovingEvent(AActor* MovingActor)
 {
+	if (CHECK_NULL_POINTER(MovingActor)) return;
 	bCanMoveUnit = true;
 }
 
 GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* InitialNode, UNodePath* DestinationNode)
 {
+	if (CHECK_NULL_POINTER(InitialNode)) return GenericStack<UNodePath*>();
+	if (CHECK_NULL_POINTER(DestinationNode)) return GenericStack<UNodePath*>();
+	
 	GenericStack<UNodePath*> PathStack;
 	if (!InitialNode || !DestinationNode)
 	{
@@ -119,6 +126,8 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 	int& BaseDistance,
 	int& LongDistance)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+			
 	//Reset NbStep
 	for (int i=0;i<AllNodePaths.Num();i++)
 	{
@@ -270,6 +279,7 @@ int UTilePathFinder::GetStepFromStepSoFar(TMap<int, int>& step_so_far, int IdNod
 
 void UTilePathFinder::MoveUnit(const AUnit* Unit, GenericStack<UNodePath*> Path, bool CallEndOfAbility)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
 	if (bCanMoveUnit)
 	{
 		Unit->TileMovementComponent->FollowPath(Path, CallEndOfAbility);

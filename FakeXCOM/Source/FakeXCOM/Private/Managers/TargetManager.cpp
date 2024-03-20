@@ -11,6 +11,7 @@
 
 void UTargetManager::Initialize(ATBTacticalGameMode* TBTacticalGameModeRef)
 {
+	if (CHECK_NULL_POINTER(TBTacticalGameModeRef)) return;
 	TBTacticalGameMode = TBTacticalGameModeRef;
 }
 
@@ -68,6 +69,8 @@ void UTargetManager::SelectPreviousTarget()
 
 void UTargetManager::UpdateAllCurrentAvailableTargetWithAbilityTargets(AUnit* OwningUnit, const FString& UnitAbilityId)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return;
+	
 	//TODO: will add other type of target later
 	TBTacticalGameMode->TargetManager->AllCurrentAvailableTarget.Empty();
 	TArray<AUnit*> AllTargetUnit = OwningUnit->UnitAbilityInfos[UnitAbilityId].AllAvailableUnitTargets;
@@ -88,6 +91,8 @@ AActor* UTargetManager::GetTargetFromIndex(int TargetIndex)
 
 void UTargetManager::GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility* UnitAbility, TArray<AUnit*>& AllAvailableUnitTargets)
 {
+	if (CHECK_NULL_POINTER(UnitAbility)) return;
+	
 	AUnit* CurrentUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
 	
 	switch (UnitAbility->TargetType)
@@ -99,7 +104,7 @@ void UTargetManager::GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility*
 	case ETargetType::SingleTarget:
 		GetTargetsFromAbiiltyRange(UnitAbility, AllAvailableUnitTargets);
 		break;
-		
+		//TODO: V1 properties
 	// case ETargetType::SpecificGroundPosition:
 	// 	
 	// 	break;
@@ -111,10 +116,13 @@ void UTargetManager::GetAllAvailableTargetsBaseOnAbilityProperties(UUnitAbility*
 
 void UTargetManager::GetTargetsFromAbiiltyRange(UUnitAbility* UnitAbility, TArray<AUnit*>& AllAvailableUnitTargets)
 {
+	if (CHECK_NULL_POINTER(UnitAbility)) return;
+	
 	AUnit* SeekingUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
 	
 	switch(UnitAbility->AbilityRange)
 	{
+		//TODO: V1 properties
 		// case Melee:
 		// 	GetTargetsUsingMeleeRange(SeekingUnit,
 		// 		UnitAbility,
@@ -140,6 +148,9 @@ void UTargetManager::GetTargetsInRangeUsingLineOfSight(
 	TArray<AUnit*>& AllAvailableUnitTargets
 	)
 {
+	if (CHECK_NULL_POINTER(SeekingUnit)) return;
+	if (CHECK_NULL_POINTER(UnitAbility)) return;
+	
 	TArray<int> AllValidUnitId = GetAllValidUnitIdFromFactionRelation(SeekingUnit, UnitAbility->ValidTargetFactionRelation);
 	
 	//Validate Line of sight of each potential target
@@ -170,6 +181,8 @@ void UTargetManager::GetTargetsInRangeUsingLineOfSight(
 
 TArray<int> UTargetManager::GetAllValidUnitIdFromFactionRelation(AUnit* SeekingUnit, TArray<TEnumAsByte<EFactionRelation>> ValidRelations)
 {
+	if (CHECK_NULL_POINTER(SeekingUnit)) return TArray<int>();
+	
 	TArray<EFaction> AllValidFaction;
 	for (int i=0; i<ValidRelations.Num(); i++)
 	{
@@ -195,6 +208,8 @@ TArray<int> UTargetManager::GetAllValidUnitIdFromFactionRelation(AUnit* SeekingU
 
 bool UTargetManager::ValidateTargetDeathFilter(AUnit* PotentialTarget, TEnumAsByte<EDeadTargetFilter> DeadTargetFilter)
 {
+	if (CHECK_NULL_POINTER(PotentialTarget)) return false;
+	
 	switch(DeadTargetFilter)
 	{
 		case EDeadTargetFilter::NoDeadTarget:
@@ -223,6 +238,9 @@ bool UTargetManager::ConfirmLineOfSightOnUnit(
 	FVector TargetUnitPosition,
 	float LineOfSightRange)
 {
+	if (CHECK_NULL_POINTER(SeekingUnit)) return false;
+	if (CHECK_NULL_POINTER(TargetUnit)) return false;
+	
 	for (int i=0; i<TargetUnit->SightSurroundDefendingAnchor.Num(); i++)
 	{
 		//To validate if you have line of sight, the potential target has surround anchor so if the target hide behind an obstacle measuring one cube
@@ -274,6 +292,9 @@ void UTargetManager::GetTargetsInRange(
 	UUnitAbility* UnitAbility,
 	TArray<AUnit*>& AllAvailableUnitTargets)
 {
+	if (CHECK_NULL_POINTER(SeekingUnit)) return;
+	if (CHECK_NULL_POINTER(UnitAbility)) return;
+	
 	//TODO: Feed AllAvailableUnitTargets
 }
 
@@ -283,5 +304,7 @@ void UTargetManager::GetTargetsUsingMeleeRange(
 	TArray<AUnit*>& AllAvailableUnitTargets
 	)
 {
+	if (CHECK_NULL_POINTER(SeekingUnit)) return;
+	if (CHECK_NULL_POINTER(UnitAbility)) return;
 	//TODO: Feed AllAvailableUnitTargets
 }

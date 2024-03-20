@@ -41,18 +41,24 @@ void UUI3DManager::Initialize()
 
 void UUI3DManager::SubscribeToUnitEvent(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	Unit->OnUnitOrderedToMoveEvent.AddDynamic(this, &UUI3DManager::OnUnitOrderedToMove);
 	Unit->OnUnitIsDeadEvent.AddDynamic(this, &UUI3DManager::OnUnitIsDead);
 }
 
 void UUI3DManager::OnUnitSelected(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	ClearDistanceLimitUI();
 	CreateDistanceLimitUI(Unit);
 }
 
 void UUI3DManager::OnUnitOrderedToMove(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	ClearPath3DIcons();
 	ClearDistanceLimitUI();
 	ConnectCover3DIconsToUnit(Unit->IdUnit);
@@ -60,11 +66,15 @@ void UUI3DManager::OnUnitOrderedToMove(AUnit* Unit)
 
 void UUI3DManager::OnUnitIsDead(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	DisconnectCover3DIconsToUnit(Unit->IdUnit);
 }
 
 void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 {
+	if (CHECK_NULL_POINTER(Actor)) return;
+	
 	if (!TBTacticalGameMode->TilePathFinder->bCanMoveUnit || AIActive)
 	{
 		return;
@@ -154,6 +164,8 @@ void UUI3DManager::OnTurnStartedEvent(EFaction CurrentSelectedFaction)
 
 void UUI3DManager::CreateDistanceLimitUI(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	if (TBTacticalGameMode && BaseDistanceLimitIconClass && LongDistanceLimitIconClass)
 	{
 		int BaseDistance;

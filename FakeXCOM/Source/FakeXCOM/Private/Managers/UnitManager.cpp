@@ -139,6 +139,7 @@ AUnit* UUnitManager::GetCurrentlySelectedUnit()
 
 void UUnitManager::Initialize(ATBTacticalGameMode* TBTacticalGameModePtr)
 {
+	if (CHECK_NULL_POINTER(TBTacticalGameModePtr)) return;
 	TBTacticalGameMode = TBTacticalGameModePtr;
 
 	TBTacticalGameMode->MainController->MouseSceneSelectionComponent->OnLeftClickSelectActorEvent.AddDynamic(this, &UUnitManager::OnLeftClickSelectActor);
@@ -163,6 +164,8 @@ TArray<int> UUnitManager::GetAllUnitsIdFromFactions(EFaction Faction)
 
 void UUnitManager::AddUnitToManager(int IdUnit, AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	if (!AllUnitFactionReferenceMap.Contains(Unit->Faction))
 	{
 		AllUnitFactionReferenceMap.Add(Unit->Faction, FUnitFactionStruct());
@@ -178,6 +181,8 @@ void UUnitManager::AddUnitToManager(int IdUnit, AUnit* Unit)
 
 void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	bAllUnitOutOfAction = true;
 	const EFaction SelectedFaction = TBTacticalGameMode->TurnManagerComponent->GetSelectedFaction();
 	
@@ -202,6 +207,8 @@ void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
 
 void UUnitManager::OnUnitIsDead(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	bool bAllUnitFromFactionAreDead = true;
 	for(int i=0; i<AllUnitFactionReferenceMap[Unit->Faction].UnitInFaction.Num(); i++)
 	{

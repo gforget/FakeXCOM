@@ -75,6 +75,8 @@ void UAIBrainComponent::UseUnitAbility(const FString& UnitAbilityId, EAIAbilityT
 
 void UAIBrainComponent::OnUnitSelected(AUnit* Unit)
 {
+	if (CHECK_NULL_POINTER(Unit)) return;
+	
 	if (OwningUnit->IdUnit == Unit->IdUnit)
 	{
 		if (TBTacticalGameMode->FactionManagerComponent->FactionsController[Unit->Faction] == AIController)
@@ -243,6 +245,8 @@ float UAIBrainComponent::ScoreAction(int ActionIndex, TArray<UConsideration*> Co
 
 UNodePath* UAIBrainComponent::PickNodePath(int ActionIndex, FUtilityMatrixDT* UMRow)
 {
+	if (CHECK_NULL_POINTER(UMRow)) return nullptr;
+	
 	float score = 0.0f;
 	int  chosenNodeIndex = 0;
 	const bool bDebugNodeScore = bShowNodeScore;
@@ -280,6 +284,8 @@ UNodePath* UAIBrainComponent::PickNodePath(int ActionIndex, FUtilityMatrixDT* UM
 
 float UAIBrainComponent::ScoreNodePath(int ActionIndex, TArray<UConsideration*> Considerations, UNodePath* Node)
 {
+	if (CHECK_NULL_POINTER(Node)) return 0.0f;
+	
 	float score = 1.0f;
 	if (Considerations.Num() == 0 ) return 0.0f;
 	
@@ -312,6 +318,8 @@ float UAIBrainComponent::ScoreNodePath(int ActionIndex, TArray<UConsideration*> 
 
 int UAIBrainComponent::PickTargetActor(int ActionIndex, FUtilityMatrixDT* UMRow)
 {
+	if (CHECK_NULL_POINTER(UMRow)) return -1;
+	
 	float score = 0.0f;
 	int  chosenActorIndex = -1;
 
@@ -361,6 +369,8 @@ int UAIBrainComponent::PickTargetActor(int ActionIndex, FUtilityMatrixDT* UMRow)
 
 float UAIBrainComponent::ScoreTargetActor(int ActionIndex, TArray<UConsideration*> Considerations, AActor* Actor)
 {
+	if (CHECK_NULL_POINTER(Actor)) return 0.0f;
+	
 	float score = 1.0f;
 	if (Considerations.Num() == 0 ) return 0.0f;
 	

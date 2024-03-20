@@ -193,8 +193,7 @@ float UUnitAbility::GetMaxDamageValue(AUnit* Unit, AActor* Target)
 void UUnitAbility::OnUnitSelected(int IdUnit)
 {
 	AUnit* UnitRef = GetTBTacticalGameMode()->UnitManager->GetUnitFromId(IdUnit);
-	if (CHECK_NULL_POINTER(UnitRef)) return;
-	
+
 	SetTargets(UnitRef);
 	
 	for (int i=0; i<UnitRef->UnitAbilityInfos[AbilityId].AllAvailableUnitTargets.Num(); i++)

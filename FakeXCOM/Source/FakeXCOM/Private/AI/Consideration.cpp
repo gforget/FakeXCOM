@@ -13,23 +13,35 @@
 
 float UConsideration::ScoreConsideration_Implementation(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return 1.0f;
+	if (CHECK_NULL_POINTER(TBTacticalGameMode)) return 1.0f;
+	
 	return 1.0f;
 }
 
 float UConsideration::ScoreConsiderationNode_Implementation(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return 1.0f;
+	if (CHECK_NULL_POINTER(TBTacticalGameMode)) return 1.0f;
+	if (CHECK_NULL_POINTER(TargetNode)) return 1.0f;
+	
 	return 1.0f;
 }
 
-float UConsideration::ScoreConsiderationActor_Implementation(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode,
-	AActor* TargetActor)
+float UConsideration::ScoreConsiderationActor_Implementation(AUnit* OwningUnit, int ActionIndex, ATBTacticalGameMode* TBTacticalGameMode, AActor* TargetActor)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return 1.0f;
+	if (CHECK_NULL_POINTER(TBTacticalGameMode)) return 1.0f;
+	if (CHECK_NULL_POINTER(TargetActor)) return 1.0f;
+	
 	return 1.0f;
 }
 
-float UConsideration::GetLowestPotentialDefence(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode,
- UNodePath* TargetNode)
+float UConsideration::GetLowestPotentialDefence(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return 0.0f;
+	if (CHECK_NULL_POINTER(TBTacticalGameMode)) return 0.0f;
+	if (CHECK_NULL_POINTER(TargetNode)) return 0.0f;
 	
 	// If there is no cover on that node, then the cover defence is 0
 	if (TargetNode->AllCoverInfos.Num() == 0)
@@ -98,9 +110,12 @@ float UConsideration::GetLowestPotentialDefence(AUnit* OwningUnit, ATBTacticalGa
 	return LowestPotentialCoverDefence;
 }
 
-TArray<AUnit*> UConsideration::GetAllEnemyUnitInSight(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode,
-	UNodePath* TargetNode)
+TArray<AUnit*> UConsideration::GetAllEnemyUnitInSight(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode, UNodePath* TargetNode)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return TArray<AUnit*>();
+	if (CHECK_NULL_POINTER(TBTacticalGameMode)) return TArray<AUnit*>();
+	if (CHECK_NULL_POINTER(TargetNode)) return TArray<AUnit*>();
+	
 	TArray<AUnit*> AllEnemyUnitInSight;
 	
 	// Get All Ennemy unit from enemy faction
@@ -135,6 +150,9 @@ TArray<AUnit*> UConsideration::GetAllEnemyUnitInSight(AUnit* OwningUnit, ATBTact
 
 TArray<AUnit*> UConsideration::GetAllEnemyUnits(AUnit* OwningUnit, ATBTacticalGameMode* TBTacticalGameMode)
 {
+	if (CHECK_NULL_POINTER(OwningUnit)) return TArray<AUnit*>();
+	if (CHECK_NULL_POINTER(TBTacticalGameMode)) return TArray<AUnit*>();
+	
 	TArray<AUnit*> AllEnemyUnits;
 	UFactionManager* FactionManagerRef = TBTacticalGameMode->FactionManagerComponent;
 	const TMap<int, AUnit*> AllUnitMapRef = TBTacticalGameMode->UnitManager->AllUnitReference;

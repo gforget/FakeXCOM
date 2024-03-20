@@ -18,6 +18,7 @@
 #include "Pathfinder/NodePath.h"
 #include "Pathfinder/TilePathFinder.h"
 #include "Pathfinder/TileMovementComponent.h"
+#include "Utility/DebugHeader.h"
 
 // Sets default values
 AUnit::AUnit()
@@ -238,6 +239,10 @@ void AUnit::CallHealthChanged()
 
 float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, UNodePath* TargetNode)
 {
+	if (CHECK_NULL_POINTER(TargetUnit)) return 0.0f;
+	if (CHECK_NULL_POINTER(UnitNode)) return 0.0f;
+	if (CHECK_NULL_POINTER(TargetNode)) return 0.0f;
+	
 	const TArray<FCoverInfo> AllCoverInfo = TargetNode->AllCoverInfos;
 	
 	bool bCoverIsEffective = false;
@@ -286,6 +291,8 @@ float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, 
 
 float AUnit::GetHeightAdvantageBonus(AUnit* Target)
 {
+	if (CHECK_NULL_POINTER(Target)) return 0.0f;
+	
 	float TargetZPosition = Target->GetActorLocation().Z;
 	float UnitZPosition = GetActorLocation().Z;
 
@@ -317,6 +324,8 @@ bool AUnit::GetIsDead()
 
 void AUnit::MoveToNodePath(UNodePath* TargetNodePath)
 {
+	if (CHECK_NULL_POINTER(TargetNodePath)) return;
+	
 	if (!TargetNodePath->bIsBlocked && TBTacticalGameMode->TilePathFinder->bCanMoveUnit)
 	{
 		const int BaseDistance = UnitAttributeSet->GetMaxMoveDistancePerAction();
@@ -346,6 +355,8 @@ void AUnit::DestroyCapsule()
 
 void AUnit::MovementActionCost(const UNodePath* Destination)
 {
+	if (CHECK_NULL_POINTER(Destination)) return;
+	
 	const int BaseDistance = UnitAttributeSet->GetMaxMoveDistancePerAction();
 	const int ActionCost = Destination->NbSteps > BaseDistance ? 2 : 1;
 	UnitAttributeSet->SetActions(UnitAttributeSet->GetActions()-ActionCost);

@@ -101,6 +101,8 @@ void ATBTacticalMainController::Tick(float DeltaTime)
 
 void ATBTacticalMainController::FollowActor(AActor* TargetActor)
 {
+	if (CHECK_NULL_POINTER(TargetActor)) return;
+	
 	CameraTargetActor = TargetActor;
 }
 
@@ -129,17 +131,20 @@ void ATBTacticalMainController::PerformFollowActor(float DeltaTime)
 
 void ATBTacticalMainController::SubscribeOnUnitMovingEvents(UTileMovementComponent* UnitMovementComponent)
 {
+	if (CHECK_NULL_POINTER(UnitMovementComponent)) return;
 	UnitMovementComponent->OnUnitStartMovingEvent.AddDynamic(this, &ATBTacticalMainController::OnUnitStartMovingEvent);
 	UnitMovementComponent->OnUnitStopMovingEvent.AddDynamic(this, &ATBTacticalMainController::OnUnitStopMovingEvent);
 }
 
 void ATBTacticalMainController::OnUnitStartMovingEvent(AActor* MovingActor)
 {
+	if (CHECK_NULL_POINTER(MovingActor)) return;
 	FollowActor(MovingActor);
 }
 
 void ATBTacticalMainController::OnUnitStopMovingEvent(AActor* MovingActor)
 {
+	if (CHECK_NULL_POINTER(MovingActor)) return;
 	UnFollowActor();
 }
 
@@ -157,6 +162,7 @@ void ATBTacticalMainController::OnTurnStartedEvent(EFaction CurrentSelectedFacti
 
 void ATBTacticalMainController::GoToActor(AActor* TargetActor)
 {
+	if (CHECK_NULL_POINTER(TargetActor)) return;
 	FollowActor(TargetActor);
 	
 	GetWorld()->GetTimerManager().SetTimer(

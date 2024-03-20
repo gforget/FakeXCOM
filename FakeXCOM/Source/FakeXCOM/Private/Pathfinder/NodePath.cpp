@@ -158,6 +158,10 @@ void UNodePath::BeginPlay()
 
 bool UNodePath::TryConnectNeighbour(int IndexDirection, TArray<FVector>& DirectionVectors, TArray<bool>& foundBlock, TArray<bool>& foundVoid, UNodePath* ChosenNodePath, ALevelBlock* LevelBlockPtr, ALevelBlock* NeighbourLevelBlock)
 {
+	if (CHECK_NULL_POINTER(ChosenNodePath)) return false;
+	if (CHECK_NULL_POINTER(LevelBlockPtr)) return false;
+	if (CHECK_NULL_POINTER(NeighbourLevelBlock)) return false;
+	
 	//clearance
 	if (IndexDirection >= 4) // if diagonal
 	{
