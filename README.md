@@ -29,8 +29,8 @@ Video explaining how to level block using the framework (Featuring a custom Path
 https://www.youtube.com/watch?v=U6oDr-Gjhig
 
 Video explaining the ability system (Featuring a customization of the Gemeplay Ability System):</br>
-https://www.youtube.com/watch?v=s6b8kvi5j5M (Part 1)
-https://www.youtube.com/watch?v=EgpNsEk4iCY (Part 2)
+https://www.youtube.com/watch?v=s6b8kvi5j5M (Part 1) </br>
+https://www.youtube.com/watch?v=EgpNsEk4iCY (Part 2) </br>
 
 Video explaining the AI system (Featuring a custom Utility Matrix system instead of Behaviour Trees):</br>
 <i>Coming soon</i>
