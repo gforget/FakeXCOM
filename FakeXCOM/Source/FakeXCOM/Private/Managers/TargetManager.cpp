@@ -249,8 +249,13 @@ bool UTargetManager::ConfirmLineOfSightOnUnit(
 			
 		FHitResult HitResult;
 		FCollisionQueryParams CollisionParams;
-		CollisionParams.AddIgnoredActor(SeekingUnit);
-		CollisionParams.AddIgnoredActor(TargetUnit);
+
+		//ignore all Unit in the way, only the environement can act as a blocker
+		for (const TPair<int, AUnit*>& pair : TBTacticalGameMode->UnitManager->AllUnitReference)
+		{
+			CollisionParams.AddIgnoredActor(pair.Value);
+		}
+		
 			
 		FVector Start = SeekingUnitPosition + SeekingUnit->SightSurroundTargetingAnchor[i];
 		FVector DeltaToPotentialTarget = ((TargetUnitPosition + TargetUnit->SightSurroundDefendingAnchor[i]) - Start);
@@ -261,7 +266,7 @@ bool UTargetManager::ConfirmLineOfSightOnUnit(
 		FVector End = Start + DeltaToPotentialTargetNormalized*LineOfSightRange;
 			
 		//GetWorld in UObject has to be called from another object that is active in the scene
-
+		
 		bool bHit = TBTacticalGameMode->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
 		const bool bDebugTrace = false;
 		if (bDebugTrace)
