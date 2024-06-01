@@ -126,6 +126,25 @@ FUtilityMatrixDT* UAIBrainComponent::DecideBestAction()
 	UtilityMatrix->GetAllRows(TEXT("UAIBrainComponent::DecideBestAction"), AllUMRows);
 	TArray<FName> AllRowsName = UtilityMatrix->GetRowNames();
 	
+	// Set the target value before the action considerations. Certain action consideration require to know what other action is targetting
+	for (int i=0; i<AllUMRows.Num(); i++)
+	{
+		if (!AllUMRows[i]->IsEnabled)
+		{
+			continue;
+		}
+		
+		if (AllUMRows[i]->TargetType == EAIAbilityTargetType::NodePath)
+		{
+			TargetNodePath[i] = PickNodePath(i, AllUMRows[i]);
+		}
+		
+		if (AllUMRows[i]->TargetType == EAIAbilityTargetType::Actor)
+		{
+			TargetActorIndex[i] = PickTargetActor(i, AllUMRows[i]);
+		}
+	}
+	
 	//Get the best action
 	float score = 0.0f;
 	int nextBestActionIndex = -1;
@@ -138,18 +157,6 @@ FUtilityMatrixDT* UAIBrainComponent::DecideBestAction()
 			continue;
 		} 
 		
-		//Check if you need a chosen node path first
-		if (AllUMRows[i]->TargetType == EAIAbilityTargetType::NodePath)
-		{
-			TargetNodePath[i] = PickNodePath(i, AllUMRows[i]);
-		}
-		
-		//Check if you need a target actor first
-		if (AllUMRows[i]->TargetType == EAIAbilityTargetType::Actor)
-		{
-			TargetActorIndex[i] = PickTargetActor(i, AllUMRows[i]);
-		}
-
 		//score the action next
 		TArray<FString> DebugConsiderationString;
 		float NewScore = ScoreAction(i, AllUMRows[i]->ActionConsiderations, DebugConsiderationString);
