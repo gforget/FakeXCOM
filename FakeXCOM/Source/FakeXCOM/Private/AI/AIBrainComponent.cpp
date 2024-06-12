@@ -51,6 +51,28 @@ void UAIBrainComponent::BeginPlay()
 	}
 }
 
+FString UAIBrainComponent::GetAbilityIdFromAction(int ActionIndex)
+{
+	TArray<FUtilityMatrixDT*> AllUMRows;
+	UtilityMatrix->GetAllRows(TEXT("UAIBrainComponent::BeginPlay"), AllUMRows);
+
+	if (ActionIndex < 0 || ActionIndex > AllUMRows.Num())
+	{
+		DebugScreen("Action index doesn't exist :: UAIBrainComponent::GetAbilityIdFromAction", FColor::Red);
+		return "";
+	}
+	
+	if (AllUMRows[ActionIndex-1]->TargetType == EAIAbilityTargetType::Actor)
+	{
+		return 	AllUMRows[ActionIndex-1]->UnitAbilityId;
+	}
+	else
+	{
+		DebugScreen("A"+ FString::FromInt(ActionIndex) + " is not an unit ability action :: UAIBrainComponent::GetAbilityIdFromAction", FColor::Red);
+		return "";
+	}
+}
+
 void UAIBrainComponent::UseUnitAbility(const FString& UnitAbilityId, EAIAbilityTargetType TargetType)
 {
 	if (TargetType == EAIAbilityTargetType::Actor)
@@ -222,6 +244,7 @@ void UAIBrainComponent::MoveToTargetNode()
 
 float UAIBrainComponent::ScoreAction(int ActionIndex, TArray<UConsideration*> Considerations, TArray<FString>& DebugStrings)
 {
+	
 	float score = 1.0f;
 	
 	if (Considerations.Num() == 0 ) return 0.0f;
@@ -239,9 +262,10 @@ float UAIBrainComponent::ScoreAction(int ActionIndex, TArray<UConsideration*> Co
 		}
 	}
 	
-	// averaging scheme of overall score
+	// merging scheme of overall score
 	// in other word : create a more usefull value due to fact that score is aggregated by multiplying decimal, which make the value lower and lower
-
+	// source of the algorithm : Behavioral Mathematics for Game AI, by Dave Mark
+	
 	float originalScore = score;
 	float modFactor = 1 - (1 / Considerations.Num());
 	float makeupValue = (1 - originalScore) * modFactor;
@@ -311,15 +335,15 @@ float UAIBrainComponent::ScoreNodePath(int ActionIndex, TArray<UConsideration*> 
 		}
 	}
 	
-	// averaging scheme of overall score
+	// merging scheme of overall score
 	// in other word : create a more usefull value due to fact that score is aggregated by multiplying decimal, which make the value lower and lower
-
+	// source of the algorithm : Behavioral Mathematics for Game AI, by Dave Mark
+	
 	float originalScore = score;
 	float modFactor = 1 - (1 / Considerations.Num());
 	float makeupValue = (1 - originalScore) * modFactor;
 	score = originalScore + (makeupValue * originalScore); 
-
-
+	
 	return score;
 }
 
@@ -396,9 +420,10 @@ float UAIBrainComponent::ScoreTargetActor(int ActionIndex, TArray<UConsideration
 		}
 	}
 	
-	// averaging scheme of overall score
+	// merging scheme of overall score
 	// in other word : create a more usefull value due to fact that score is aggregated by multiplying decimal, which make the value lower and lower
-
+	// source of the algorithm : Behavioral Mathematics for Game AI, by Dave Mark
+	
 	float originalScore = score;
 	float modFactor = 1 - (1 / Considerations.Num());
 	float makeupValue = (1 - originalScore) * modFactor;

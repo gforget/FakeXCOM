@@ -75,7 +75,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Debug Properties")
 	bool bShowTargetActorScore = false;
-	
+
+	UFUNCTION(BlueprintPure, Category = "Main Functions")
+	FString GetAbilityIdFromAction(int ActionIndex);
+
 private:
 
 	void UseUnitAbility(const FString& UnitAbilityId, EAIAbilityTargetType TargetType);
