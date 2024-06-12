@@ -34,11 +34,11 @@ https://www.youtube.com/watch?v=EgpNsEk4iCY (Part 2 - Create a "heal ally" abili
 
 Video explaining the AI system (Featuring a custom Utility Matrix system made for Unreal):</br>
 https://youtu.be/Qc6swLKVfFA (Part 1 - What is a utility matrix and how to design it) </br>
-https://youtu.be/hRXL30Da-yI (Part 2 - Explaining the aggregation equation) </br>)
+https://youtu.be/hRXL30Da-yI (Part 2 - Explaining the aggregation equation) </br>
 https://youtu.be/hXOqgpgG0cs (Part 3 - Implementing the matrix in the project) </br>
-https://youtu.be/6j3xWfurozk (Part 4 - Creating new considerations BP) </br>)
+https://youtu.be/6j3xWfurozk (Part 4 - Creating new considerations BP) </br>
 https://youtu.be/la7YgMdkkEQ (Part 5 - Considerations with curve value) </br>
-https://youtu.be/sR5yuzTubZg (Part 6 - Debugging tool for the AI </br>)
+https://youtu.be/sR5yuzTubZg (Part 6 - Debugging tool for the AI </br>
 
 ### Build of the basic level used in the presentation
 https://artanist.com/FakeXCOM/FakeXCOMBuild.zip
