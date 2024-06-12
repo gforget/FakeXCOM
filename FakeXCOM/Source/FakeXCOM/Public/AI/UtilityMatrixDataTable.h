@@ -57,6 +57,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
 	TEnumAsByte<EAIAbilityTargetType> TargetType = None;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI", meta = (EditCondition = "TargetType != EAIAbilityTargetType::None", EditConditionHides))
+	bool DebugTargetScore = false;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI", meta = (EditCondition = "TargetType != EAIAbilityTargetType::None"))
 	TArray<UConsideration*> TargetConsiderations;

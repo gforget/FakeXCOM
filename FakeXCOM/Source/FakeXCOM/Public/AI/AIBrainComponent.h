@@ -70,12 +70,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Debug Properties")
 	bool bLogActionScore = false;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Debug Properties")
-	bool bShowNodeScore = false;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Debug Properties")
-	bool bShowTargetActorScore = false;
-
 	UFUNCTION(BlueprintPure, Category = "Main Functions")
 	FString GetAbilityIdFromAction(int ActionIndex);
 

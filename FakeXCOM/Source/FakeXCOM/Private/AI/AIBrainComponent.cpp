@@ -280,7 +280,7 @@ UNodePath* UAIBrainComponent::PickNodePath(int ActionIndex, FUtilityMatrixDT* UM
 	
 	float score = 0.0f;
 	int  chosenNodeIndex = 0;
-	const bool bDebugNodeScore = bShowNodeScore;
+	const bool bDebugNodeScore = UMRow->DebugTargetScore;
 	
 	TArray<UNodePath*> AllValidNode;
 	AllValidNode.Append(AllBaseDistanceNode);
@@ -354,7 +354,7 @@ int UAIBrainComponent::PickTargetActor(int ActionIndex, FUtilityMatrixDT* UMRow)
 	float score = 0.0f;
 	int  chosenActorIndex = -1;
 
-	const bool bDebugTargetActorScore = bShowTargetActorScore;
+	const bool bDebugTargetActorScore = UMRow->DebugTargetScore;
 	TArray<AActor*> AllTarget;
 	
 	if (UMRow->ActionType == EActionType::UnitAbilityAction)
