@@ -22,7 +22,6 @@ UAIBrainComponent::UAIBrainComponent()
 void UAIBrainComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	//test commit
 	TBTacticalGameMode = GetOwner()->GetWorld()->GetAuthGameMode<ATBTacticalGameMode>();
 	if (TBTacticalGameMode)
 	{
