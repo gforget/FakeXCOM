@@ -133,8 +133,6 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 	int& BaseDistance,
 	int& LongDistance)
 {
-	//test development
-	
 	//Use a breadth first approach instead of Dijkstra, because it allow to guarantee the number of
 	//steps is in order while we explore the grid. While the path found are not the same, the number
 	//of steps is, since diagonal and vertical movement cost the same amount of step in this game.
