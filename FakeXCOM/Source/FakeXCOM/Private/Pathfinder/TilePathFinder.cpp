@@ -79,6 +79,12 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Initia
 		{
 			iteration++;
 			UNodePath* next = current->AllConnectedNeighbours[i];
+			if (!next)
+			{
+				DebugScreen("Current node"+ current->GetName() +" neighbour " + FString::FromInt(i) + "is Null, please regenerate the pathfinding graph", FColor::Red);
+				continue;
+			}
+			
 			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllConnectedNeighboursBaseCost[i]*next->WeightCost;
 			
 			if ((!cost_so_far.Contains(next->IdNode) || new_cost < GetCostFromCostSoFar(cost_so_far, next->IdNode))
@@ -120,12 +126,17 @@ GenericStack<UNodePath*> UTilePathFinder::GetPathToDestination(UNodePath* Initia
 	
 	return PathStack;
 }
+
 void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 	TArray<UNodePath*>& AllBaseDistanceNode,
 	TArray<UNodePath*>& AllLongDistanceNode,
 	int& BaseDistance,
 	int& LongDistance)
 {
+	//Use a breadth first approach instead of Dijkstra, because it allow to guarantee the number of
+	//steps is in order while we explore the grid. While the path found are not the same, the number
+	//of steps is, since diagonal and vertical movement cost the same amount of step in this game.
+	
 	if (CHECK_NULL_POINTER(Unit)) return;
 			
 	//Reset NbStep
@@ -139,45 +150,41 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 	
 	UNodePath* InitialNode = Unit->TileMovementComponent->LocatedNodePath;
 	
-	GenericPriorityQueue<UNodePath*, float> frontier;
-	frontier.Enqueue(InitialNode, 0.0f);
+	TQueue<UNodePath*> frontier;
+	frontier.Enqueue(InitialNode);
 
 	TMap<int, UNodePath*> came_from;
 	AddNodeToCameFrom(came_from, InitialNode->IdNode, nullptr);
-	
-	TMap<int, float> cost_so_far;
-	AddCostToCostSoFar(cost_so_far, InitialNode->IdNode, 0.0f);
 
 	TMap<int, int> step_so_far;
 	AddStepToStepSoFar(step_so_far, InitialNode->IdNode, 0);
 	
 	while (!frontier.IsEmpty())
 	{
-		UNodePath* current = frontier.Dequeue();
-		int lowestNewStep = -1;
+		UNodePath* current;
+		frontier.Dequeue(current);
 		
-		for (int i = 0; i<current->AllConnectedNeighbours.Num(); i++)
+		if (current->NbSteps > LongDistance) // now guarantied to be in order, if the current step is higher than long distance, stop checking
 		{
-			UNodePath* next = current->AllConnectedNeighbours[i];
+			break;
+		}
+		
+		for (int i = 0; i<8; i++)
+		{
+			UNodePath* next = current->AllNeighboursConnectionInfo[i];
 			if (!next)
 			{
-				DebugScreen("Current node"+ current->GetName() +" neighbour " + FString::FromInt(i) + "is Null, please regenerate the pathfinding graph", FColor::Red);
 				continue;
 			}
 			
-			const float new_cost = GetCostFromCostSoFar(cost_so_far, current->IdNode) + current->AllConnectedNeighboursBaseCost[i]*next->WeightCost;
 			const int new_step = GetStepFromStepSoFar(step_so_far, current->IdNode) + 1;
-			if (lowestNewStep == -1) lowestNewStep = new_step;
-				
-			if ((!cost_so_far.Contains(next->IdNode) || new_cost < GetCostFromCostSoFar(cost_so_far, next->IdNode))
-				&& !next->bIsBlocked )
+			if (!came_from.Contains(next->IdNode) && !next->bIsBlocked)
 			{
-				if (next->NbSteps == -1 || next->NbSteps > new_step) next->NbSteps = new_step;
+				next->NbSteps = new_step;
 				
 				AddStepToStepSoFar(step_so_far, next->IdNode, new_step);
-				AddCostToCostSoFar(cost_so_far, next->IdNode, new_cost);
 				AddNodeToCameFrom(came_from, next->IdNode, current);
-				frontier.Enqueue(next, new_cost);
+				frontier.Enqueue(next);
 				
 				if (new_step <= BaseDistance)
 				{
@@ -187,17 +194,7 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 				{
 					AllLongDistanceNode.Add(next);
 				}
-
-				if (lowestNewStep < new_step)
-				{
-					lowestNewStep = new_step;
-				}
 			}
-		}
-
-		if (lowestNewStep > LongDistance + 3) // optimisation done by approximation, could be higher than +3
-		{
-			break;
 		}
 	}
 	
@@ -206,9 +203,8 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 	Unit->AIBrainComponent->AllLongDistanceNode = AllLongDistanceNode;
 	
 	// clear memory to avoid memory leak
-	frontier.Clear(); 
+	frontier.Empty();
 	came_from.Empty();
-	cost_so_far.Empty();
 }
 
 void UTilePathFinder::AddNodeToCameFrom(TMap<int, UNodePath*>& came_from, int IdNode, UNodePath* ValueNode)
