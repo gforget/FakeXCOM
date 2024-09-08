@@ -10,4 +10,7 @@ This project aim at creating a framework to create prototype level of the modern
 - I am not an employe of Firaxis, nor did I ever work for them in the past, the algorithm used and source code are from my own speculation on how they might have done the game. That being said, this mean I do own the source code of this project.
 - I do not mind you using the code for your own interest (school project, personal interest, etc.), but any commercial use should at least credit me and discussed with me at this email gforget2@gmail.com.
 
+## Update Done
+- Removed the use AttributeSet : not that usefull and unintuitive to use. On top, force the use of float value instead of more appropriate variable types.
+
 
