@@ -69,8 +69,7 @@ void ATBTacticalGameMode::BeginPlay()
 	TargetManager->Initialize(this);
 	UI3DManagerComponent->Initialize();
 	LevelUIRef->Initialization();
-
-
+	
 	TMap<EFaction, bool> ActiveFactions;
 	TArray<TEnumAsByte<EFaction>> FactionTurnOrder = TurnManagerComponent->FactionTurnOrder;
 

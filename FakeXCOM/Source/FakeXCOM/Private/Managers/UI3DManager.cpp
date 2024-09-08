@@ -5,7 +5,6 @@
 
 #include "TBTacticalGameMode.h"
 
-#include "AttributeSets/UnitAttributeSet.h"
 #include "Controller/MouseSceneSelectionComponent.h"
 #include "Controller/TBTacticalMainController.h"
 #include "Managers/UnitAbilityManager.h"
@@ -90,9 +89,9 @@ void UUI3DManager::OnMouseOverActor(AActor* Actor, FVector HitLocation)
 			ClearSelect3DIcon();
 			ClearCover3DIcons();
 			
-			const AUnit* SelectedUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
-			const int BaseDistance = SelectedUnit->UnitAttributeSet->GetMaxMoveDistancePerAction();
-			const int AllowedDistance = BaseDistance*SelectedUnit->UnitAttributeSet->GetActions();
+			AUnit* SelectedUnit = TBTacticalGameMode->UnitManager->GetCurrentlySelectedUnit();
+			const int BaseDistance = SelectedUnit->GetMaxMoveDistancePerAction();
+			const int AllowedDistance = BaseDistance*SelectedUnit->GetActions();
 			
 			if (ChosenNodePath->NbSteps == -1 || ChosenNodePath->NbSteps > AllowedDistance)
 			{
@@ -179,12 +178,12 @@ void UUI3DManager::CreateDistanceLimitUI(AUnit* Unit)
 			BaseDistance,
 			LongDistance);
 		
-		if (Unit->UnitAttributeSet->GetActions() == 2)
+		if (Unit->GetActions() == 2)
 		{
 			SpawnDistanceIcons(AllBaseDistanceNode, BaseDistance, BaseDistanceLimitIconClass);
 			SpawnDistanceIcons(AllLongDistanceNode, LongDistance, LongDistanceLimitIconClass);
 		}
-		else if (Unit->UnitAttributeSet->GetActions() == 1)
+		else if (Unit->GetActions() == 1)
 		{
 			SpawnDistanceIcons(AllBaseDistanceNode, BaseDistance, LongDistanceLimitIconClass);
 		}

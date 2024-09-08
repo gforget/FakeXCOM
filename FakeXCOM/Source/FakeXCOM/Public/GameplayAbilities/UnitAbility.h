@@ -116,7 +116,6 @@ public :
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	bool GetIsDisabled(AUnit* Unit);
 	
-	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enabling Ability Event")
 	void SetAbilityHiddenEvent(AUnit* Unit);
 
@@ -149,7 +148,7 @@ public :
 	void SetDynamicDamageValueEvent(AUnit* Unit, AActor* Target);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void SetDynamicDamageValue(AUnit* Unit, AActor* Target, float NewMinDamageValue, float NewMaxDamageValue);
+	void SetDynamicDamageValue(AUnit* Unit, AActor* Target, int NewMinDamageValue, int NewMaxDamageValue);
 
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	float GetDamageValue(AUnit* Unit, AActor* Target);
@@ -191,10 +190,10 @@ public :
 	void CostAllActions(AUnit* Unit);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void CostActions(AUnit* Unit, float CostValue);
+	void CostActions(AUnit* Unit, int CostValue);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
-	void CostAmmo(AGun* Gun, float CostValue);
+	void CostAmmo(AGun* Gun, int CostValue);
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	void RechargeAllAmmo(AGun* Gun);

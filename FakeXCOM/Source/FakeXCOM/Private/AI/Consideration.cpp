@@ -6,7 +6,6 @@
 #include "TBTacticalGameMode.h"
 
 #include "ActorsObject/Gun.h"
-#include "AttributeSets/GunAttributeSet.h"
 #include "Managers/TargetManager.h"
 #include "Pathfinder/NodePath.h"
 #include "Pathfinder/TileMovementComponent.h"
@@ -64,7 +63,7 @@ float UConsideration::GetLowestPotentialDefence(AUnit* OwningUnit, ATBTacticalGa
 		}
 		
 		//Check if you have line of sight the unit if position at that node
-		const float LineOfSightRange = AllEnemyUnit[i]->Gun->GunAttributeSet->GetRange();
+		const float LineOfSightRange = AllEnemyUnit[i]->Gun->GetRange();
 		if (TargetManagerRef->ConfirmLineOfSightOnUnit(
 			AllEnemyUnit[i],
 			OwningUnit,
@@ -122,7 +121,7 @@ TArray<AUnit*> UConsideration::GetAllEnemyUnitInSight(AUnit* OwningUnit, ATBTact
 	TArray<AUnit*> AllEnemyUnit = GetAllEnemyUnits(OwningUnit, TBTacticalGameMode);
 	
 	UTargetManager* TargetManagerRef = TBTacticalGameMode->TargetManager;
-	const float LineOfSightRange = OwningUnit->Gun->GunAttributeSet->GetRange();
+	const float LineOfSightRange = OwningUnit->Gun->GetRange();
 	
 	for (int i=0; i<AllEnemyUnit.Num(); i++)
 	{

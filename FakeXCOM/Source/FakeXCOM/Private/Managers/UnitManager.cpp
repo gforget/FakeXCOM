@@ -5,7 +5,6 @@
 
 #include "TBTacticalGameMode.h"
 
-#include "AttributeSets/UnitAttributeSet.h"
 #include "Controller/MouseSceneSelectionComponent.h"
 #include "Controller/TBTacticalMainController.h"
 #include "GameplayAbilities/UnitAbility.h"
@@ -31,7 +30,7 @@ void UUnitManager::SelectNextUnit()
 		UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
 		AUnit* SelectedUnit = AllUnitReference[UnitID];
 		
-		if (SelectedUnit->UnitAttributeSet->GetActions() != 0 && !SelectedUnit->GetIsDead())
+		if (SelectedUnit->GetActions() != 0 && !SelectedUnit->GetIsDead())
 		{
 			haveSelectedAUnit = true;
 			break;
@@ -61,7 +60,7 @@ void UUnitManager::SelectPreviousUnit()
 		UnitID = AllUnitFactionReferenceMap[SelectedFaction].UnitInFaction[SelectedUnitIndex];
 		AUnit* SelectedUnit = AllUnitReference[UnitID];
 		
-		if (SelectedUnit->UnitAttributeSet->GetActions() != 0 && !SelectedUnit->GetIsDead())
+		if (SelectedUnit->GetActions() != 0 && !SelectedUnit->GetIsDead())
 		{
 			haveSelectedAUnit = true;
 			break;
@@ -92,7 +91,7 @@ AUnit* UUnitManager::SelectUnit(int UnitId, bool bGoToUnit)
 		return nullptr;
 	}
 
-	if (SelectedUnit->UnitAttributeSet->GetActions() == 0.0f)
+	if (SelectedUnit->GetActions() == 0.0f)
 	{
 		TBTacticalGameMode->LevelUIRef->CallCustomAlertStatusEvent(SelectedUnit, FColor::Green, "NO ACTION LEFT", -1.0f);
 	}
@@ -197,7 +196,7 @@ void UUnitManager::OnUnitRanOutOfActions(AUnit* Unit)
 			continue;	
 		}
 		
-		if (UnitPtr->UnitAttributeSet->GetActions() > 0)
+		if (UnitPtr->GetActions() > 0)
 		{
 			bAllUnitOutOfAction = false;
 			break;
@@ -242,7 +241,7 @@ void UUnitManager::EndOfAbility()
 			TBTacticalGameMode->UnitAbilityManager->DeactivateAbilitySelectionMode();
 		}
 		
-		if (GetCurrentlySelectedUnit()->UnitAttributeSet->GetActions() > 0)
+		if (GetCurrentlySelectedUnit()->GetActions() > 0)
 		{
 			SelectUnit(GetCurrentlySelectedUnit()->IdUnit, false);
 		}
@@ -287,7 +286,7 @@ void UUnitManager::ResetAllActionsOfFaction(EFaction Faction)
 		{
 			continue;	
 		}
-		UnitPtr->UnitAttributeSet->SetActions(UnitPtr->UnitAttributeSet->GetMaxActions());
+		UnitPtr->SetActions(UnitPtr->GetMaxActions());
 	}
 }
 

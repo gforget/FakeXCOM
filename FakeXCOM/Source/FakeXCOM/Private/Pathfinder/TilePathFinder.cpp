@@ -4,7 +4,6 @@
 
 #include "TBTacticalGameMode.h"
 
-#include "AttributeSets/UnitAttributeSet.h"
 #include "AI/AIBrainComponent.h"
 #include "Managers/UnitAbilityManager.h"
 #include "Pathfinder/NodePath.h"
@@ -145,7 +144,7 @@ void UTilePathFinder::GetNodeDistanceLimitForUnit(AUnit* Unit,
 		AllNodePaths[i]->NbSteps = -1;
 	}
 	
-	BaseDistance = Unit->UnitAttributeSet->GetMaxMoveDistancePerAction();
+	BaseDistance = Unit->GetMaxMoveDistancePerAction();
 	LongDistance = BaseDistance*2;
 	
 	UNodePath* InitialNode = Unit->TileMovementComponent->LocatedNodePath;

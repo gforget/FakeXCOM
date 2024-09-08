@@ -45,10 +45,10 @@ struct NO_API FUnitAbilityInfoStruct
 	TArray<AUnit*> AllAvailableUnitTargets;
 
 	UPROPERTY(BlueprintReadWrite)
-	TMap<int, float> TargetUnitsMinDamage;
+	TMap<int, int> TargetUnitsMinDamage;
 
 	UPROPERTY(BlueprintReadWrite)
-	TMap<int, float> TargetUnitsMaxDamage;
+	TMap<int, int> TargetUnitsMaxDamage;
 	
 	UPROPERTY(BlueprintReadWrite)
 	TMap<int, float> TargetUnitsHitChances;
@@ -62,8 +62,8 @@ struct NO_API FUnitAbilityInfoStruct
 		bIsHidden = false;
 		RangeValue = 0.0f;
 		AllAvailableUnitTargets = TArray<AUnit*>();
-		TargetUnitsMinDamage = TMap<int, float>();
-		TargetUnitsMaxDamage = TMap<int, float>();
+		TargetUnitsMinDamage = TMap<int, int>();
+		TargetUnitsMaxDamage = TMap<int, int>();
 		TargetUnitsHitChances = TMap<int, float>();
 		TargetUnitsCritChance = TMap<int, float>();
 	}
@@ -73,8 +73,8 @@ struct NO_API FUnitAbilityInfoStruct
 		bool _bIsHidden,
 		float _RangeValue,
 		const TArray<AUnit*>& _AllAvailableTargets,
-		const TMap<int, float>& _TargetMinDamages,
-		const TMap<int, float>& _TargetMaxDamages,
+		const TMap<int, int>& _TargetMinDamages,
+		const TMap<int, int>& _TargetMaxDamages,
 		const TMap<int, float>& _TargetsHitChances,
 		const TMap<int, float>& _TargetsCritChances
 		)
@@ -181,9 +181,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Unit Properties")
 	float DistanceSurroundDefendingAnchor = 25.0f;
 	
-	UPROPERTY()
-	const UUnitAttributeSet* UnitAttributeSet;
-	
 	UPROPERTY(EditDefaultsOnly)
 	UCapsuleComponent* CapsuleComponent;
 
@@ -221,9 +218,6 @@ public:
 	TMap<FString, FUnitAbilityInfoStruct> UnitAbilityInfos;
 	
 	void Initialize();
-
-	void CallRanOutOfActions();
-	void CallHealthChanged();
 	
 	UFUNCTION(BlueprintPure, Category="Main Functions")
 	float GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, UNodePath* TargetNode);
@@ -248,6 +242,48 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Main Functions")
 	bool CheckAbilityById(FString AbilityID);
+
+	UFUNCTION(BlueprintCallable)
+	void SetHealth(int value);
+	
+	UFUNCTION(BlueprintPure)
+	int GetHealth();
+
+	UFUNCTION(BlueprintCallable)
+	void SetMaxHealth(int value);
+	
+	UFUNCTION(BlueprintPure)
+	int GetMaxHealth();
+	
+	UFUNCTION(BlueprintCallable)
+	void SetDefence(float value);
+	
+	UFUNCTION(BlueprintPure)
+	float GetDefence();
+
+	UFUNCTION(BlueprintCallable)
+	void SetAim(float value);
+	
+	UFUNCTION(BlueprintPure)
+	float GetAim();
+
+	UFUNCTION(BlueprintCallable)
+	void SetActions(int value);
+	
+	UFUNCTION(BlueprintPure)
+	int GetActions();
+
+	UFUNCTION(BlueprintCallable)
+	void SetMaxActions(int value);
+	
+	UFUNCTION(BlueprintPure)
+	int GetMaxActions();
+
+	UFUNCTION(BlueprintCallable)
+	void SetMaxMoveDistancePerAction(int value);
+	
+	UFUNCTION(BlueprintPure)
+	int GetMaxMoveDistancePerAction();
 	
 private:
 
@@ -260,4 +296,24 @@ private:
 
 	void MovementActionCost(const UNodePath* Destination);
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Unit Attributes", meta = (ClampMin = "0", UIMin = "0"))
+	int Health = 5;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Unit Attributes", meta = (ClampMin = "0", UIMin = "0"))
+	int MaxHealth = 5;
+
+	UPROPERTY(VisibleAnywhere, Category = "Unit Attributes")
+	float Defence = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Unit Attributes", meta = (ClampMin = "0.0", ClampMax = "100.0", UIMin = "0.0", UIMax = "100.0"))
+	float Aim;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Unit Attributes", meta = (ClampMin = "0", UIMin = "0"))
+	int Actions = 2;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Unit Attributes", meta = (ClampMin = "0", UIMin = "0"))
+	int MaxActions = 2;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Unit Attributes", meta = (ClampMin = "0", UIMin = "0"))
+	int MaxMoveDistancePerAction = 5;
 };

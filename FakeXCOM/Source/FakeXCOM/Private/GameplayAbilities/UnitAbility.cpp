@@ -6,8 +6,6 @@
 #include "TBTacticalGameMode.h"
 
 #include "ActorsObject/Gun.h"
-#include "AttributeSets/GunAttributeSet.h"
-#include "AttributeSets/UnitAttributeSet.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Pathfinder/NodePath.h"
 #include "Utility/DebugHeader.h"
@@ -133,7 +131,7 @@ void UUnitAbility::SetDynamicDamageValueEvent_Implementation(AUnit* Unit, AActor
 	}
 }
 
-void UUnitAbility::SetDynamicDamageValue(AUnit* Unit, AActor* Target, float NewMinDamageValue, float NewMaxDamageValue)
+void UUnitAbility::SetDynamicDamageValue(AUnit* Unit, AActor* Target, int NewMinDamageValue, int NewMaxDamageValue)
 {
 	if (CHECK_NULL_POINTER(Unit)) return;
 	if (CHECK_NULL_POINTER(Target)) return;
@@ -412,34 +410,25 @@ void UUnitAbility::CostAllActions(AUnit* Unit)
 {
 	if (CHECK_NULL_POINTER(Unit)) return;
 	
-	Unit->UnitAttributeSet->SetActions(0.0f);
+	Unit->SetActions(0.0f);
 }
 
-void UUnitAbility::CostActions(AUnit* Unit, float CostValue)
+void UUnitAbility::CostActions(AUnit* Unit, int CostValue)
 {
 	if (CHECK_NULL_POINTER(Unit)) return;
-	
-	const UUnitAttributeSet* TargetUnitAttributeSet = Unit->UnitAttributeSet;
-	const float NewActionsValue = TargetUnitAttributeSet->GetActions() - CostValue;
-	TargetUnitAttributeSet->SetActions(NewActionsValue);
+	Unit->SetActions(Unit->GetActions() - CostValue);
 }
 
-void UUnitAbility::CostAmmo(AGun* Gun, float CostValue)
+void UUnitAbility::CostAmmo(AGun* Gun, int CostValue)
 {
 	if (CHECK_NULL_POINTER(Gun)) return;
-	
-	const UGunAttributeSet* OwnedGunAttributeSet = Gun->GunAttributeSet;
-	const float NewAmmosValue = OwnedGunAttributeSet->GetAmmo() - CostValue;
-	OwnedGunAttributeSet->SetAmmo(NewAmmosValue);
+	Gun->SetAmmo(Gun->GetAmmo() - CostValue);
 }
 
 void UUnitAbility::RechargeAllAmmo(AGun* Gun)
 {
 	if (CHECK_NULL_POINTER(Gun)) return;
-	
-	const UGunAttributeSet* OwnedGunAttributeSet = Gun->GunAttributeSet;
-	const float NewAmmosValue = OwnedGunAttributeSet->GetMaxAmmo();
-	OwnedGunAttributeSet->SetAmmo(NewAmmosValue);
+	Gun->SetAmmo(Gun->GetMaxAmmo());
 }
 
 void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue, const bool IsCrit)
@@ -448,10 +437,7 @@ void UUnitAbility::ApplyDamage(AActor* Target, float DamageValue, const bool IsC
 	
 	if (AUnit* UnitTarget = Cast<AUnit>(Target))
 	{
-		const UUnitAttributeSet* TargetUnitAttributeSet = UnitTarget->UnitAttributeSet;
-		const float NewHealth = TargetUnitAttributeSet->GetHealth() - DamageValue;
-		TargetUnitAttributeSet->SetHealth(NewHealth);
-
+		UnitTarget->SetHealth(UnitTarget->GetHealth() - DamageValue);
 		if (IsCrit)
 		{
 			GetTBTacticalGameMode()->LevelUIRef->CallStatusEvent(UnitTarget, EStatusType::CriticalDamage, DamageValue);
@@ -469,10 +455,7 @@ void UUnitAbility::ApplyHeal(AActor* Target, float DamageValue, bool IsCrit)
 	
 	if (AUnit* UnitTarget = Cast<AUnit>(Target))
 	{
-		const UUnitAttributeSet* TargetUnitAttributeSet = UnitTarget->UnitAttributeSet;
-		const float NewHealth = TargetUnitAttributeSet->GetHealth() + DamageValue;
-		TargetUnitAttributeSet->SetHealth(NewHealth);
-
+		UnitTarget->SetHealth(UnitTarget->GetHealth() + DamageValue);
 		if (IsCrit)
 		{
 			GetTBTacticalGameMode()->LevelUIRef->CallStatusEvent(UnitTarget, EStatusType::CriticalHealing, DamageValue);

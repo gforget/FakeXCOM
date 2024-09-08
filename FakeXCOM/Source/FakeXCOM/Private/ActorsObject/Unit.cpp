@@ -8,7 +8,6 @@
 #include "ActorsObject/Gun.h"
 #include "ActorsObject/LevelBlock.h"
 #include "AI/AIBrainComponent.h"
-#include "AttributeSets/UnitAttributeSet.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameplayAbilities/UnitAbility.h"
@@ -205,7 +204,6 @@ void AUnit::Initialize()
 	const UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	if (IsValid(ASC))
 	{
-		UnitAttributeSet = ASC->GetSet<UUnitAttributeSet>();
 		for (int i=0; i<OwnedAbilitiesClasses.Num();i++)
 		{
 			const FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(OwnedAbilitiesClasses[i], 0, -1));
@@ -225,16 +223,6 @@ void AUnit::Initialize()
 			CurrentAbility->OnAbilityAssigned(TBTacticalGameMode, this);
 		}
 	}
-}
-
-void AUnit::CallRanOutOfActions()
-{
-	OnUnitRanOutOfActionsEvent.Broadcast(this);
-}
-
-void AUnit::CallHealthChanged()
-{
-	OnUnitHealthChangeEvent.Broadcast(this);
 }
 
 float AUnit::GetTargetCoverDefenceBonus(AUnit* TargetUnit, UNodePath* UnitNode, UNodePath* TargetNode)
@@ -328,8 +316,8 @@ void AUnit::MoveToNodePath(UNodePath* TargetNodePath)
 	
 	if (!TargetNodePath->bIsBlocked && TBTacticalGameMode->TilePathFinder->bCanMoveUnit)
 	{
-		const int BaseDistance = UnitAttributeSet->GetMaxMoveDistancePerAction();
-		const int AllowedDistance = BaseDistance*UnitAttributeSet->GetActions();
+		const int BaseDistance = MaxMoveDistancePerAction;
+		const int AllowedDistance = BaseDistance*Actions;
 					
 		GenericStack<UNodePath*> Path = TBTacticalGameMode->TilePathFinder->GetPathToDestination(
 			TileMovementComponent->LocatedNodePath,
@@ -338,7 +326,7 @@ void AUnit::MoveToNodePath(UNodePath* TargetNodePath)
 		if (Path.Num() > 0
 			&& TargetNodePath->NbSteps != -1
 			&& TargetNodePath->NbSteps <= AllowedDistance
-			&& UnitAttributeSet->GetActions() > 0)
+			&& Actions > 0)
 		{
 			OnUnitOrderedToMoveEvent.Broadcast(this);
 			MovementActionCost(TargetNodePath);
@@ -357,9 +345,9 @@ void AUnit::MovementActionCost(const UNodePath* Destination)
 {
 	if (CHECK_NULL_POINTER(Destination)) return;
 	
-	const int BaseDistance = UnitAttributeSet->GetMaxMoveDistancePerAction();
+	const int BaseDistance = MaxMoveDistancePerAction;
 	const int ActionCost = Destination->NbSteps > BaseDistance ? 2 : 1;
-	UnitAttributeSet->SetActions(UnitAttributeSet->GetActions()-ActionCost);
+	SetActions(Actions-ActionCost);
 }
 
 bool AUnit::TryActivateAbilityByID(FString AbilityID, bool ForceActivation)
@@ -398,4 +386,84 @@ bool AUnit::CheckAbilityById(FString AbilityID)
 	}
 	
 	return true;
+}
+
+void AUnit::SetHealth(int value)
+{
+	Health = FMath::Max(value, 0);
+	OnUnitHealthChangeEvent.Broadcast(this);;
+
+	if (Health == 0.0f)
+	{
+		SetIsDead(true);
+	}
+}
+
+int AUnit::GetHealth()
+{
+	return FMath::Max(Health, 0);
+}
+
+void AUnit::SetMaxHealth(int value)
+{
+	MaxHealth = FMath::Max(value, 0);
+}
+
+int AUnit::GetMaxHealth()
+{
+	return FMath::Max(MaxHealth, 0);
+}
+
+void AUnit::SetDefence(float value)
+{
+	Defence = FMath::Clamp(value, 0.0f, 100.0f);
+}
+
+float AUnit::GetDefence()
+{
+	return FMath::Clamp(Defence, 0.0f, 100.0f);;
+}
+
+void AUnit::SetAim(float value)
+{
+	Aim = FMath::Clamp(value, 0.0f, 100.0f);
+}
+
+float AUnit::GetAim()
+{
+	return FMath::Clamp(Aim, 0.0f, 100.0f);;
+}
+
+void AUnit::SetActions(int value)
+{
+	Actions = FMath::Max(value, 0);
+	if (Actions == 0)
+	{
+		OnUnitRanOutOfActionsEvent.Broadcast(this);
+	}
+}
+
+int AUnit::GetActions()
+{
+	return FMath::Max(Actions, 0);
+}
+
+void AUnit::SetMaxActions(int value)
+{
+	MaxActions = FMath::Max(value, 0);
+}
+
+int AUnit::GetMaxActions()
+{
+	return FMath::Max(MaxActions, 0);
+}
+
+void AUnit::SetMaxMoveDistancePerAction(int value)
+{
+	MaxMoveDistancePerAction = FMath::Max(value, 0);
+}
+
+int AUnit::GetMaxMoveDistancePerAction()
+{
+	return FMath::Max(MaxMoveDistancePerAction, 0);;
 }
